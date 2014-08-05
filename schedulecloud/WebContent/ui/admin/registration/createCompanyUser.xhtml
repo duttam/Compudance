@@ -1,0 +1,46 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	template="../../../template/admincontenttemplate.xhtml">
+    
+
+	<ui:define name="mainContent">
+	<br></br>
+		<h:form id="companyForm">
+			<p:panel>
+				<div align="right" style="width: 90%;">
+			<h:panelGrid columns="6" >
+				
+				<p:button value="Register Company" outcome="registerCompany">
+                	<f:param name="action" value="addcompany"/>
+                </p:button>
+				
+			</h:panelGrid>
+			</div>
+			
+			<br />
+			<div align="center">
+			<p:dataTable id="companytable" var="company" value="#{companyHome.companyList}" paginator="true" rows="10" style="width:80%" >
+				<f:facet name="header">List of registered companies</f:facet>
+				<p:column headerText="Company Name" sortBy="#{company.name}">
+					<div align="center">
+						
+						<h:link styleClass="cellBoldCenter" value="#{company.name}" outcome="editCompany">
+						    <f:param name="action" value="editcompany" />
+							<f:param name="id" value="#{company.id}" />
+						</h:link>
+					</div>
+				</p:column>
+				
+				
+				
+			</p:dataTable>
+			
+			</div>
+			</p:panel>
+			
+		</h:form>
+	</ui:define>
+</ui:composition>

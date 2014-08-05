@@ -1,0 +1,20 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+    xmlns:of="http://omnifaces.org/functions"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions"
+	template="../../template/sitetemplate.xhtml">
+    
+	
+	<ui:define name="content">You got a Database Error
+	
+	<ul>
+                <li>Exception type: #{requestScope['javax.servlet.error.exception_type']}</li>
+                <li>Exception message: #{requestScope['javax.servlet.error.message']}</li>
+                <li>Stack trace: <pre><code>#{of:printStackTrace(requestScope['javax.servlet.error.exception'])}</code></pre></li>
+            </ul>
+	</ui:define>
+</ui:composition>

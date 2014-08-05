@@ -1,0 +1,25 @@
+<f:view xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pm="http://primefaces.org/mobile" 
+	contentType="text/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	renderKitId="PRIMEFACES_MOBILE">
+
+	<p:overlayPanel for="btnPanelContext" widgetVar="panelContext">
+                  
+                <p:dataList styleClass="ui-li-custom">
+                    <f:attribute name="dividerSwatch" value="d" />
+                    <h:outputLink value="/ui/mobile/admin/changeRegion.jsf" rendered="#{p:ifAnyGranted('ROLE_ACCESS_ADMIN,ROLE_ACCESS_MANAGER')}">Change Region [#{regionBean.selectedRegion.name}]</h:outputLink>
+                    <h:outputLink value="/ui/mobile/admin/adminHome.jsf" rendered="#{p:ifAnyGranted('ROLE_ACCESS_ADMIN,ROLE_ACCESS_MANAGER,ROLE_ACCESS_SALES')}">Roster</h:outputLink>
+                    <h:outputLink value="/ui/mobile/admin/employees.jsf" rendered="#{p:ifAnyGranted('ROLE_ACCESS_ADMIN,ROLE_ACCESS_MANAGER')}">Employees</h:outputLink>
+                    <h:outputLink value="/ui/mobile/admin/sendEmail.jsf" rendered="#{p:ifAnyGranted('ROLE_ACCESS_ADMIN,ROLE_ACCESS_MANAGER')}">Send Email</h:outputLink>
+                    <p:separator>&#160;</p:separator>
+                    
+                    <p:commandLink value="Goto Employee Home" action="#{loginBean.loadEmployeeTemplate}"></p:commandLink>
+                    <h:outputLink value="/ui/mobile/chngPasswd.jsf">Change password</h:outputLink>
+                    <h:outputLink value="#{request.contextPath}/j_spring_security_logout">Log Out</h:outputLink>
+                </p:dataList>                                
+            </p:overlayPanel>
+</f:view>

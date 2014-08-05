@@ -1,0 +1,314 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:o="http://omnifaces.org/ui"
+	xmlns:of="http://omnifaces.org/functions"
+	template="../../../template/employeecontenttemplate.xhtml">
+    <ui:define name="head">
+    	<script type="text/javascript">
+			$(document).ready(function(){
+		        $("btnPrint").click(function(){
+		            $("availDatesCal").printArea( options );
+		            return false;
+		        });
+
+        
+    		});
+			</script>
+		
+	
+        
+    </ui:define>
+
+	<ui:define name="mainContent">
+	<style type="text/css">
+	.TOP label {
+			    vertical-align: top;
+		}
+		#left {
+		    display: table-cell;
+		    min-width: 350px;
+		}
+		#center {
+		    display: table-cell;
+		    min-width: 10px;
+		}
+		#right {
+		    display: table-cell;
+		    width: 100%;
+		    vertical-align: top;
+		}
+	</style>
+	
+		<h:form id="availabilityForm" prependId="false">
+		<p:growl id="availgrowl" showDetail="false"  life="10000" showSummary="true"/>
+		<p:panel header="" >
+		
+			<f:facet name="header">
+				<p:row>
+					<p:column>Employee Availability [To edit existing availability click it]</p:column>
+					<p:column>
+						<h:panelGroup layout="block" style="float:right">
+							<h:commandLink immediate="true" >  
+					            <p:graphicImage value="/images/download/downloadpdf.jpg" />  
+					            <p:dataExporter type="pdf" target="availreporttbl" fileName="Availability" />  
+					        </h:commandLink>  
+							
+					    </h:panelGroup>
+						
+					</p:column>	
+					<p:column rendered="true">
+						<h:panelGroup layout="block" style="float:right">
+							<p:commandButton value="New Availability" onclick="newAvailWidget.show();" action="#{availHome.createNewAvailability}"></p:commandButton>
+					    </h:panelGroup>
+						
+					</p:column>				
+				</p:row>
+				
+			</f:facet>
+					
+			
+				<p:dialog id="newAvailabilityDialog" widgetVar="newAvailWidget" 
+							showEffect="clip" hideEffect="clip" dynamic="true" modal="true" >
+					 <f:facet name="header">
+					 	Enter new Availability 
+					 </f:facet>
+					 <h:form prependId="false">
+					 <h:panelGroup id="newAvailGrp">
+						 <h:panelGrid id="eventDetails" columns="3" cellpadding="15">  
+						 
+				            <h:outputLabel for="title" value="Title:" />  
+				            <p:outputLabel id="title" value="#{availHome.availability.title}" />  
+				  			<h:outputLabel/>
+				  			
+				  			<h:outputLabel for="sdate" value="Start Date:" />  
+					        <p:calendar id="sdate" value="#{availHome.availability.startDate}" pattern="MM/dd/yyyy" required="true" requiredMessage="#{msg['message.empty']}" >
+					          	<p:ajax event="blur" process="@this" update="sdateMsg" />
+			                        
+					            <p:ajax event="dateSelect" listener="#{availHome.handleStartDateSelect}" update="edate,sdateMsg"/> 
+					        </p:calendar>
+					        <p:message for="sdate" id="sdateMsg" display="text" />
+				            
+				            
+					        <h:outputLabel for="edate" value="End Date:" />  
+					        <p:calendar id="edate" value="#{availHome.availability.endDate}" pattern="MM/dd/yyyy" required="true" requiredMessage="#{msg['message.empty']}" >
+					           	<p:ajax event="blur" process="@this" update="edateMsg" />
+			                    <p:ajax event="dateSelect" listener="#{availHome.handleEndDateSelect}" update="edateMsg"  />
+					        </p:calendar>
+					        <p:message for="edate" id="edateMsg" display="text" />
+				            
+				            <p:outputLabel value="Available All Day (6 am to 2 am):" />
+				            
+						        <p:selectBooleanCheckbox value="#{availHome.availability.allday}" >
+							    	<p:ajax  update="stlblid stid stmsgid etlblid etid etmsgid" />
+							    </p:selectBooleanCheckbox>
+						        
+					        <p:outputLabel></p:outputLabel>
+					        <h:panelGroup id="stlblid">
+					        <h:outputLabel value="Start Time:" rendered="#{not availHome.availability.allday}"/>
+					        </h:panelGroup>
+					        <h:panelGroup id="stid">  
+					        <p:selectOneMenu id="stime" value="#{availHome.availability.startTime}" rendered="#{not availHome.availability.allday}">  
+					            
+					            <f:selectItems value="#{dateBean.allDates}" var="sdate" itemLabel="#{of:formatDate(sdate, 'hh:mm a')}" itemValue="#{sdate}" />  
+					            <f:convertDateTime pattern="hh:mm a" type="time"/>
+					            <p:ajax event="change" process="@this"  listener="#{availHome.selectAvailStartTime}" update="stimeMsg"  />
+					        </p:selectOneMenu>
+				            </h:panelGroup>
+			            	<h:panelGroup id="stmsgid">
+			            	<p:message for="stime" id="stimeMsg" display="text" rendered="#{not availHome.availability.allday}"/>
+			            	</h:panelGroup>
+			            	
+			            	<h:panelGroup id="etlblid">
+		            		<h:outputLabel  value="End Time:" rendered="#{not availHome.availability.allday}"/>  
+		            		</h:panelGroup>
+		            		<h:panelGroup id="etid">
+		            		<p:selectOneMenu id="etime" value="#{availHome.availability.endTime}" rendered="#{not availHome.availability.allday}">  
+				            	<f:convertDateTime pattern="hh:mm a" type="time"/>
+				            	<f:selectItems value="#{dateBean.allDates}" var="edate" itemLabel="#{of:formatDate(edate, 'hh:mm a')}" itemValue="#{edate}"/>
+				            	<p:ajax event="change" process="@this"  listener="#{availHome.selectAvailEndTime}" update="etimeMsg"  />
+				        	</p:selectOneMenu>
+				        	</h:panelGroup>
+				        	<h:panelGroup id="etmsgid">
+		            		<p:message for="etime" id="etimeMsg" display="text" rendered="#{not availHome.availability.allday}"/>
+		           			</h:panelGroup>
+					</h:panelGrid>
+<p></p>
+						
+									<p:outputLabel value="Repeat On" style="padding-left:10px; font-weight:bold"></p:outputLabel>
+									<p></p>
+										<h:panelGrid id="daysGrid" columns="7" cellpadding="5"
+											styleClass="TOP" >
+											<h:panelGroup>
+												<p:selectBooleanCheckbox
+													value="#{availHome.availability.repeatWeekSunday}"></p:selectBooleanCheckbox>
+												<p:spacer width="3"></p:spacer>
+												<h:outputLabel>S</h:outputLabel>
+											</h:panelGroup>
+											<h:panelGroup>
+												<p:selectBooleanCheckbox
+													value="#{availHome.availability.repeatWeekMonday}"></p:selectBooleanCheckbox>
+												<p:spacer width="3"></p:spacer>
+												<h:outputLabel>M</h:outputLabel>
+											</h:panelGroup>
+											<h:panelGroup>
+												<p:selectBooleanCheckbox
+													value="#{availHome.availability.repeatWeekTuesday}"></p:selectBooleanCheckbox>
+												<p:spacer width="3"></p:spacer>
+												<h:outputLabel>T</h:outputLabel>
+											</h:panelGroup>
+											<h:panelGroup>
+												<p:selectBooleanCheckbox
+													value="#{availHome.availability.repeatWeekWednesday}"></p:selectBooleanCheckbox>
+												<p:spacer width="3"></p:spacer>
+												<h:outputLabel>W</h:outputLabel>
+											</h:panelGroup>
+											<h:panelGroup>
+												<p:selectBooleanCheckbox
+													value="#{availHome.availability.repeatWeekThursday}"></p:selectBooleanCheckbox>
+												<p:spacer width="3"></p:spacer>
+												<h:outputLabel>T</h:outputLabel>
+											</h:panelGroup>
+											<h:panelGroup>
+												<p:selectBooleanCheckbox
+													value="#{availHome.availability.repeatWeekFriday}"></p:selectBooleanCheckbox>
+												<p:spacer width="3"></p:spacer>
+												<h:outputLabel>F</h:outputLabel>
+											</h:panelGroup>
+											<h:panelGroup>
+												<p:selectBooleanCheckbox
+													value="#{availHome.availability.repeatWeekSaturday}"></p:selectBooleanCheckbox>
+												<p:spacer width="3"></p:spacer>
+												<h:outputLabel>S</h:outputLabel>
+											</h:panelGroup>
+											
+										</h:panelGrid>
+								
+					<p></p> 
+					<div align="center">
+		            <p:commandButton value="Save" actionListener="#{availHome.addAvailability}" update="@form" process="@form" oncomplete="myschedule.update();newAvailWidget.hide();" rendered="#{availHome.availability.id ==null}"/>
+		            <p:commandButton value="Cancel" immediate="true" onclick="newAvailWidget.hide();" process="@this"/>
+					</div>	
+					</h:panelGroup>
+					
+			       </h:form> 
+			       <p:ajax event="close" listener="#{availHome.closeAvailDialog}"/>
+		    </p:dialog>
+				
+		        <p:dialog id="availDialog"  widgetVar="eventDialog" 
+		        	header="Update Availability for #{of:formatDate(availHome.availability.availDate, 'MM/dd/yyyy')}" 
+		        	showEffect="clip" hideEffect="clip" dynamic="true" 
+		        	rendered="#{availHome.availability ne null}" >
+		        		
+				        <h:panelGrid id="availDetails" columns="2" cellpadding="5">  
+				            <h:outputLabel for="availtitle" value="Title:" />  
+				            <p:outputLabel id="availtitle" value="#{availHome.availability.title}" required="true"/>  
+				  			
+				  			<p:outputLabel value="Available All Day (6 am to 2 am) :" />
+				  			
+						        <p:selectBooleanCheckbox value="#{availHome.availability.allday}" >
+							    	<p:ajax  update="updatestlbl updatestid updateetlbl updateetid" />
+							    </p:selectBooleanCheckbox>
+						    
+					        <h:panelGroup id="updatestlbl">
+				  			<h:outputLabel value="Start Time:" rendered="#{not availHome.availability.allday}"/>
+				  			</h:panelGroup>
+				  			<h:panelGroup id="updatestid">  
+							    <p:selectOneMenu id="st" value="#{availHome.availability.startTime}" rendered="#{not availHome.availability.allday}">  
+						            
+						            <f:selectItems value="#{dateBean.allDates}" var="sdate" itemLabel="#{of:formatDate(sdate, 'hh:mm a')}" itemValue="#{sdate}" />  
+						            <f:convertDateTime pattern="MM/dd/yyyy hh:mm a" type="time"/>
+						        </p:selectOneMenu>
+					            
+				            </h:panelGroup>
+				            <h:panelGroup id="updateetlbl">
+				            <h:outputLabel  value="End Time:" rendered="#{not availHome.availability.allday}"/>  
+				             </h:panelGroup>
+				             <h:panelGroup id="updateetid">
+				            	<p:selectOneMenu id="et" value="#{availHome.availability.endTime}" rendered="#{not availHome.availability.allday}">  
+						            
+						            <f:selectItems value="#{dateBean.allDates}" var="edate" itemLabel="#{of:formatDate(edate, 'hh:mm a')}" itemValue="#{edate}"/>
+						            <f:convertDateTime pattern="MM/dd/yyyy hh:mm a" type="time"/>  
+						        </p:selectOneMenu>
+				            </h:panelGroup>
+				            				  
+				            <h:outputLabel></h:outputLabel>
+				            <h:panelGroup>
+				            <p:commandButton value="Update" actionListener="#{availHome.updateAvailability}" 
+				            oncomplete="myschedule.update();eventDialog.hide();" process="availDetails"/>  
+				            <p:commandButton value="Delete" actionListener="#{availHome.deleteAvailability}" oncomplete="myschedule.update();eventDialog.hide();" process="@this"/>
+				            </h:panelGroup>
+				        </h:panelGrid>  
+				       
+				        <p:ajax event="close" listener="#{availHome.closeAvailDialog}"/>
+				        
+		    		</p:dialog>
+				
+				  
+			
+			
+			<div id="center">
+				
+			
+			</div>
+			
+			<div id="right">
+				
+				<p:schedule id="availDatesCal" value="#{availHome.eventModel}" widgetVar="myschedule"  view="month" aspectRatio="3" initialDate="#{availHome.currentAvailDate}" timeFormat="h:mm t{ - h:mm t}" >  
+	  
+			        <p:ajax event="eventSelect" listener="#{availHome.onEventSelect}" oncomplete="eventDialog.show();"  />  
+			        
+			    </p:schedule> 
+			    
+		    </div>
+    		<p />
+    		
+    		</p:panel>  
+    		<p:dataTable id="availreporttbl" var="availReport" value="#{availHome.allAvailability}" rendered="false">
+							<f:facet name="header">  
+						        <h:outputText value="Employee Availability Report for #{availHome.employee.firstname}"/>  
+						    </f:facet>  
+    
+							    	 
+						            
+					            	<p:column styleClass="hdr1Black">
+					                   
+					                    	<f:facet name="header">  
+									            <h:outputText value="Date" />  
+									        </f:facet>
+					                        <h:outputText value="#{availReport.availDate}" >
+					                            <f:convertDateTime pattern="MM/dd/yyyy"></f:convertDateTime>
+					                        </h:outputText>                     
+					                   
+					                </p:column>
+									
+					                <p:column styleClass="hdr1Black" >
+					                    
+					                    <f:facet name="header">  
+									            <h:outputText value="Start Time" />  
+									        </f:facet>
+					                        <h:outputText value="#{availReport.startTime}" >
+					                            <f:convertDateTime pattern="hh:mm a" />
+					                        </h:outputText>
+					                    
+					                </p:column>
+					                
+					                <p:column styleClass="hdr1Black" >
+					                    
+					                    <f:facet name="header">  
+									            <h:outputText value="End Time" />  
+									        </f:facet>
+					                        <h:outputText value="#{availReport.endTime}" >
+					                            <f:convertDateTime pattern="hh:mm a" />
+					                        </h:outputText>
+					                    
+					                </p:column>
+									 
+						  
+						</p:dataTable>
+		</h:form>
+		
+	</ui:define>
+</ui:composition>

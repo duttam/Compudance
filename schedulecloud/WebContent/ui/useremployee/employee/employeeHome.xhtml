@@ -1,0 +1,132 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	template="../../../template/employeecontenttemplate.xhtml"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions">
+    <ui:define name="head">
+		
+	</ui:define>
+
+	<ui:define name="mainContent">
+		<h:form>
+		<style type="text/css">
+                    .label {
+                        width:40%;
+                        padding:2px;
+                    }
+                    .value {
+                            width:40%;
+                            padding:2px;
+                    }
+                    .error {
+                            width: 20%;
+                            padding: 2px;
+                    }
+                    .grid {
+                            width:80%;
+                    }
+					#container{width:100%;}
+					#left{float:left;width:150px;;}
+					
+					#center{margin:0 auto;width:auto;}
+			
+		</style>
+        
+        <p:panel header="Employee Detail">
+
+        <p:growl id="growl" showDetail="true" sticky="false" showSummary="false" />
+        <br></br>
+        <div id="container">
+					
+        <div id="left">
+
+                <p:graphicImage value="#{userEmployeeImage.loadImage}" cache="false" style="width:90%">
+                        <f:param name="id" value="#{userEmployeeHome.employee.id}" />
+                </p:graphicImage>
+        </div>
+        <div id="center">
+        <h:panelGrid columns="2" columnClasses="label,value">
+        	
+			<h:outputText value="Employer Name:" styleClass="tableHdr2"/>
+			<h:outputText value="#{userEmployeeHome.tenant.name}" />
+			
+			<h:outputText value="Employee ID:" styleClass="tableHdr2"/>
+			<h:outputText value="#{userEmployeeHome.employee.id}" />
+			
+            <p:outputLabel value="Email: " styleClass="tableHdr2"/>
+            <h:outputText id="email" value="#{userEmployeeHome.employee.email}" />
+
+            <p:outputLabel value="Last name: " styleClass="tableHdr2"/>
+            <h:outputText id="lastname" value="#{userEmployeeHome.employee.lastname}" />
+
+            <p:outputLabel value="First name: " styleClass="tableHdr2" />
+            <h:outputText id="firstname" value="#{userEmployeeHome.employee.firstname}" />
+
+            <p:outputLabel value="Address1: " styleClass="tableHdr2"/>
+            <h:outputText id="address1" value="#{userEmployeeHome.employee.address1}" />
+
+            <p:outputLabel value="Address2: " styleClass="tableHdr2"/>
+            <h:outputText id="address2" value="#{userEmployeeHome.employee.address2}" />
+
+            <p:outputLabel value="City: " styleClass="tableHdr2"/>
+            <h:outputText id="city" value="#{userEmployeeHome.employee.city}" />
+
+            <p:outputLabel value="State: " styleClass="tableHdr2"/>
+            <h:outputText id="state" value="#{userEmployeeHome.employee.state.stateName}"/>
+
+            <p:outputLabel value="Zip Code: " styleClass="tableHdr2"/>
+            <h:outputText id="zipcode" value="#{userEmployeeHome.employee.zipcode}" />
+
+            <p:outputLabel value="Primary Phone: " styleClass="tableHdr2"/>
+            <h:outputText id="homephone" value="#{userEmployeeHome.employee.homephone}"  converter="phoneconverter"/>
+
+            <p:outputLabel value="Cell Phone: " styleClass="tableHdr2"/>
+            <h:outputText id="cellphone" value="#{userEmployeeHome.employee.cellphone}"  converter="phoneconverter"/>
+
+            <p:outputLabel value="Fax: " styleClass="tableHdr2"/>
+            <h:outputText id="fax" value="#{userEmployeeHome.employee.fax}" converter="phoneconverter"/>
+			
+	        						
+	        <p:outputLabel value="Emergency Contact Name:" styleClass="tableHdr2"/>  
+	        <h:outputText value="#{userEmployeeHome.employee.emergencyContact}" />
+	       	
+	        						
+	        <p:outputLabel value="Emergency Phone:" styleClass="tableHdr2"/>  
+	        <h:outputText id="emergencyphone" value="#{userEmployeeHome.employee.emergencyPhone}" converter="phoneconverter"/>
+	        
+            <p:outputLabel value="Date of Birth: *" styleClass="tableHdr2" rendered="false"/>
+            <h:outputText id="dob" value="#{userEmployeeHome.employee.dob}" rendered="false">
+                <f:convertDateTime pattern="MM/dd"></f:convertDateTime>
+            </h:outputText>
+            <p:outputLabel/>
+            <p:outputLabel/>
+            <h:panelGrid  columns="1" rendered="false">
+                <p:outputLabel value="Assigned Positions" style="font-weight:bold; color:green;text-decoration : underline;"></p:outputLabel>
+                <ol>
+                <ui:repeat value="#{userEmployeeHome.employee.assignedPositions}" var="employeePosition">
+                    <li>
+                        <p:outputLabel  value="#{employeePosition.name}"></p:outputLabel>
+                    </li>
+                </ui:repeat>
+                </ol>
+                <p:outputLabel value="No Position assigned yet" rendered="#{empty userEmployeeHome.employee.assignedPositions}"></p:outputLabel>
+            </h:panelGrid>
+            <h:outputLabel></h:outputLabel>
+            <h:outputLabel></h:outputLabel>
+            <h:outputLabel></h:outputLabel>
+            <h:outputLabel></h:outputLabel>
+            <p:commandButton value="Edit" action="editEmployee?faces-redirect=true" ajax="false"/>
+        </h:panelGrid>
+                
+            <p></p>
+            <h:panelGrid style="align:right;" columns="1">
+
+            </h:panelGrid>
+            </div>
+            </div>
+        </p:panel>
+        </h:form>
+	</ui:define>
+</ui:composition>

@@ -1,0 +1,81 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:o="http://omnifaces.org/ui"
+	xmlns:of="http://omnifaces.org/functions"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+	xmlns:pe="http://primefaces.org/ui/extensions"
+	>
+
+<f:view contentType="text/html">
+	<f:metadata>
+		<f:viewParam name="scheduleId" value="#{notificationStatusBean.scheduleId}" />
+          <f:viewParam name="employeeId" value="#{notificationStatusBean.employeeId}" />
+          <f:viewParam name="companyId" value="#{notificationStatusBean.companyId}" />
+          <f:viewParam name="eventPosId" value="#{notificationStatusBean.eventPosId}" />
+          <f:viewParam name="status" value="#{notificationStatusBean.status}" />
+          <f:event listener="#{notificationStatusBean.init}" type="preRenderView" />
+      </f:metadata>
+	<h:head >
+        <f:facet name="first">
+            <meta content='text/html; charset=UTF-8' http-equiv="Content-Type"/>
+            <title>Schedule Cloud</title>
+            
+        </f:facet>
+        <link rel="shortcut icon" href="#{request.contextPath}/favicon.ico" />
+        <link type="text/css" rel="stylesheet" href="#{request.contextPath}/css/default.css" />
+        <script src="#{facesContext.externalContext.requestContextPath}/js/admin_event.js" type="text/javascript"></script>
+        
+	</h:head>
+
+	<h:body>
+		
+		<div id="header" class="ui-widget ui-widget-header">
+			<div id="logo">
+				<img src="#{facesContext.externalContext.requestContextPath}/images/logo.jpg" border="0" style="border: none; height: 50px; width: 400px; " />
+					
+			</div>
+            
+		</div>
+		
+	        <div id="page" class="ui-widget">
+	        	<div style="padding-top:5%;padding-left:15%">
+					<h:outputLabel style="color: green;font-weight: bold; font-size: large" value="#{notificationStatusBean.notificationStatus}"></h:outputLabel>
+					<p/>
+				    <h:outputLabel value="#{notificationStatusBean.notificationDesc}"></h:outputLabel>
+				    <p/>
+				    <h:panelGrid columns="2">
+				    	<h:outputLabel value="Date" style="font-weight:bold"></h:outputLabel>
+				    	<h:outputText value="#{notificationStatusBean.schedule.event.startDate}" >
+			            	<f:convertDateTime pattern="MM/dd/yyyy"></f:convertDateTime>
+			            </h:outputText>
+				    	<h:outputLabel value="Time" style="font-weight:bold"></h:outputLabel>
+				    	<h:outputText value="#{of:formatDate(notificationStatusBean.schedule.eventPosition.startTime, 'hh:mm a')} - #{of:formatDate(notificationStatusBean.schedule.eventPosition.endTime, 'hh:mm a')}"></h:outputText>
+				    	<h:outputLabel value="Employee Name" style="font-weight:bold"></h:outputLabel>
+				    	<h:outputText value="#{notificationStatusBean.schedule.employee.firstname} #{notificationStatusBean.schedule.employee.lastname}"></h:outputText>
+				    	<h:outputLabel value="Event Name" style="font-weight:bold"></h:outputLabel>
+				    	<h:outputText value="#{notificationStatusBean.schedule.event.name}"></h:outputText>
+				    	<h:outputLabel value="Event Position" style="font-weight:bold"></h:outputLabel>
+				    	<h:outputText value="#{notificationStatusBean.schedule.position.name}"></h:outputText>
+				    	<h:outputLabel value="Dress Code" style="font-weight:bold"></h:outputLabel>
+				    	<h:outputText value="#{notificationStatusBean.schedule.event.dressCode}"></h:outputText>
+				    	<h:outputLabel value="Location" style="font-weight:bold"></h:outputLabel>
+				    	<h:outputText value="#{notificationStatusBean.schedule.event.location.name},#{notificationStatusBean.schedule.event.location.address1},#{notificationStatusBean.schedule.event.location.city}"></h:outputText>
+				    </h:panelGrid>
+				    </div><div align="center" style="padding-top:10%">
+				</div>
+			</div>
+            <div id="footer" align="center">
+			<p class="tiny1">Legal Notice | Copyright @ 2013 OneTouch Inc.</p>
+		</div>
+
+	</h:body>
+
+</f:view>
+</html>
+
+
+	

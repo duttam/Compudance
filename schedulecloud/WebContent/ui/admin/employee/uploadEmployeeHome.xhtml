@@ -1,0 +1,192 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions"
+	template="../../../template/admincontenttemplate.xhtml">
+    <ui:define name="head">
+    
+    	<style type="text/css">
+    		.icon {
+                width:30%;
+                padding:4px;
+            }
+    	</style>
+    	
+    </ui:define>
+
+	<ui:define name="mainContent">
+	<p:growl id="growl" showDetail="false" showSummary="true" autoUpdate="true" sticky="true"/>
+    <h:form id="uploadEmployeeForm" prependId="false">
+    	
+    	<br />
+    	<p:panel header="Uploaded Employee">
+    	 <div align="right"  style="width: 90%;">
+        <h:panelGrid columns="3">
+        		<p:commandButton value="Download Template" ajax="false" icon="ui-icon ui-icon-arrowthickstop-1-s">  
+					<p:dataExporter type="xls" target="downloademployeetable" fileName="employee_data" />  
+				</p:commandButton>
+				
+        		<p:button value="Upload Employee" outcome="uploadEmployee" rendered="true">
+                        <f:param name="action" value="uploademployee" />
+                </p:button>
+				<p:commandButton value="Invite All" oncomplete="sendinviteconfirmation.show();"  />
+        </h:panelGrid>
+        <p:confirmDialog id="sendEmployeeInviteConfirm"
+								message="Are you sure ?"
+								header="Send Inite to All" severity="alert"
+								widgetVar="sendinviteconfirmation">
+
+								<p:commandButton id="sendinviteconfirm" value="Yes Sure" action="#{uploadEmployee.sendInviteAllEmployee}"  
+								process="@this,employeetable" oncomplete="sendinviteconfirmation.hide();" immediate="true" ajax="false"/>
+								<p:commandButton id="updatedecline" value="Not Yet" onclick="sendinviteconfirmation.hide()" type="button" />
+
+							</p:confirmDialog>
+        </div>
+        <div style="display:none">
+        			<p:dataTable  id="downloademployeetable">
+	
+	                <p:column>  
+				        <f:facet name="header">  
+				            <h:outputText value="First Name" />  
+				        </f:facet>  
+				    </p:column> 
+				    <p:column>  
+				        <f:facet name="header">  
+				            <h:outputText value="Last Name" />  
+				        </f:facet>  
+				    </p:column>
+
+						<p:column headerText="Address1">
+							<f:facet name="header">
+								<h:outputText value="Address_Line1" />
+							</f:facet>
+						</p:column>
+						<p:column headerText="Address2">
+							<f:facet name="header">
+								<h:outputText value="Address_Line2" />
+							</f:facet>
+						</p:column>
+						<p:column headerText="City">
+							<f:facet name="header">
+								<h:outputText value="City" />
+							</f:facet>
+						</p:column>
+						<p:column headerText="State">
+							<f:facet name="header">
+								<h:outputText value="State" />
+							</f:facet>
+						</p:column>
+						<p:column headerText="State Code">
+							<f:facet name="header">
+								<h:outputText value="State Code" />
+							</f:facet>
+						</p:column>
+						<p:column headerText="Zipcode">
+							<f:facet name="header">
+								<h:outputText value="Zipcode" />
+							</f:facet>
+						</p:column>
+						<p:column headerText="Home Phone">
+							<f:facet name="header">
+								<h:outputText value="Home Phone" />
+							</f:facet>
+						</p:column>
+						<p:column headerText="Cell Phone">
+							<f:facet name="header">
+								<h:outputText value="Cell Phone" />
+							</f:facet>
+						</p:column>
+						<p:column headerText="Fax">
+							<f:facet name="header">
+								<h:outputText value="Fax" />
+							</f:facet>
+						</p:column>
+
+						<p:column>  
+				        <f:facet name="header">  
+				            <h:outputText value="Email" />  
+				        </f:facet>  
+				    </p:column>
+				    <p:column>  
+				        <f:facet name="header">  
+				            <h:outputText value="Hire Date" />  
+				        </f:facet>  
+				    </p:column>
+				    <p:column>  
+				        <f:facet name="header">  
+				            <h:outputText value="Hourly_Rate" />  
+				        </f:facet>  
+				    </p:column>
+				    
+				    <p:column>  
+				        <f:facet name="header">  
+				            <h:outputText value="Positions" />  
+				        </f:facet>  
+				    </p:column>
+					</p:dataTable>
+					</div>
+        <br />
+        <div align="center">
+        <p:dataTable  id="employeetable" var="employee" value="#{uploadEmployee.employeeList}" filteredValue="#{uploadEmployee.filteredEmployeeList}" scrollable="true"  scrollHeight="250" rowIndexVar="rowIndex">
+				<p:column headerText="" style="width:3%" >
+	                    	<p:commandButton icon="ui-icon ui-icon-close" actionListener="#{uploadEmployee.onDeleteUploadEmployee}"   
+	                    	update="employeetable :growl" disabled="#{employee.employeeUploadStatus ne 'upload'}" 
+	                    	onclick="statusDialog.show();" onsuccess="statusDialog.hide();" >
+	                    		
+	                    		<f:param name="currentRowIndex" value="#{rowIndex}"></f:param> 
+	                    	</p:commandButton>
+							    
+                		</p:column>
+				<p:column styleClass="hdr1Black" headerText="Last Name" sortBy="#{employee.lastname}" filterBy="#{employee.lastname}"  filterMatchMode="contains">
+                    <div  align="center">
+                    	<p:outputLabel styleClass="cellBoldCenter" value="#{employee.lastname}" outcome="editEmployee"/>
+						    
+						
+                        
+                    </div>
+                </p:column>
+               <p:column styleClass="hdr1Black" headerText="First Name" sortBy="#{employee.firstname}" filterBy="#{employee.firstname}"  filterMatchMode="contains">
+                <div  align="center">
+                    <p:outputLabel styleClass="cellBoldCenter" value="#{employee.firstname}"  />
+                        
+                    
+                </div>
+                </p:column>
+
+                <p:column styleClass="hdr1Black" headerText="Email" filterBy="#{employee.email}"  filterMatchMode="contains">
+                    <div  align="center">
+                    <p:outputLabel  styleClass="cellBoldCenter" value="#{employee.email}" />
+                    </div>
+                </p:column>
+
+				<p:column styleClass="hdr1Black" headerText="Hourly Rate" >
+                    <div  align="center">
+                    <p:outputLabel  styleClass="cellBoldCenter" value="#{employee.empRate.hourlyRate}" />
+                    </div>
+                </p:column>
+                
+                 <p:column styleClass="hdr1Black" >
+                    <div  align="center">
+                    <p:commandButton value="Invite" action="#{uploadEmployee.inviteUploadedEmployee(employee)}" disabled="#{employee.employeeUploadStatus ne 'upload'}" update="employeetable">
+                    	
+                    </p:commandButton>
+                    </div>
+                </p:column>
+					
+				<p:column styleClass="hdr1Black" headerText="Status">
+                    <div  align="center">
+                    <p:outputLabel value="#{employee.employeeUploadStatus}" />
+                    </div>
+                </p:column>
+        </p:dataTable>
+        
+             <br />
+        
+        </div>
+        </p:panel>
+        <ui:include src="ajaxStatusDialog.xhtml"></ui:include>
+    </h:form>
+	</ui:define>
+</ui:composition>

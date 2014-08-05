@@ -1,0 +1,181 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+	template="../../../template/admincontenttemplate.xhtml"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+    <ui:define name="head">
+    
+    	<style type="text/css">
+    		.icon {
+                width:30%;
+                padding:4px;
+            }
+            .cellBoldCenter{
+				font-family: Arial, Helvetica, sans-serif;
+				font-size: 12px;
+				font-weight: bold;
+				color: #203034;
+		        border: 0;
+		        padding: 2px;
+		        text-align: center;
+		        width:auto;
+			}
+			
+    	</style>
+    	
+    </ui:define>
+
+	<ui:define name="mainContent">
+	
+    <h:form id="uploademployeeForm" enctype="multipart/form-data" prependId="false">
+    	<style type="text/css">
+    		.ui-datatable thead th, .ui-datatable tbody td, .ui-datatable tfoot td {
+white-space: normal !important;
+} 
+    	</style>
+    	<br />
+    	<p:panel header="Upload Employee ">
+        
+        <h:outputText value="Please fill out missing values" rendered="#{facesContext.validationFailed}" style="color:red;font-weight:bold"/>
+        <div style="display:none">
+        <p:messages id="allerror" showDetail="false" showSummary="false"  ></p:messages>
+        </div>
+        <div align="center">
+        
+       
+            		<h:panelGrid columns="3" cellspacing="5" cellpadding="3">
+            			
+						<p:outputLabel value="Upload Employee Data" style="font-weight:bold"></p:outputLabel>
+            			  
+				  		<p:fileUpload fileUploadListener="#{uploadEmployee.uploadEmployeeDetailFile}" dragDropSupport="false" label="Select"  
+				  		mode="advanced" update="uploademployeetable" sizeLimit="1000000" allowTypes="/(\.|\/)(xls|xlsx)$/" messageTemplate="{name}, only .xls,.xlsx files allowed" /> 
+            			 
+            		</h:panelGrid>
+            		
+            		
+            		
+	           </div>
+				
+				<div align="right"  >
+        		<h:panelGrid columns="2"  >
+        		
+					 <p:commandButton value="Save" action="#{uploadEmployee.saveEmployeeExcelData}" ajax="false" onclick="jQuery(this).addClass('ui-state-disabled')"/> 	
+				   	     
+       
+        		<p:commandButton value="Cancel Uploaded Data" actionListener="#{uploadEmployee.clearUploadedEmployeeData}" update="uploademployeetable" immediate="true"/>
+                </h:panelGrid>        
+                
+				</div>
+				<br></br>
+				<h:panelGroup id="uploademployeeGrp" layout="block">
+				<p:dataTable id="uploademployeetable"  value="#{uploadEmployee.uploadEmployeeList}" var="employee" scrollable="true"  scrollHeight="250" >
+					
+					<p:columnGroup type="header">  
+				        <p:row>  
+				            
+				            <p:column headerText="First Name"/>  
+				            <p:column headerText="Last Name" />  
+				            <p:column headerText="Address1"/>  
+				            <p:column headerText="Address2" />  
+				            <p:column headerText="City"/>  
+				            <p:column headerText="State" />  
+				            <p:column headerText="State Code"/>
+				            <p:column headerText="Zipcode"/>
+				            <p:column headerText="Home Phone"/>  
+				            <p:column headerText="Cell Phone" />  
+				            <p:column headerText="Fax"/>
+				            <p:column headerText="Email"/>  
+				            <p:column headerText="Hire Date" />  
+				            <p:column headerText="H/R"/>
+				            <p:column headerText="Positions"/>  
+				        </p:row>  
+    				</p:columnGroup>
+	                	
+	                	<p:column >
+	                    	<p:inputText id="firstname" value="#{employee.firstname}"  required="true"  style="width:100%" />
+							    
+                		</p:column>
+		               <p:column>
+		                
+		                    <p:inputText id="lastname" value="#{employee.lastname}"   required="true"  style="width:100%"/>
+		                
+		                </p:column>
+                		
+                		<p:column >
+	                    	<p:inputText id="address1" value="#{employee.address1}"    style="width:100%"/>
+							    
+                		</p:column>
+		               <p:column>
+		                
+		                    <p:inputText id="address2" value="#{employee.address2}"   style="width:100%"/>
+		                
+		                </p:column>
+		                
+		                <p:column >
+	                    	<p:inputText id="city" value="#{employee.city}"    style="width:100%"/>
+							    
+                		</p:column>
+		               <p:column>
+		                
+		                    <p:inputText id="statename" value="#{employee.state.stateName}"   style="width:100%"/>
+		                
+		                </p:column>
+		                <p:column >
+	                    	<p:inputText id="statcode" value="#{employee.state.stateCode}"    style="width:100%"/>
+							    
+                		</p:column>
+		               <p:column>
+		                
+		                    <p:inputText id="zipcode" value="#{employee.zipcode}"     style="width:100%"/>
+		                
+		                </p:column>
+		                <p:column >
+		                	<p:inputMask  value="#{employee.homephone}" mask="(999) 999-9999" converter="phoneconverter"/>
+		                	
+							    
+                		</p:column>
+		               <p:column>
+		                
+		                    
+		                	<p:inputMask  value="#{employee.cellphone}" mask="(999) 999-9999" converter="phoneconverter"/>
+		                	
+		                </p:column>
+		                <p:column >
+	                    	
+							<p:inputMask  value="#{employee.fax}" mask="(999) 999-9999" converter="phoneconverter"/>
+		                	    
+                		</p:column>
+		               
+		                <p:column>
+		                    
+		                    <p:inputText id="email"  value="#{employee.email}"  required="true"  style="width:100%">
+		                    	<f:converter converterId="emailconverter"/>
+								<f:validator validatorId="emailValidator" />
+		                    </p:inputText>
+		                    
+		                </p:column>
+						<p:column>
+		                    <p:calendar   id="dob" value="#{employee.hireDate}" pattern="MM/dd/yyyy" showButtonPanel="true" navigator="true" style="width:100%"/>
+		                </p:column>
+		                <p:column >
+		                    <p:inputText  id="rate" value="#{employee.empRate.hourlyRate}" required="true"  style="width:100%" />
+		                    
+		                </p:column>
+		        		<p:column >
+		                    <p:outputLabel id="positions" value="#{employee.uploadedPositionString}" title="#{employee.uploadedPositionString}" />
+		                    
+		                </p:column>        
+                		<f:facet name="footer">
+                			No of Uploaded Employee Records  #{fn:length(uploadEmployee.uploadEmployeeList)}
+                		</f:facet>
+					</p:dataTable>  
+				</h:panelGroup>	
+        <p></p>
+        </p:panel>
+        <p></p>
+    </h:form>
+	</ui:define>
+</ui:composition>

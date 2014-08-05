@@ -1,0 +1,113 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:o="http://omnifaces.org/ui"
+	xmlns:of="http://omnifaces.org/functions"
+	template="eventMain.xhtml">
+    
+	
+<ui:define name="eventContent">
+    <h:form id="eventForm">
+    <p:growl id="growl" showDetail="true" sticky="false" showSummary="false" />
+        <br />
+        <p:panel header="Manage Event">
+
+        <div align="right" style="width: 90%;">
+        <h:panelGrid columns="3" >
+				
+				
+                <p:button value="Add Event" outcome="addEvent" process="@this">
+                        <f:param name="action" value="addevent" />
+                </p:button>
+                <p:outputLabel/>
+                <p:selectOneMenu id="locationlist" value="#{eventHome.selectedLocation}" converter="locationconverter"
+                                                                                 style="width: 140px" >
+                        <f:selectItem itemLabel="All Location" itemValue="" />
+                        <f:selectItems value="#{locationHome.locationList}" var="location"
+                                itemLabel="#{location.locationTitle} #{location.name}, #{location.city}, #{location.state.stateName}"
+                                itemValue="#{location}"/>
+
+                        <p:ajax event="change" update="eventtable" listener="#{eventHome.selectLocationChange}"/>
+                </p:selectOneMenu>
+        </h:panelGrid>
+        </div>
+
+        <br/>
+        <div align="center">
+        <p:dataTable id="eventtable" var="event"
+                value="#{eventHome.eventList}" paginator="true" rows="10" style="width:80%" filteredValue="#{eventHome.filteredEvents}">
+			
+			<p:column headerText="Event ID" filterBy="#{event.id}"  filterMatchMode="exact">
+                <div align="center">
+                <h:outputText styleClass="cellBoldCenter"  value="#{event.id}" />
+                </div>
+            </p:column>
+
+            <p:column headerText="Event Name" sortBy="#{event.name}" filterBy="#{event.name}"  filterMatchMode="contains">
+            <div align="center">
+                
+            
+            
+            	<h:link styleClass="cellBoldCenter" value="#{event.name}" outcome="addEvent">
+						    <f:param name="action" value="editevent" />
+                        <f:param name="eventid" value="#{event.id}" />
+				</h:link>
+				</div>
+            </p:column>
+            
+            <p:column headerText="Event Type">
+                <div align="center">
+                <h:outputText styleClass="cellBoldCenter"  value="#{event.eventType.name}"/>
+                </div>
+            </p:column>
+				
+            <p:column headerText="Sales Person/Admin" filterBy="#{event.salesPerson.firstname}"  filterMatchMode="contains">
+                <div align="center">
+                <h:outputText styleClass="cellBoldCenter"  value="#{event.salesPerson.firstname} #{event.salesPerson.lastname}" />
+                </div>
+            </p:column>
+				
+				
+                
+                <p:column headerText="Start Date" sortBy="#{event.startDate}" >
+                <div align="center">
+                <h:outputText styleClass="cellBoldCenter" value="#{event.startDate}">
+                        <f:convertDateTime pattern="MM/dd/yyyy" />
+                </h:outputText>
+                </div>
+                </p:column>
+                
+                <p:column headerText="End Date" rendered="false">
+                <div align="center">
+                <h:outputText styleClass="cellBoldCenter" value="#{event.endDate}">
+                        <f:convertDateTime pattern="MM/dd/yyyy" />
+                </h:outputText>
+                </div>
+                </p:column>
+
+                <p:column headerText="Event Time">
+                <div align="center">
+                <h:outputText styleClass="cellBoldCenter" value="#{event.startTime}">
+                    <f:convertDateTime pattern="hh:mm a" />
+                </h:outputText>
+                <span styleClass="cellBoldCenter">-</span>
+                <h:outputText styleClass="cellBoldCenter" value="#{event.endTime}">
+                    <f:convertDateTime pattern="hh:mm a" />
+                </h:outputText>
+                </div>
+                </p:column>
+				
+				<p:column headerText="Event Status" sortBy="#{event.status}">
+                <div align="center">
+                <h:outputText styleClass="cellBoldCenter"  value="#{event.status}" />
+                </div>
+                </p:column>
+            </p:dataTable>
+
+            </div>
+            </p:panel>
+    </h:form>
+</ui:define>
+</ui:composition>

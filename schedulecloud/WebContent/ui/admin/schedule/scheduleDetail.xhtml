@@ -1,0 +1,272 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:func="http://onetouch.com/functions"
+	xmlns:o="http://omnifaces.org/ui"
+	xmlns:of="http://omnifaces.org/functions"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+	xmlns:pe="http://primefaces.org/ui/extensions"
+	template="../../../template/admincontenttemplate.xhtml">
+
+
+	<ui:define name="mainContent">
+		<h:form id="scheduleDetail" prependId="false">
+			<style type="text/css">
+.ui-datalist-data {
+   height:150px;
+   overflow:auto;
+}
+.sickStyle {
+	color: green;
+	width: 65%;
+}
+
+.noStyle {
+	width: 65%;
+}
+
+.ui-carousel .ui-carousel-header .ui-carousel-header-title {
+	display: inline;
+}
+
+#repeatId_content.ui-widget-content {
+	border: 0px;
+}
+
+.ui-datagrid .ui-datagrid-header,.ui-datagrid .ui-datagrid-footer {
+	padding: 10px 10px;
+	text-align: center;
+	height: 25px;
+}
+
+.ui-orderlist .ui-orderlist-list {
+	width: 99.5%;
+}
+
+#quotescointainer {
+	width: 100%;
+	font-size: 12px;
+	overflow: hidden; /* contain floated elements */
+}
+
+#quotesleft {
+	float: left;
+	width: 35%;
+}
+
+#quotescenter {
+	float: left;
+	width: 5%;
+}
+
+#quotesright {
+	float: left;
+	width: 65%;
+}
+
+#left {
+	display: table-cell;
+	min-width: 350px;
+}
+
+#center {
+	display: table-cell;
+	min-width: 10px;
+}
+
+#right {
+	display: table-cell;
+	width: 100%;
+	vertical-align: top;
+}
+</style>
+		<p:dialog modal="true" widgetVar="statusDialog" header="Processing..."   
+		        draggable="false" closable="false" >  
+		    <p:graphicImage value="/images/design/ajaxloadingbar.gif" />  
+		</p:dialog>
+			<br></br>
+			<div style="height: 100%">
+				<p:growl id="growl" showDetail="true" sticky="false"
+					showSummary="false" />
+				<p:panel header="Event Detail">
+
+					<f:facet name="actions">
+						<h:panelGroup layout="block" style="float:right">
+							<h:panelGrid columns="3">
+								<h:panelGroup>
+								<h:commandLink action="#{scheduleDetailBean.employeeSchedulePreProcessorPDF('landscape')}">
+									<p:graphicImage value="/images/pdf.png" title="export as pdf" />
+								</h:commandLink>
+								<br></br>
+								<h:outputLabel value="Landscape"></h:outputLabel>
+								</h:panelGroup>
+								<h:outputLabel></h:outputLabel>
+								<h:panelGroup>
+								<h:commandLink action="#{scheduleDetailBean.employeeSchedulePreProcessorPDF('potrait')}">
+									<p:graphicImage value="/images/pdf.png" title="export as pdf" />
+								</h:commandLink>
+								<br></br>
+								<h:outputLabel value="Portrait"></h:outputLabel>
+								</h:panelGroup>
+							</h:panelGrid>
+						</h:panelGroup>
+					</f:facet>
+					
+					<div id="quotescointainer">
+						<div id="quotesleft">
+							<ui:include src="eventDetailFacelet.xhtml" />
+						</div>
+						<div id="quotescenter">
+							<p:spacer width="10"></p:spacer>
+						</div>
+						<div id="quotesright">
+							<ui:include src="bulkEmailFacelet.xhtml"></ui:include>
+
+						</div>
+					</div>
+
+
+
+					<br />
+					<div align="right">
+					<p:commandButton value="Back to Roster" action="#{scheduleDetailBean.gotoRoster}" includeViewParams="true"/>
+
+					<p:commandButton value="Add Position"
+							action="#{scheduleDetailBean.showNewEventPositionDialog}" title="Add Position, Start Time, End Time and Employees"></p:commandButton>
+						
+
+					</div>
+					<br></br>
+					<h:panelGroup id="allEventPositionIds">
+					<p:dataGrid id="evntposid" var="eventPosition"
+						value="#{scheduleDetailBean.allEventPositions}" columns="4"
+						styleClass="TOP">
+						<f:facet name="header">  
+						           Scheduled Positions and Staff [To add more staff click Edit]
+						        </f:facet>
+						<p:orderList value="#{eventPosition.position.scheduledEmployees}"
+							var="employee" controlsLocation="none" itemValue="#{employee}"
+							converter="employeeConverter" id="empList" style="width:100%;">
+							<f:facet name="caption">
+
+								<p:row>
+									<p:column>#{eventPosition.position.name}</p:column>
+									<p:column>( <span style="color: green">#{eventPosition.position.scheduledEmployeesCount}</span> ) , </p:column>
+									<p:column>( <span style="color: red">#{eventPosition.reqdNumber
+											- eventPosition.position.scheduledEmployeesCount}</span> )  </p:column>
+
+								</p:row>
+								<br></br>
+								<p:row>
+									<p:column>#{of:formatDate(eventPosition.startTime, 'hh:mm a')} - #{of:formatDate(eventPosition.endTime, 'hh:mm a')}</p:column>
+									<p:column>
+										<p:spacer height="5" width="10"></p:spacer>
+									</p:column>
+									<p:column>
+
+										<p:commandLink  value="Edit"
+											style="color:#2779AA;"  
+											action="#{scheduleDetailBean.editEventPosition}" disabled="#{eventPosition.offerCount gt 0}"
+											rendered="true" onclick="statusDialog.show();" onsuccess="statusDialog.hide();">
+											<f:setPropertyActionListener target="#{scheduleDetailBean.scheduledEventPosition}" value="#{eventPosition}"></f:setPropertyActionListener>
+											<f:setPropertyActionListener target="#{scheduleDetailBean.operation}" value="edit"></f:setPropertyActionListener>
+										</p:commandLink>
+
+									</p:column>
+									<p:column>
+										<p:spacer height="5" width="10"></p:spacer>
+									</p:column>
+									<p:column>
+
+										<p:commandLink id="offerId" value="Offer" rendered="#{scheduleDetailBean.tenant.showOffer}"
+											style="color:#2779AA;" onclick="statusDialog.show();" onsuccess="statusDialog.hide();"
+											action="#{scheduleDetailBean.editEventPosition}"
+											oncomplete="overrideScheduleWidget.show();" process="@this">
+											<f:setPropertyActionListener target="#{scheduleDetailBean.scheduledEventPosition}" value="#{eventPosition}"></f:setPropertyActionListener>
+											<f:setPropertyActionListener target="#{scheduleDetailBean.operation}" value="offer"></f:setPropertyActionListener>
+										</p:commandLink>
+									</p:column>
+									<p:column>
+										<p:spacer height="5" width="10"></p:spacer>
+									</p:column>
+									<p:column>
+
+										<p:commandLink id="epnotes" value="Note"
+											title="#{eventPosition.notes}" style="color:#2779AA;" 
+											actionListener="#{scheduleDetailBean.editEventPositionNotes(eventPosition.id)}"
+											oncomplete="editNotesWidget.show();" process="@this">
+											
+										</p:commandLink>
+
+									</p:column>
+									<p:column>
+										<p:spacer height="5" width="5"></p:spacer>
+									</p:column>
+									<p:column>
+										<p:commandLink  value="Override"
+											style="color:#2779AA;"  
+											action="#{scheduleDetailBean.editEventPosition}"
+											rendered="true" onclick="statusDialog.show();" onsuccess="statusDialog.hide();">
+											<f:setPropertyActionListener target="#{scheduleDetailBean.scheduledEventPosition}" value="#{eventPosition}"></f:setPropertyActionListener>
+											<f:setPropertyActionListener target="#{scheduleDetailBean.operation}" value="override"></f:setPropertyActionListener>
+										</p:commandLink>
+										<p:commandLink id="overrideId" value="Override" rendered="false"
+											style="color:#2779AA;" onclick="statusDialog.show();" onsuccess="statusDialog.hide();"
+											actionListener="#{scheduleDetailBean.emergencyOverrideEventPosition(eventPosition.id)}"
+											oncomplete="overrideScheduleWidget.show();" process="@this"></p:commandLink>
+
+									</p:column>
+									
+								</p:row>
+
+
+							</f:facet>
+
+							<p:column rendered="#{employee.schedule.schedulestatus le 2}">
+								<p:outputLabel
+									value="#{employee.lastname}, #{employee.firstname} " />
+
+							</p:column>
+
+							<p:column style="width:40%"
+								rendered="#{employee.schedule.schedulestatus le 2}">
+								<p:rating value="#{employee.rating}" readonly="true"></p:rating>
+							</p:column>
+
+						</p:orderList>
+
+					</p:dataGrid>
+					</h:panelGroup>
+					
+					
+					<h:panelGroup id="test">
+
+						<!-- notes dialog for schedule  -->
+
+						<p:dialog id="editNoteDialog" widgetVar="editNotesWidget"
+							showEffect="clip" hideEffect="clip" dynamic="true">
+							<f:facet name="header">
+							 	Update Note 
+							 	
+							 </f:facet>
+							<h:panelGrid columns="1">
+								<p:inputTextarea autoResize="true"
+									value="#{scheduleDetailBean.scheduledEventPosition.notes}"></p:inputTextarea>
+								<p:commandButton value="Save"
+									action="#{scheduleDetailBean.saveEventPositionNotes}"></p:commandButton>
+							</h:panelGrid>
+						</p:dialog>
+					</h:panelGroup>
+
+					
+					
+					
+				</p:panel>
+			</div>
+			
+		</h:form>
+
+	</ui:define>
+</ui:composition>

@@ -1,0 +1,47 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions"
+	template="../../template/sitetemplate.xhtml">
+    
+
+	<ui:define name="content">
+		<h:form id="loginForm" prependId="false">
+		<style type="text/css">
+			.ui-widget-content{
+				
+			}
+		</style>
+			<div align="center" style="padding-top:10%">
+			<p:panel style="width: 30%;" header="Schedule-Cloud Login">
+			
+			<p></p>
+				<h:panelGrid columns="2" cellspacing="6" cellpadding="6" >
+					<p:outputLabel value="User Name" />
+					<p:inputText id="j_username_input" 
+						required="true" style="width:100%"/>
+					<p:outputLabel value="Password"  />
+					<p:password id="j_password_input" 
+						required="true" style="width:100%"/>
+				</h:panelGrid>
+				
+				<h:panelGrid columns="2" >
+					
+					<p:commandButton action="#{loginBean.doLogin}" value="Login" type="submit"	process="@this" ajax="false"/>
+				</h:panelGrid>
+				<br />
+				<h:panelGrid columns="2" >	
+					<p:spacer width="100" height="5"></p:spacer>
+					<p:commandLink value="Can't access your account?" action="resetPassword?faces-redirect=true" immediate="true"/>
+				</h:panelGrid>
+				<br></br>
+				
+			</p:panel>	
+				<h:messages style="color: red;" />
+			</div>
+		</h:form>
+		
+	</ui:define>
+</ui:composition>

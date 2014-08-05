@@ -1,0 +1,102 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:o="http://omnifaces.org/ui"
+	xmlns:of="http://omnifaces.org/functions"
+	template="eventMain.xhtml">
+    
+	
+<ui:define name="eventContent">
+    <h:form id="eventTypeForm" prependId="false">
+    <br></br>
+    	<p:panel header="Manage EventType">
+    		<p:growl id="eventtypegrowl" showDetail="false" life="3000" showSummary="true"/> 	
+			<br />
+			<div align="right" style="width: 90%;">
+				<p:commandButton value="Add EventType" oncomplete="eventtypedlg.show();" actionListener="#{eventTypeHome.addNewEventType}">
+					
+				</p:commandButton>
+				
+			</div>
+			<br />
+			<div align="center">
+			<p:dataTable id="eventtypetable" var="eventtype"
+				value="#{eventTypeHome.allEventTypes}" paginator="true" rows="10" style="width:80%" >
+
+				<p:column headerText="Event Type" sortBy="#{eventtype.name}" >
+					<div align="center">
+						<p:commandLink value="#{eventtype.name}" oncomplete="editeventtypedlg.show();"  update=":eventTypeForm:editEventtypeGrp">
+							<f:setPropertyActionListener target="#{eventTypeHome.eventType}" value="#{eventtype}"></f:setPropertyActionListener>		
+						</p:commandLink>
+					</div>
+				</p:column>
+				<p:column headerText="Description" >
+					<div  align="center" >
+					
+						  <p:outputLabel value="#{eventtype.description}"></p:outputLabel>
+					
+					</div>
+				</p:column>
+								
+				
+			</p:dataTable>
+			</div>
+			
+			<p:dialog id="eventtypeDialog" header="Add Event Type" dynamic="true" widgetVar="eventtypedlg">
+				<div align="center">
+				
+				<h:panelGrid columns="4" >
+					<p:outputLabel value="Name: *" />
+					<p:spacer height="5" width="30"></p:spacer>
+					<p:inputText id="eventtypename" value="#{eventTypeHome.eventType.name}"></p:inputText>
+					<p:message for="eventtypename" id="eventtypenameMsg" display="text" style="padding-left:30px;"/>
+					
+				</h:panelGrid>
+				
+				<br />
+				<h:panelGrid columns="1">
+				<h:outputText value="Description: " />
+					<p:inputTextarea rows="4" cols="55" id="eventtypedesc" value="#{eventTypeHome.eventType.description}"/>  
+					
+				</h:panelGrid>
+				
+				<br />
+				<h:panelGrid>
+					<p:commandButton value="Save" oncomplete="eventtypedlg.hide();" actionListener="#{eventTypeHome.saveEventType}" update="eventtypetable"/>
+				</h:panelGrid>	
+				
+			</div>
+			</p:dialog>
+    		
+    		<p:dialog id="editeventtypeDialog" header="Add Event Type" dynamic="true" widgetVar="editeventtypedlg">
+				<h:panelGroup id="editEventtypeGrp" style="align:center" layout="block">
+				
+				<h:panelGrid columns="4" >
+					<p:outputLabel value="Name: *" />
+					<p:spacer height="5" width="30"></p:spacer>
+					<p:inputText id="editeventtypename" value="#{eventTypeHome.eventType.name}"></p:inputText>
+					<p:message for="editeventtypename" id="editeventtypenameMsg" display="text" style="padding-left:30px;"/>
+					
+				</h:panelGrid>
+				
+				<br />
+				<h:panelGrid columns="1">
+				<h:outputText value="Description: " />
+					<p:inputTextarea rows="4" cols="55" id="editeventtypedesc" value="#{eventTypeHome.eventType.description}"/>  
+					
+				</h:panelGrid>
+				
+				<br />
+				<h:panelGrid>
+					<p:commandButton value="Update" oncomplete="editeventtypedlg.hide();" actionListener="#{eventTypeHome.updateEventType}" update="eventtypetable"/>
+				</h:panelGrid>	
+				</h:panelGroup>
+			
+			</p:dialog>
+    	</p:panel>
+    </h:form>
+</ui:define>
+</ui:composition>		
+		

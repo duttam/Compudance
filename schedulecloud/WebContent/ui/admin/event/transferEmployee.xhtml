@@ -1,0 +1,109 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+				xmlns:h="http://java.sun.com/jsf/html"
+				xmlns:f="http://java.sun.com/jsf/core"
+				xmlns:p="http://primefaces.org/ui"
+				xmlns:func="http://onetouch.com/functions"
+				xmlns:o="http://omnifaces.org/ui"
+				xmlns:of="http://omnifaces.org/functions"
+				xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+				xmlns:pe="http://primefaces.org/ui/extensions">
+
+<p:dialog id="transferDialog" header="Transfer Employee : #{rosterBean.transferEmployee.firstname} #{rosterBean.transferEmployee.lastname}" 
+			widgetVar="transferdlg" resizable="true" showEffect="clip" hideEffect="fold" dynamic="true" height="500" width="500">  
+			<p:ajax event="close"  listener="#{rosterBean.handleClose}" />
+  			<h:form id="transferform" prependId="false">
+  				<h:panelGrid columns="2" styleClass="TOP" cellspacing="5">
+  				<h:outputLabel value="Transfer To Event :"></h:outputLabel>	        
+                <p:selectOneMenu id="eventlist" value="#{rosterBean.transferEvent}" converter="selectitemeventconverter" filter="true">
+                	<f:selectItem itemValue="" itemLabel="Select Event"></f:selectItem>
+                    <f:selectItems value="#{rosterBean.eventList}" var="event"
+                        itemLabel="#{event.name}" itemValue="#{event}"/>
+                    <p:ajax listener="#{rosterBean.onSelectTransferEvent}" update="eventPositionmenu"></p:ajax>
+                </p:selectOneMenu>
+                </h:panelGrid>
+				
+				
+                <h:panelGroup id="eventPositionmenu">
+                	<h:panelGrid columns="2" styleClass="TOP">
+		                <h:outputLabel value="Transfer To Position :"></h:outputLabel>	
+		                <p:selectOneMenu id="eventPositionList" value="#{rosterBean.transferEventPosition}" filter="true" 
+		                				var="ep"	converter="selectitemeventpositionconverter" style="width: 300px" panelStyle="width:300px">
+		                    <f:selectItems value="#{rosterBean.transferEvent.assignedEventPosition}" var="eventPosition"
+		                        itemLabel="#{eventPosition.position.name}" itemValue="#{eventPosition}"/>
+		                    <p:column>  
+							                <h:outputText value="#{ep.position.name}">  
+		                						
+		            						</h:outputText>  
+							            </p:column>
+				                        <p:column>  
+							                #{of:formatDate(ep.startTime, 'hh:mm a')} - #{of:formatDate(ep.endTime, 'hh:mm a')} 
+							            </p:column>
+							            <p:column>  
+							            <h:outputLabel value="#{ep.reqdNumber - ep.position.scheduledEmployeesCount}"></h:outputLabel>   	  
+							            </p:column>
+		                </p:selectOneMenu>
+					</h:panelGrid>
+				<p></p>		
+				
+						<p:dataTable id="eventDetailtbl" var="eventPosition"
+							value="#{rosterBean.transferEvent.assignedEventPosition}" scrollable="true" scrollHeight="300">
+
+							<f:facet name="header">  
+				            Employee Shift Detail  
+				        </f:facet>
+
+							<p:columnGroup type="header">
+								<p:row>
+									<p:column headerText="Notified" />
+									<p:column headerText="Accepted" />
+									<p:column headerText="Declined"/>
+									<p:column headerText="Expired" />
+								</p:row>
+							</p:columnGroup>
+
+							<p:subTable value="#{eventPosition.position.scheduledEmployees}"
+								var="employee">
+								<f:facet name="header">
+									<p:row>
+										<p:column>
+											#{eventPosition.position.name}
+											
+										</p:column>
+										
+										<p:column>( <span style="color: green">#{eventPosition.position.scheduledEmployeesCount}</span> ) , </p:column>
+										<p:column>( <span style="color: red">#{eventPosition.reqdNumber
+												- eventPosition.position.scheduledEmployeesCount}</span> ) , </p:column>
+										<p:column>#{of:formatDate(eventPosition.startTime, 'hh:mm a')} - #{of:formatDate(eventPosition.endTime, 'hh:mm a')}</p:column>
+
+									</p:row>
+
+
+								</f:facet>
+
+								<p:column>
+									<h:outputLabel	value=" #{employee.lastname}, #{employee.firstname}" rendered="#{employee.schedule.schedulestatus == 1}">
+									</h:outputLabel> 
+								</p:column>
+								<p:column>
+									<h:outputLabel	value="#{employee.lastname}, #{employee.firstname}" rendered="#{employee.schedule.schedulestatus == 2}" >
+									</h:outputLabel>
+								</p:column>
+								<p:column>
+									<h:outputText
+										value="#{employee.lastname}, #{employee.firstname}" rendered="#{employee.schedule.schedulestatus == 3}"/>
+								</p:column>
+								<p:column>
+									<h:outputText
+										value="#{employee.lastname}, #{employee.firstname}" rendered="#{employee.schedule.schedulestatus == 4}"/>
+								</p:column>
+							</p:subTable>
+						</p:dataTable>
+				</h:panelGroup>
+				<p></p>
+				<div align="center">
+					<p:commandButton value="Move" action="#{rosterBean.moveEmployee}" process="@all" oncomplete="transferdlg.hide();" ></p:commandButton>
+				</div>
+            	</h:form>
+		    </p:dialog> 
+</ui:composition>

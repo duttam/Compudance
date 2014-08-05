@@ -1,0 +1,78 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	template="../tools/toolHome.xhtml">
+    
+
+	
+    <ui:define name="head">
+    	
+    	<script type="text/javascript">
+                    /* <![CDATA[ */
+                    function onChangePositionType(){
+                    	
+                        if($('#addShiftForm\\:optionposition').val()=='allposition'){
+                        	$('#addShiftForm\\:positionlist').hide();
+                        }else{
+                        	$('#addShiftForm\\:positionlist').show();
+                        }
+                    }
+                    
+                    
+                    /* ]]> */
+                </script>
+    </ui:define>
+
+	
+	
+		
+			<div align="left">
+				<p:outputLabel value="Manage Shift" style="font-size: 20px;"></p:outputLabel>
+			</div>
+			<div align="right">
+			<p:panelGrid columns="1" >
+				
+				<p:commandButton value="add Shift" action="addShift" ajax="false">
+					<f:param name="action" value="addshift" />
+				</p:commandButton>
+				
+			</p:panelGrid>
+			<br />
+			<div align="center">
+			<p:dataTable id="shifttable" var="shift"
+				value="#{shiftHome.shiftList}" paginator="true" rows="10" style="width:80%">
+
+				<p:column headerText="Shift Name">
+					<div align="center">
+						<p:commandLink value="#{shift.name}" action="addShift">
+							<f:param name="action" value="editshift" />
+							<f:param name="id" value="#{location.id}" />
+						</p:commandLink>
+					</div>
+				</p:column>
+				<p:column headerText="Start Time">
+					<div align="center">
+						<h:outputText value="#{shift.startTime}">  
+                			<f:convertDateTime pattern="hh:mm a" />  
+            			</h:outputText>
+					</div>
+				</p:column>
+				
+				<p:column headerText="End Time">
+					<div align="center">
+						<h:outputText value="#{shift.endTime}">  
+                			<f:convertDateTime pattern="hh:mm a" />  
+            			</h:outputText>
+					</div>
+				</p:column>
+				
+			</p:dataTable>
+			</div>
+			</div>
+			
+			<br />
+			
+		
+</ui:composition>

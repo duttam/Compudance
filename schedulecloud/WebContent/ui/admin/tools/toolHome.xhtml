@@ -1,0 +1,53 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	template="../../../template/admincontenttemplate.xhtml">
+    
+
+	<ui:define name="mainContent">
+		<br />
+		 
+		<h:form id="toolForm" enctype="multipart/form-data">
+			<style type="text/css">
+				#left {
+    display: table-cell;
+    min-width: 400px;
+}
+#center {
+    display: table-cell;
+    min-width: 50px;
+}
+#right {
+    display: table-cell;
+    width: 100%;
+    vertical-align: top;
+}
+			</style>
+			<script type="text/javascript">  
+				function start() {  
+				    statusDialog.show();  
+				}  
+				  
+				function stop() {  
+				    statusDialog.hide();  
+				}  
+        </script> 
+        
+			<p:tabView id="toolview" dynamic="true">
+            	<p:ajax event="tabChange" listener="#{toolHome.onTabChange}" />
+            	
+                <ui:include src="/ui/admin/position/positionHome.xhtml" />
+            	
+            	<ui:include src="/ui/admin/document/uploadDocument.xhtml"/>
+            	<ui:include src="/ui/admin/tools/sendBulkEmail.xhtml" />
+            </p:tabView>
+			<br />
+			
+			
+			
+		</h:form>
+		
+	</ui:define>
+</ui:composition>

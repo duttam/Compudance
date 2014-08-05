@@ -1,0 +1,71 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	template="../../../template/admincontenttemplate.xhtml">
+    
+
+	<ui:define name="mainContent">
+		<h:form id="locationForm">
+		<p:growl id="growl" showDetail="true" sticky="false" showSummary="false" />
+		<br></br>
+		<p:panel header="Manage Locations">
+			
+			<div align="right" style="width: 90%;">
+			<h:panelGrid columns="6" >
+				
+				<p:button value="Add Location" outcome="addLocation">
+                	<f:param name="action" value="addlocation"/>
+                </p:button>
+				<p:selectOneMenu value="#{locationHome.locationType}">
+					<f:selectItem itemLabel="All location" itemValue="All" /> 
+					<f:selectItem itemLabel="Custom" itemValue="custom" /> 
+					<f:selectItem itemLabel="Standard" itemValue="standard" /> 
+					<p:ajax update="locationForm:locationtable" listener="#{locationHome.selectLocationTypeChange}" event="change"/>
+				</p:selectOneMenu>
+				
+			</h:panelGrid>
+			</div>
+			
+			<br />
+			<div align="center">
+			<p:dataTable id="locationtable" var="location"
+				value="#{locationHome.locationList}" paginator="true" rows="10" style="width:80%">
+				<p:column headerText="Cost Center" filterBy="#{location.code}"  filterMatchMode="contains">
+	                <div align="center">
+	                <h:outputText styleClass="cellBoldCenter"  value="#{location.code}" />
+	                </div>
+	            </p:column>
+				<p:column headerText="Location Name" sortBy="#{location.name}" filterBy="#{location.name}"  filterMatchMode="contains">
+					<div align="center">
+						
+						<h:link styleClass="cellBoldCenter" value="#{location.name}" outcome="editLocation">
+						    <f:param name="action" value="editlocation" />
+							<f:param name="id" value="#{location.id}" />
+						</h:link>
+					</div>
+				</p:column>
+				
+				<p:column headerText="Type" sortBy="#{location.locationType}">
+					<div align="center">
+						<h:outputText value="#{location.locationType}"	styleClass="cellBoldCenter" />
+					</div>
+				</p:column>
+				<p:column headerText="Contact Name" sortBy="#{location.contactName}">
+					<div align="center">
+						<h:outputText value="#{location.contactName}"	styleClass="cellBoldCenter" />
+					</div>
+				</p:column>
+				<p:column headerText="Contact Email">
+					<div align="center">
+						<h:outputText value="#{location.contactEmail}"	styleClass="cellBoldCenter" />
+					</div>
+				</p:column>
+				
+			</p:dataTable>
+			</div>
+			</p:panel>
+		</h:form>
+	</ui:define>
+</ui:composition>

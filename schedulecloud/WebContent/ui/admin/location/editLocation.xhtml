@@ -1,0 +1,157 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	template="../../../template/admincontenttemplate.xhtml">
+    <ui:define name="head">
+    	
+        
+    </ui:define>
+
+	<ui:define name="mainContent">
+		<h:form id="editLocationForm" styleClass="mainContent">
+		<style type="text/css">
+			
+			.label {
+				width:40%;
+				padding:2px;
+			}
+
+			.value {
+				width:20%;
+				padding:2px;
+			}
+			.error {
+				width: 20%;
+				padding: 2px;
+			}
+			.grid {
+				width:80%;
+			}
+		</style>
+		<br />
+		<p:panel id="editLocationPanel" header="Update Location">
+		<div align="center">
+			<h:panelGrid columns="6"  columnClasses="tableHdr2,value,error" >
+				<p:outputLabel value="Name:" styleClass="tableHdr2"></p:outputLabel>
+				<p:inputText id="name" value="#{locationController.location.name}"/>
+				<p:message for="name" id="nameMsg" display="text"/>
+				
+				<p:outputLabel value="Cost Center: *" styleClass="tableHdr2"></p:outputLabel>				
+				<p:inputText id="code" value="#{locationController.location.code}" required="true" requiredMessage="#{msg['message.empty']}">
+					<p:ajax event="blur" process="@this" update="codeMsg"  />
+				</p:inputText>
+				<p:message for="code" id="codeMsg" display="text"/>
+				
+				
+				<p:outputLabel value="Main Address" style="font-weight:bold; color:black" ></p:outputLabel>
+				<p:outputLabel />
+				<p:outputLabel />
+				<p:outputLabel></p:outputLabel>
+				<p:outputLabel></p:outputLabel>
+				<p:outputLabel></p:outputLabel>
+				<p:outputLabel value="Address1:" styleClass="tableHdr2" ></p:outputLabel>
+				<p:inputText id="address1" value="#{locationController.location.address1}"/>
+				<p:message for="address1" id="address1Msg" display="text"/>
+				
+				<p:outputLabel value="Address2:" styleClass="tableHdr2" ></p:outputLabel>
+				<p:inputText id="address2" value="#{locationController.location.address2}"/>
+				<p:message for="address2" id="address2Msg" display="text"/>
+				
+				<p:outputLabel value="City: " styleClass="tableHdr2"  />
+					<p:autoComplete id="city" value="#{locationController.location.city}"
+						completeMethod="#{autoCompleteBean.complete}" >
+						<p:ajax event="blur" process="@this" update="cityMsg" />
+					</p:autoComplete>
+					<p:message for="city" id="cityMsg" display="text" />
+	
+					<p:outputLabel value="State: " styleClass="tableHdr2"  />
+					<p:selectOneMenu id="state"
+						value="#{locationController.location.state.stateName}"
+						style="width: 140px">
+						<f:selectItem itemLabel="Select One" itemValue="" />
+						<f:selectItems value="#{supportBean.states}" />
+						<p:ajax process="@this" update="stateMsg" />
+					</p:selectOneMenu>
+					<p:message for="state" display="text" id="stateMsg" />
+					<h:outputText value="Zip Code: " styleClass="tableHdr2"  />
+					<p:inputText id="zipcode"
+							value="#{locationController.location.zipcode}" maxlength="5">
+							<f:validator validatorId="zipCodeValidator" />
+							<p:ajax event="blur" process="@this" update="zipcodeMsg" />
+					</p:inputText>
+					<p:message for="zipcode" id="zipcodeMsg" display="text" />
+                                        
+					<p:outputLabel value="Location Type: " styleClass="tableHdr2"/>
+					<p:selectOneMenu id="locationtype"
+						value="#{locationController.location.locationType}"
+						style="width: 140px">
+						
+						<f:selectItem itemLabel="Custom" itemValue="custom" />
+						<f:selectItem itemLabel="Standard" itemValue="standard" />    
+						<p:ajax event="change" process="@this"  listener="#{locationController.changeLocationType}" update="locationtypeMsg editLocationForm:code" />
+					</p:selectOneMenu>
+					<p:message for="locationtype" display="text" id="locationtypeMsg" />
+					
+					<p:outputLabel value="Parking Directions:" styleClass="tableHdr2" ></p:outputLabel>
+					<p:inputTextarea id="parkdirection" value="#{locationController.location.parkingDirection}"/>
+					<p:message for="parkdirection" id="parkdirectionMsg" display="text"/>
+					<p:outputLabel></p:outputLabel>
+				<p:outputLabel></p:outputLabel>
+				<p:outputLabel></p:outputLabel>
+				
+                                <p:outputLabel value="Main Contact" style="font-weight:bold;color:black"></p:outputLabel>
+				<p:outputLabel />
+				<p:outputLabel />
+				<p:outputLabel></p:outputLabel>
+				<p:outputLabel></p:outputLabel>
+				<p:outputLabel></p:outputLabel>
+				<p:outputLabel value="Contact Name:" styleClass="tableHdr2" ></p:outputLabel>
+				<p:inputText id="contactname" value="#{locationController.location.contactName}"/>
+				<p:message for="contactname" id="contactnameMsg" display="text"/>
+	
+				<h:outputText value="Phone: " styleClass="tableHdr2" />
+				<p:inputMask id="contactphone" value="#{locationController.location.contactPhone}" mask="(999) 999-9999" converter="phoneconverter">
+					<p:ajax event="blur" process="@this" update="contactphoneMsg" />
+				</p:inputMask>
+				<p:message for="contactphone" id="contactphoneMsg" display="text" />
+				
+				<h:outputText value="Emergency Phone: " styleClass="tableHdr2"/>
+				<p:inputMask id="contactcellphone" value="#{locationController.location.contactCellphone}" mask="(999) 999-9999" converter="phoneconverter">
+					<p:ajax event="blur" process="@this" update="contactphoneMsg" />
+				</p:inputMask>
+				<p:message for="contactcellphone" id="contactcellphoneMsg" display="text" />
+				
+				<h:outputText value="Fax: " styleClass="tableHdr2"/>
+				<p:inputMask id="contactfax" value="#{locationController.location.contactFax}" mask="(999) 999-9999" converter="phoneconverter">
+						<p:ajax event="blur" process="@this" update="contactfaxMsg" />
+				</p:inputMask>
+				<p:message for="contactfax" id="contactfaxMsg" display="text" />
+				
+				<h:outputText value="Email: " styleClass="tableHdr2"/>
+				<p:inputText id="email" value="#{locationController.location.contactEmail}"></p:inputText>
+				<p:message for="email" id="emailMsg" display="text"/>
+						
+				<h:outputText value="Enter timezone for location:"  styleClass="tableHdr2" />
+					<p:selectOneMenu id="timezonelist"
+						value="#{locationController.location.timezone}"
+						style="width: 140px">
+						<f:selectItem itemLabel="Select One" itemValue="" />
+						<f:selectItems value="#{locationController.USTIMEZONES}" />
+						
+					</p:selectOneMenu>
+				<p:message for="timezonelist" display="text" />
+			</h:panelGrid>
+			
+				<p></p>
+				<p:panelGrid columns="2">
+					
+					<p:commandButton id="edit" value="Update Location" action="#{locationController.editLocation}" process="@form" ajax="false"/>
+					<p:commandButton id="delete" value="Delete Location" action="#{locationController.deleteLocation}" process="@form" ajax="false" rendered="true"/>
+				</p:panelGrid>
+			</div>
+		</p:panel>
+		</h:form>
+	</ui:define>
+</ui:composition>

@@ -1,0 +1,59 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Schedule detail</title>
+</head>
+
+<body>
+<script language="text/css">
+	.label {
+			    font-weight:bold;
+		}
+</script>
+<div align="left" style="padding-left:40px;">
+	
+		</p>
+		We need to fill ${offerCount} ${employeePosition} positions for the following event:
+		<br/>
+		${offerNotes}
+		<br/>
+		<span style="font-weight:bold">Event Detail </span>
+    	<br/>
+		<span style="font-weight:bold">Date </span> : ${eventDate}</span>
+        <br/>
+		<span style="font-weight:bold">Time </span> : ${shiftStartTime}- ${shiftEndTime}
+        <br/>
+        <span style="font-weight:bold">Employee Name </span> : ${firstname} ${lastname}
+        
+        <br/>
+        <span style="font-weight:bold">Event Name </span> : ${eventName}
+        <br/>
+        
+        <span style="font-weight:bold">Event Note </span> : ${eventNotes}
+        <br/>
+        <span style="font-weight:bold">Position Note </span> : ${positionNotes}
+        <br/>
+		<span style="font-weight:bold">Dress Code </span> : ${dressCode}
+        <br/>
+		<span style="font-weight:bold">Location </span> : ${locName},${locAddress1},${locAddress2},${locCity},${locState}-${locZipcode}
+        <br/>
+        
+        <p><span>Please click on the Accept link below to confirm if you can work. This is a first come, first serve basis offer. </span></p>
+		<br/>
+		<a href="${serverUrl}/ui/offerAccept.jsf?scheduleId=${scheduleId}&companyId=${companyId}&employeeId=${employeeId}&eventPosId=${eventPosId}&status=accept" target="_blank">
+    		<img src="${serverUrl}/images/accept.PNG">
+    	</a>
+		
+        <br/>
+		<br/>
+		
+		Check your online schedule for further event detail ${serverUrl}/ui/login/login.jsf 
+		<br/>
+        <br/>
+        <p><span style="font-weight:bold">Please don't reply to this email.</span></p>
+		Thank You
+</div>
+</body>
+</html>
+

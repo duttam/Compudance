@@ -1,0 +1,159 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:o="http://omnifaces.org/ui"
+	xmlns:of="http://omnifaces.org/functions"
+	xmlns:pe="http://primefaces.org/ui/extensions"
+	template="../../../template/employeecontenttemplate.xhtml">
+    
+
+	<ui:define name="mainContent">
+		<h:form id="employeeScheduleForm">
+			<style type="text/css">
+				 .fc-event {
+    background-color: #3A87AD;
+    border: 1px solid #3A87AD;
+    color: #FFFFFF;
+    cursor: pointer;
+    font-size: 0.85em;
+} 
+
+
+				
+			</style>
+			
+			<p:panel header=" Monthly Schedule ">
+				<div style="width:100%">
+					
+					<h:panelGroup id="employeeschedulelock" layout="block"  >
+						<p:schedule  value="#{employeeScheduleHome.employeeScheduleModel}" widgetVar="employeeschedule"   draggable="false" resizable="false" aspectRatio="3" timeFormat="h:mm t{ - h:mm t}" >
+							  <p:ajax event="eventSelect" listener="#{employeeScheduleHome.onScheduleEventSelect}" oncomplete="employeeScheduleDialog.show();" update="employeeScheduleForm:scheduleDetails employeeScheduleForm:btnPdf"/>
+						</p:schedule>
+					</h:panelGroup>
+					
+					<p:dialog id="employeeScheduleDetail" widgetVar="employeeScheduleDialog"  showEffect="clip" hideEffect="clip" dynamic="true" position="50,50" >  
+						<f:facet name="header">
+							<p:row>
+								<p:column>Schedule Details</p:column>
+								<p:column>
+									<p:spacer width="370" height="5"></p:spacer>
+								</p:column>
+								<p:column>
+									<h:panelGroup layout="block" style="float:right">
+										<h:commandButton id="btnPrint" value="Print" image="/images/download/printer.jpg">
+		                        			<p:printer  target="employeeScheduleForm:employeeScheduleDetail" />  
+		                     			</h:commandButton>
+		                     			<h:panelGroup id="btnPdf">
+		                     				
+											<h:commandLink  rendered="#{employeeScheduleHome.schedule.position.viewReports}" action="#{employeeScheduleHome.employeeSchedulePreProcessorPDF}">  
+										    	<p:graphicImage value="/images/pdf.png" title="export as pdf" />
+										    	  
+											</h:commandLink>
+										</h:panelGroup>
+							</h:panelGroup>
+								</p:column>					
+							</p:row>
+						</f:facet>
+						<div style="display:none">
+				        	<ui:include src="pdfSchEmpRpt.xhtml" />
+				        </div>
+				        <h:panelGrid id="scheduleDetails" columns="1" cellpadding="10">  
+				        	
+				        	<p:panel style="width: 100%;" header="Event Detail">
+				        	<h:panelGroup>
+				        		<h:panelGrid columns="4" cellpadding="5">
+				        			<h:outputLabel  value="Event Name: " />
+									<h:outputLabel  value="#{employeeScheduleHome.schedule.event.name}" />
+									
+									<h:outputLabel  value="Event Date: " />
+									<h:outputLabel  value="#{of:formatDate(employeeScheduleHome.schedule.event.startDate, 'MM-dd-yyyy')}" />
+									
+									<h:outputText value="Host:" rendered="#{employeeScheduleHome.tenant.id ne 8}"/>
+							        <h:outputText value="#{employeeScheduleHome.schedule.event.hostname}" rendered="#{employeeScheduleHome.tenant.id ne 8}"/>
+							        
+							        <h:outputText value="Notes:" />
+							        <h:outputText value="#{employeeScheduleHome.schedule.event.notes}" />
+							        
+							        <h:outputText value="Description:" />
+							        <h:outputText value="#{employeeScheduleHome.schedule.event.description}" />
+									
+									<h:outputText value="Dress Code:" />
+							        <h:outputText value="#{employeeScheduleHome.schedule.event.dressCode}" />
+				        		</h:panelGrid>
+				        	</h:panelGroup>
+				        	</p:panel>
+				        	<p:panel style="width: 100%;" header="Location Detail">
+				        	<h:panelGroup>
+				        		<h:panelGrid columns="4" cellpadding="5">
+				        			<h:outputLabel  value="Address1: " />
+									<h:outputLabel  value="#{employeeScheduleHome.schedule.event.location.address1}" />
+									
+									<h:outputLabel  value="Address2: " />
+									<h:outputLabel  value="#{employeeScheduleHome.schedule.event.location.address2}" />
+									
+									<h:outputText value="City:" />
+							        <h:outputText value="#{employeeScheduleHome.schedule.event.location.city}" />
+							        
+							        <h:outputText value="State:" />
+							        <h:outputText value="#{employeeScheduleHome.schedule.event.location.state.stateName}" />
+							        
+							        <h:outputText value="Zipcode:" />
+							        <h:outputText value="#{employeeScheduleHome.schedule.event.location.zipcode}" />
+									
+									<h:outputText value="Parking Direction:" />
+							        <h:outputText value="#{employeeScheduleHome.schedule.event.location.parkingDirection}" />
+							        
+									<h:outputText value="Contact Name:" rendered="#{employeeScheduleHome.tenant.id ne 8}"/>
+							        <h:outputText value="#{employeeScheduleHome.schedule.event.location.contactName}" rendered="#{employeeScheduleHome.tenant.id ne 8}"/>
+									<h:outputText value="Contact Email:" rendered="#{employeeScheduleHome.tenant.id ne 8}"/>
+							        <h:outputText value="#{employeeScheduleHome.schedule.event.location.contactEmail}" rendered="#{employeeScheduleHome.tenant.id ne 8}"/>
+									<h:outputText value="Contact Phone:" rendered="#{employeeScheduleHome.tenant.id ne 8}"/>
+							        <h:outputText value="#{employeeScheduleHome.schedule.event.location.contactPhone}" rendered="#{employeeScheduleHome.tenant.id ne 8}"/>
+									
+									
+				        		</h:panelGrid>
+				        	</h:panelGroup>
+				        	</p:panel>
+				        	<p:panel style="width: 100%;" header="Position Detail">
+				            <h:panelGroup>
+				        		<h:panelGrid columns="4" cellpadding="5">
+						            <h:outputLabel  value="Position Name: " />  
+						            <h:outputLabel  value="#{employeeScheduleHome.schedule.position.name}" />
+						            <h:outputLabel  value="Notes: " />  
+						            <h:outputLabel  value="#{employeeScheduleHome.schedule.position.notes}" />
+						            <h:outputLabel  value="Start Time: " />  
+						            <h:outputLabel  value="#{of:formatDate(employeeScheduleHome.schedule.eventPosition.startTime, 'h:mm a')}" />
+						            <h:outputLabel  value="End Time: " />  
+						            <h:outputLabel  value="#{of:formatDate(employeeScheduleHome.schedule.eventPosition.endTime, 'h:mm a')}" />
+						            
+					        	</h:panelGrid>
+				        	</h:panelGroup> 
+				        	</p:panel>
+				        	
+				        	<p:panel style="width: 100%;" header="SignIn SignOut Detail">
+				            <h:panelGroup>
+				        		<h:panelGrid columns="4" cellpadding="5">
+						            
+						            <h:outputLabel  value="SignIn Time: " />  
+						            <h:outputLabel  value="#{of:formatDate(employeeScheduleHome.schedule.signInOut.startTime, 'h:mm a')}" />
+						            <h:outputLabel  value="SignOutTime: " />  
+						            <h:outputLabel  value="#{of:formatDate(employeeScheduleHome.schedule.signInOut.endTime, 'h:mm a')}" />
+						            
+						            <h:outputLabel  value="Break Start Time: " />  
+						            <h:outputLabel  value="#{of:formatDate(employeeScheduleHome.schedule.signInOut.breakStartTime, 'h:mm a')}" />
+						            <h:outputLabel  value="Break End Time: " />  
+						            <h:outputLabel  value="#{of:formatDate(employeeScheduleHome.schedule.signInOut.breakEndTime, 'h:mm a')}" />
+					        	</h:panelGrid>
+				        	</h:panelGroup> 
+				        	</p:panel>
+						  	
+				              
+				        </h:panelGrid>  
+				    </p:dialog>
+				</div>
+			</p:panel>
+		</h:form>
+	</ui:define>
+</ui:composition>

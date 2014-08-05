@@ -1,0 +1,82 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	template="../../../template/employeecontenttemplate.xhtml">
+  
+
+    <ui:define name="mainContent">
+
+	
+    <h:form id="addTimeOffForm" prependId="false">
+    	
+    	<p:panel header="Add TimeOff Request">
+        <br />
+        <div align="center">
+			<p:outputLabel value="NOTE * YOUR COMPANY HR POLICIES WILL DETERMINE THE PROCEDURES YOU SHOULD USE FOR CALL OUTS. CHECK WITH YOUR COMPANY ADMINISTRATOR IF YOU ARE ALLOWED TO USE THIS SCREEN." style="font-weight:bold"></p:outputLabel>
+			<p></p>
+            <h:panelGrid columns="3"  cellpadding="5" cellspacing="5" id="timeoffreqgrd">
+                <p:outputLabel value="Request Type: *" />
+                
+                <p:selectOneMenu id="reqtype" value="#{timeoffBean.timeOff.requestType}" >
+                    <f:selectItem itemLabel="Request Type" itemValue="" noSelectionOption="true"/>
+                    <f:selectItems value="#{timeoffBean.requestTypes}" var="reqType"
+                        itemLabel="#{reqType}" itemValue="#{reqType}"/>
+                    <p:ajax listener="#{timeoffBean.timeOffReqChanged}" update="eventlist enddatelbl enddategrp enddateerror eventlbl eventlistmenu eventmsg"></p:ajax>
+                </p:selectOneMenu>
+                <p:message for="reqtype" id="reqMsg" display="text"/>
+
+                <p:outputLabel value="Start Date: *" />
+                
+                <p:calendar id="startDt" value="#{timeoffBean.timeOff.beginDate}" >
+                	<p:ajax event="blur" process="@this" update="startMsg" />
+                        
+		            	<p:ajax event="dateSelect" listener="#{timeoffBean.handleStartDateSelect}" update="endDt startMsg reqtimeoffBtn eventmsg eventlistMsg"/>
+                </p:calendar>
+                <p:message for="startDt" id="startMsg" display="text"/>
+				
+				<h:panelGroup id="eventlbl">
+				<p:outputLabel value="Events: *" rendered="#{timeoffBean.timeOff.requestType eq 'Sick'}"/>
+                </h:panelGroup>
+                <h:panelGroup id="eventlistmenu">
+                <p:selectOneMenu id="eventlist" value="#{timeoffBean.sickEvent}" rendered="#{timeoffBean.timeOff.requestType eq 'Sick'}"
+                					converter="selectitemeventconverter" >
+                    <f:selectItems value="#{timeoffBean.sickEventList}" var="event"
+                        itemLabel="#{event.name}" itemValue="#{event}"/>
+                    
+                </p:selectOneMenu>
+                </h:panelGroup>
+                <h:panelGroup id="eventmsg">
+                <p:message for="eventlist" id="eventlistMsg" display="text" />
+                </h:panelGroup>
+                <h:panelGroup id="enddatelbl">
+                	<p:outputLabel value="End Date: *" rendered="#{timeoffBean.timeOff.requestType ne 'Sick'}"/>
+                </h:panelGroup>
+                <h:panelGroup id="enddategrp">
+	                
+	                <p:calendar id="endDt" value="#{timeoffBean.timeOff.endDate}" rendered="#{timeoffBean.timeOff.requestType ne 'Sick'}">
+	                	<p:ajax event="blur" process="@this" update="endMsg" />
+	                        <p:ajax event="dateSelect" listener="#{timeoffBean.handleEndDateSelect}" update="endMsg"  />
+	                </p:calendar>
+                </h:panelGroup>
+                <h:panelGroup id="enddateerror">
+                	<p:message for="endDt" id="endMsg" display="text" rendered="#{timeoffBean.timeOff.requestType ne 'Sick'}"/>
+                </h:panelGroup>
+                <p:outputLabel value="Reason:" />
+                
+                <p:inputTextarea cols="20" value="#{timeoffBean.timeOff.reason}"></p:inputTextarea>
+                <p:outputLabel  />
+                
+                <p:outputLabel  />
+                
+                <p:commandButton id="reqtimeoffBtn" value="Request TimeOff" action="#{timeoffBean.addTimeOffRequest}" process="@all" disabled="#{timeoffBean.timeOffBtn}"/>
+            </h:panelGrid>
+            
+            
+        </div>
+        </p:panel>
+        <br />
+    </h:form>
+    </ui:define>
+</ui:composition>

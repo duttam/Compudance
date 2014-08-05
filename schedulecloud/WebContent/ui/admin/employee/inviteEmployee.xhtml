@@ -1,0 +1,188 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	template="../../../template/admincontenttemplate.xhtml">
+    <ui:define name="head">
+    	
+        <style type="text/css">
+	    </style>
+        
+    </ui:define>
+
+    <ui:define name="mainContent">
+    <style type="text/css">
+    
+    
+			#quotescointainer{
+			    width: 100%;
+			    font-size: 12px;
+			    overflow: hidden; /* contain floated elements */
+			    
+			}
+			#quotesleft {
+			    float: left; 
+			    width: 10%;
+			    
+			}
+			#quotescenter { 
+			    float: left;
+			    
+			    width: 70%;
+			}
+			#quotesright{
+			    float: left;
+			    width: 20%;
+			    
+			}
+			
+			
+    
+		.ui-selectmanycheckbox label, .ui-selectoneradio label {
+    display: block;
+    margin-top: 4px;
+    margin-left: 4px;
+    margin-right: 10px;
+}
+    	
+    </style>
+    	
+        <h:form id="addEmployeeForm">
+        <br />
+        <p:panel header="Invite Employee">
+        
+        <br />
+        <div id="quotescointainer">
+    				<div id="quotesleft">
+    					<span style="visibility: hidden;">test</span>
+					</div>
+					<div id="quotescenter">
+					<h:panelGrid
+						columnClasses="tableHdr2,tableCellBold,bodyErrorRed,tableHdr2,tableCellBold,bodyErrorRed"
+						 columns="6" cellspacing="10" styleClass="TOP">
+						<h:outputText value="First Name: *" />
+						<p:inputText id="fname"
+							value="#{employeeController.employee.firstname}" required="true"
+							requiredMessage="#{msg['message.empty']}">
+							<p:ajax event="blur" process="@this" update="fnameMsg" />
+						</p:inputText>
+						<p:message for="fname" id="fnameMsg" display="text" />
+
+						<h:outputText value="Last Name: *" />
+						<p:inputText id="lname"
+							value="#{employeeController.employee.lastname}" required="true"
+							requiredMessage="#{msg['message.empty']}">
+							<p:ajax event="blur" process="@this" update="lnameMsg" />
+						</p:inputText>
+						<p:message for="lname" id="lnameMsg" display="text" />
+
+						<h:outputText value="Email: *" />
+						<p:inputText id="email"
+							value="#{employeeController.employee.email}" required="true"
+							requiredMessage="#{msg['message.empty']}">
+							<f:converter converterId="emailconverter" />
+							<f:validator validatorId="emailValidator" />
+							<p:ajax event="blur" process="@this" update="emailMsg" />
+						</p:inputText>
+						<p:message for="email" id="emailMsg" display="text" />
+
+						<h:outputText value="Hourly Rate: *" />
+						<p:inputText id="rate"
+							value="#{employeeController.employee.empRate.hourlyRate}"
+							required="true" requiredMessage="#{msg['message.empty']}">
+							<p:ajax event="blur" process="@this" update="rateMsg" />
+						</p:inputText>
+						<p:message for="rate" id="rateMsg" display="text" />
+
+						<h:outputText styleClass="tableHdr2" value="Positions: *"></h:outputText>
+						<p:selectCheckboxMenu
+							value="#{employeeController.selectedPositions}"
+							converter="positionconverter" id="positionList"
+							label="Select Positions" filter="true" filterText="Filter"
+							filterMatchMode="startsWith" panelStyle="width:220px"
+							required="true" requiredMessage="Select Position"
+							valueChangeListener="#{employeeController.selectedItemsChanged}">
+							<f:selectItems value="#{positionHome.positionList}"
+								var="position" itemLabel="#{position.name}"
+								itemValue="#{position}" />
+							<p:ajax process="@this" update="positionListMsg" />
+						</p:selectCheckboxMenu>
+						<p:message for="positionList" id="positionListMsg" display="text" />
+						<h:outputLabel value="Roles"></h:outputLabel>
+						<h:panelGrid columns="1">
+							<p:selectBooleanCheckbox id="adminchkbx"
+								value="#{employeeController.employee.scAdmin}" itemLabel="Admin" disabled="#{employeeController.employee.scSalesPerson}">
+								<p:ajax  update="addEmployeeForm:saleschkbx"></p:ajax>
+							</p:selectBooleanCheckbox>
+							<p:selectBooleanCheckbox id="managerchkbx"
+								value="#{employeeController.employee.scManager}"
+								itemLabel="Manager" disabled="#{employeeController.employee.scSalesPerson}">
+								<p:ajax  update="addEmployeeForm:saleschkbx"></p:ajax>
+							</p:selectBooleanCheckbox>
+							<p:selectBooleanCheckbox id="saleschkbx"
+								value="#{employeeController.employee.scSalesPerson}"
+								itemLabel="Sales Person" disabled="#{employeeController.employee.scAdmin or employeeController.employee.scManager}">
+								<p:ajax  update="addEmployeeForm:saleslocationlist, addEmployeeForm:adminchkbx, addEmployeeForm:managerchkbx"></p:ajax>
+							</p:selectBooleanCheckbox>
+						</h:panelGrid>
+
+						<h:outputLabel></h:outputLabel>
+						<h:outputText styleClass="tableHdr2" value="Notes: " />
+						<h:panelGrid columns="1">
+							<p:inputTextarea styleClass="tableCellBold" rows="15" cols="30"
+								counter="counter"
+								value="#{employeeController.employee.adminNotes}"
+								maxlength="1500" counterTemplate="{0} characters remaining."
+								autoResize="true" />
+							<h:outputText
+								style="width:20%;overflow: scroll; padding-left:25%;"
+								id="counter" />
+						</h:panelGrid>
+						<h:outputLabel></h:outputLabel>
+						<h:outputLabel></h:outputLabel>
+						<h:panelGroup id="saleslocationlist">
+						<p:outputLabel  value="Select SalesPerson Locations" 
+							style="font-weight:bold;color: #00679A " rendered="#{employeeController.employee.scSalesPerson}"></p:outputLabel>
+							<p></p>
+						<p:selectManyMenu  value="#{employeeController.employee.assignedSalesPersonLocations}"
+							rendered="#{employeeController.employee.scSalesPerson}"
+							converter="locationconverter" style="width:auto;height:200px"
+							var="l" showCheckbox="true">
+							<f:selectItems value="#{locationHome.locationList}"
+								var="location" itemLabel="#{location.name}"
+								itemValue="#{location}" />
+							<p:column>  
+							                #{l.code}
+							            </p:column>
+							<p:column>  
+							                #{l.name}
+							            </p:column>
+						</p:selectManyMenu>
+						</h:panelGroup>
+					</h:panelGrid>
+					</div>
+					<div id="quotesright">
+					</div>
+					
+					<br />
+					</div>
+                
+      
+
+    <br />
+    <div align="center" >
+      <p:commandButton id="sendInvBtn" value="Invite" actionListener="#{employeeController.inviteEmployee}" update="@all" ajax="false" rendered="#{employeeController.employee.id eq null}" onclick="jQuery(this).addClass('ui-state-disabled')" oncomplete="jQuery(this).removeAttr('ui-state-disabled')"/>
+      <br></br>
+      <p:commandButton id="resendInvBtn" value="Resend Invite" actionListener="#{employeeController.resendInviteEmployee}" update="@all" ajax="false" rendered="#{employeeController.employee.id ne null}"/>
+      <br />
+      <p:message for="sendInvBtn" id="sendInvMsg"></p:message>
+      <p:growl id="growl" showDetail="true" sticky="false" showSummary="false"/>
+    </div>
+    
+   
+   <br />
+  </p:panel>
+ </h:form>
+</ui:define>
+</ui:composition>

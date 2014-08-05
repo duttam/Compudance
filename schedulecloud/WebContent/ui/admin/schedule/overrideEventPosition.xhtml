@@ -1,0 +1,204 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:func="http://onetouch.com/functions"
+	xmlns:o="http://omnifaces.org/ui"
+	xmlns:of="http://omnifaces.org/functions"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+	xmlns:pe="http://primefaces.org/ui/extensions"
+	template="../../../template/admincontenttemplate.xhtml">
+
+
+	<ui:define name="mainContent">
+	
+		<h:form id="scheduleDetail" prependId="false">
+			<style type="text/css">
+.sickStyle {
+	color: green;
+	width: 65%;
+}
+
+.noStyle {
+	width: 65%;
+}
+
+.ui-carousel .ui-carousel-header .ui-carousel-header-title {
+	display: inline;
+}
+
+#repeatId_content.ui-widget-content {
+	border: 0px;
+}
+
+.ui-datagrid .ui-datagrid-header,.ui-datagrid .ui-datagrid-footer {
+	padding: 10px 10px;
+	text-align: center;
+	height: 25px;
+}
+
+.ui-orderlist .ui-orderlist-list {
+	width: 99.5%;
+}
+
+#quotescointainer {
+	width: 100%;
+	font-size: 12px;
+	overflow: hidden; /* contain floated elements */
+}
+
+#quotesleft {
+	float: left;
+	width: 35%;
+}
+
+#quotescenter {
+	float: left;
+	width: 5%;
+}
+
+#quotesright {
+	float: left;
+	width: 65%;
+}
+
+#left {
+	display: table-cell;
+	min-width: 350px;
+}
+
+#center {
+	display: table-cell;
+	min-width: 10px;
+}
+
+#right {
+	display: table-cell;
+	width: 100%;
+	vertical-align: top;
+}
+.ui-datalist-data {
+   height:150px;
+   overflow:auto;
+}
+</style>
+<br></br>
+		<p:panel header="Schedule Position">
+			<div align="center">
+							<h:panelGrid columns="10" cellpadding="5" cellspacing="5">
+								<p:outputLabel value="Position Name :"></p:outputLabel>
+								<h:panelGroup>
+									<p:outputLabel
+										value="#{scheduleEventPosition.scheduledPosition.name}"></p:outputLabel>
+								</h:panelGroup>
+								<p:inputText
+									value="#{scheduleEventPosition.scheduledEventPosition.reqdNumber}"
+									size="1" disabled="true" ></p:inputText>
+							
+							
+								<p:outputLabel value="Start Time" />
+								
+									<p:selectOneMenu id="epstarttime"
+										value="#{scheduleEventPosition.scheduledEventPosition.startTime}"
+										editable="true" disabled="true">
+
+										<f:selectItems value="#{dateBean.shiftTimes}" var="sdate"
+											itemLabel="#{of:formatDate(sdate, 'MM/dd/yyyy hh:mm a')}"
+											itemValue="#{sdate}" />
+										<f:convertDateTime pattern="MM/dd/yyyy hh:mm a" type="time" />
+										<p:ajax event="change" process="@this"
+											update="epstartTimeMsg,scroll"
+											listener="#{scheduleEventPosition.filterEditEmployeeList}" />
+									</p:selectOneMenu>
+								
+								<p:message for="epstarttime" id="epstartTimeMsg" display="text" />
+
+								<p:outputLabel value="End Time" />
+								
+									<p:selectOneMenu id="ependtime"
+										value="#{scheduleEventPosition.scheduledEventPosition.endTime}"
+										editable="true" disabled="true">
+										<f:selectItems value="#{dateBean.shiftTimes}" var="edate"
+											itemLabel="#{of:formatDate(edate, 'MM/dd/yyyy hh:mm a')}"
+											itemValue="#{edate}" />
+										<f:convertDateTime pattern="MM/dd/yyyy hh:mm a" type="time" />
+										<p:ajax event="change" process="@this"
+											listener="#{scheduleEventPosition.filterEditEmployeeList}"
+											update="ependTimeMsg,scroll" />
+
+									</p:selectOneMenu>
+								
+								<p:message for="ependtime" id="ependTimeMsg" display="text" />
+								<ui:include src="sortEmployee.xhtml"></ui:include>
+							</h:panelGrid>
+							<p></p>
+							
+							<ui:include src="scheduleEmployee.xhtml"></ui:include>
+							<p></p>
+								<p:button value="Back" outcome="scheduleDetail">
+									<f:param name="eventId" value="#{scheduleEventPosition.event.id}" />
+								</p:button>
+								
+								<p:spacer width="10" ></p:spacer>
+								<p:commandButton value="Override Position" actionListener="#{scheduleEventPosition.showOverrideSummary}"
+									oncomplete="updateconfirmation.show()" update=":scheduleDetail:updateConfirmDialog">
+								</p:commandButton>
+								
+							</div>
+
+						
+		</p:panel>
+				<p:confirmDialog id="updateConfirmDialog"  
+						 severity="alert"
+						widgetVar="updateconfirmation">
+						<f:facet name="header">
+							<h:outputText value="Update Position" />
+						</f:facet>
+						<f:facet name="message">
+							<h:outputText value="#{scheduleEventPosition.editConfirmMessage}" />
+							<p:dataList value="#{scheduleEventPosition.saveSchedules}" var="schedule" type="ordered">
+						        <f:facet name="header">
+						            Scheduled Employees
+						        </f:facet>
+						        #{schedule.employee.firstname}, #{schedule.employee.lastname}
+						    </p:dataList>
+						    <br></br>
+						    <p:dataList value="#{scheduleEventPosition.updateSchedules}" var="schedule" type="ordered">
+						        <f:facet name="header">
+						            Updated Employees 
+						        </f:facet>
+						        #{schedule.employee.firstname}, #{schedule.employee.lastname}
+						    </p:dataList>
+						    <br></br>
+						    <p:dataList value="#{scheduleEventPosition.deleteSchedules}" var="schedule" type="ordered">
+						        <f:facet name="header">
+						            <h:outputLabel value="Deleted Employees" style="font-weight:bold;color:red"></h:outputLabel> 
+						        </f:facet>
+						        #{schedule.employee.firstname}, #{schedule.employee.lastname}
+						    </p:dataList>
+						</f:facet>
+						<div align="center">
+						<p:commandButton id="updateconfirm" value="Submit"
+							action="#{scheduleEventPosition.OverrideSchedule}" 
+							 />
+						<p:commandButton id="updatedecline" value="Back" 
+							onclick="updateconfirmation.hide();editScheduleWidget.hide();" type="button" />
+						<p:button value="Cancel" outcome="overrideEventPosition"
+							onclick="updateconfirmation.hide()"  includeViewParams="true">
+							<f:param name="operation" value="override" />
+							
+						</p:button>
+						</div>
+					</p:confirmDialog>
+					
+					
+					
+					
+					
+			<ui:include src="availabilityDialog.xhtml"></ui:include>
+			<ui:include src="notifyDialog.xhtml"></ui:include>
+		</h:form>
+
+	</ui:define>
+</ui:composition>

@@ -1,0 +1,178 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:func="http://onetouch.com/functions"
+	xmlns:o="http://omnifaces.org/ui"
+	xmlns:of="http://omnifaces.org/functions"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+	template="eventMain.xhtml">
+    
+
+	<ui:define name="eventContent">
+	<f:metadata>
+		
+    	<f:event type="preRenderView" listener="#{scheduleEmployeeBean.init}" />
+	</f:metadata>
+		<h:form id="scheduleForm" prependId="false">
+		<style type="text/css">
+			#repeatId_content.ui-widget-content {
+  				border: 0px ;
+			}
+			#displayEmployeeList_content.ui-widget-content{
+				border: 0px ;
+			}
+			#evntposid_content.ui-widget-content{
+				border: 0px ;
+			}
+			
+			.sickStyle {
+			    
+			    color: green;
+			    width:65%;
+			}
+			.noStyle{
+				width:65%;
+			}
+		</style>
+		<br></br>
+			<p:panel header="Assign Employees">
+			<div style="height:100%">
+			<p:messages></p:messages>
+			<div align="right">
+				<p:button value="GO BACK" outcome="addEvent">
+					
+					<f:param name="action" value="editevent" />
+                    <f:param name="eventid" value="#{eventSupport.event.id}" />
+				</p:button>
+			</div>
+			
+			
+			<div align="center" style="display:block">
+				<p:accordionPanel style="width:80%;" >
+					<p:tab title="Event Detail">
+					<span style="font-weight : bold">Event name : </span> <p:outputLabel value="#{scheduleEmployeeBean.event.name}"></p:outputLabel>,
+					<span style="font-weight : bold">Start Date : </span> 
+					<h:outputText value="#{scheduleEmployeeBean.event.startDate}">
+							<f:convertDateTime pattern="MM/dd/yyyy" />
+						</h:outputText>,
+					
+					<span style="font-weight : bold">Starting From </span> <h:outputText value="#{scheduleEmployeeBean.event.startTime}">  
+                		<f:convertDateTime pattern="hh:mm a" />  
+            		</h:outputText>
+            		<span style="font-weight : bold"> Ending At </span> <h:outputText value="#{scheduleEmployeeBean.event.endTime}">  
+                		<f:convertDateTime pattern="hh:mm a" />  
+            		</h:outputText>
+					</p:tab>
+				</p:accordionPanel>
+				<br />
+				
+				<p:dialog id="editNoteDialog" widgetVar="editNotesWidget" 
+							showEffect="clip" hideEffect="clip" dynamic="true"  >
+					 <f:facet name="header">
+					 	Update Note 
+					 	
+					 </f:facet>
+					 	<h:panelGrid columns="1">
+						 	<p:inputTextarea autoResize="true" value="#{scheduleEmployeeBean.scheduledEventPosition.notes}"></p:inputTextarea>
+						 	<p:commandButton value="Save" actionListener="#{scheduleEmployeeBean.saveEventPositionNotes}" oncomplete="editNotesWidget.hide();"></p:commandButton>
+					 	</h:panelGrid>
+					 </p:dialog>
+					 
+				<p:dataGrid id="evntposid" var="eventPosition"
+							value="#{scheduleEmployeeBean.allEventPositions}" columns="2"
+							 styleClass="TOP">
+
+							<p:panel>
+								<f:facet name="header">  
+						            <span style="text-align:left">Position : #{eventPosition.position.name}, #{of:formatDate(eventPosition.startTime, 'hh:mm a')} - #{of:formatDate(eventPosition.endTime, 'hh:mm a')}, #{eventPosition.reqdNumber} , </span>
+						            <h:panelGroup rendered="#{not eventPosition.position.noEmpAssign and empty eventPosition.position.employees}" > <span style="color: red"> #{msg['message.noavailableemployee']} </span></h:panelGroup>  
+						            <h:panelGroup rendered="#{eventPosition.position.noEmpAssign}"> <span style="color: red"> #{msg['message.noassignemployee']} </span></h:panelGroup>
+						            <p:commandLink id="epnotes" value="Note" title="#{eventPosition.notes}" style="color:#2779AA;" action="#{scheduleEmployeeBean.editEventPositionNotes(eventPosition.id)}" oncomplete="editNotesWidget.show();" process="@this"></p:commandLink>
+						            <p:spacer width="5"></p:spacer>
+						            
+						        </f:facet>
+								<p:selectManyMenu id="scroll" 
+									value="#{eventPosition.position.selectedEmployees}" 
+									converter="employeeConverter" style="width:auto;height:auto"
+									var="emp" showCheckbox="true" valueChangeListener="#{scheduleEmployeeBean.selectedItemsChanged}" filter="true">
+									<f:selectItems value="#{eventPosition.position.limitedEmployees}"
+										var="employee" itemLabel="#{employee.firstname}"
+										itemValue="#{employee}" />
+									<br></br>
+									<p:column>
+										<p:graphicImage
+											value="/images/#{eventSupport.tenant.code}/#{emp.imageName}"
+											width="30" rendered="false">
+
+										</p:graphicImage>
+
+									</p:column>
+									<p:column style="text-align:center">
+										<p:outputLabel value="N" style="font-weight:bold" onmouseover="displayNotifiedPosition([{name:'empid',value:'#{emp.id}'}]); " rendered="#{emp.alreadyNotified}"  />
+										<p:remoteCommand name="displayNotifiedPosition" actionListener="#{scheduleEmployeeBean.displayNotifiedEventPosition}" oncomplete="notifydlg.show()"></p:remoteCommand>
+									</p:column>
+									<p:column>  
+						                <h:graphicImage url="/images/redAsterisk.jpg" rendered="#{emp.declinedBefore}" title="employee has declined offer previously">
+									    </h:graphicImage>  
+						            </p:column>
+						            <p:column>  
+						                <h:graphicImage url="/images/callout.png" rendered="#{emp.sick}" title="Employee has submitted callout request previously">
+									    </h:graphicImage>  
+						            </p:column>
+									<p:column>  
+										<p:outputLabel value="#{emp.firstname} #{emp.lastname}" />
+							        	  
+							        </p:column>
+							        <p:column> 
+						            	<h:panelGroup>
+						            		
+						            		<h:outputText  value="#{emp.homephone}"  converter="phoneconverter" />
+						            		
+						            	</h:panelGroup> 
+						               
+						            </p:column>
+							        <p:column>  
+							        	<h:graphicImage title="Display Employee Availability" url="/images/#{emp.availableLabel}"  onmouseover="testRemote([{name:'empid',value:'#{emp.id}'}]); ">
+							        		
+							        	</h:graphicImage>
+							        	<p:remoteCommand name="testRemote" actionListener="#{scheduleEmployeeBean.displayEmployeeAvailability}" oncomplete="availabilitydlg.show()" ></p:remoteCommand>
+							        </p:column>
+									<p:column>
+										<p:rating value="#{emp.rating}" readonly="true"></p:rating>
+									</p:column>
+									<p:ajax listener="#{scheduleEmployeeBean.selectEmployeeEventPosition}" update="@form" ></p:ajax>
+									<f:param name="currentEvntPosId" value="#{eventPosition.id}"></f:param>
+									<f:param name="currentPosId" value="#{eventPosition.position.id}"></f:param>
+									
+								</p:selectManyMenu>
+							</p:panel>
+
+
+						</p:dataGrid>
+						
+						 <p:dialog id="availdialog" header="Employee Availability" showEffect="fade" hideEffect="fade" widgetVar="availabilitydlg" dynamic="true">  
+					        
+					            <ui:repeat value="#{scheduleEmployeeBean.viewEmployeeAvailability}" var="availability">
+					            	     #{of:formatDate(availability.startTime, 'hh:mm a')} - #{of:formatDate(availability.endTime, 'hh:mm a')}
+					            	     <br></br>
+					            </ui:repeat>  
+					              
+					       
+					    </p:dialog>
+					   
+			</div>
+			<p></p> 
+			<div align="right">
+				<p:commandButton  value="Publish Schedule"  ajax="false" process="@form" action="#{scheduleEmployeeBean.scheduleEmployees}" onclick="jQuery(this).addClass('ui-state-disabled')">
+					
+				</p:commandButton> 
+			</div>
+			<p></p>
+			</div>	 
+			
+		</p:panel>
+		</h:form>
+	</ui:define>
+</ui:composition>

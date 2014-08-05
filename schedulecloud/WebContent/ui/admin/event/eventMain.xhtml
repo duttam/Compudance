@@ -1,0 +1,35 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:o="http://omnifaces.org/ui"
+	xmlns:of="http://omnifaces.org/functions"
+	template="../../../template/admincontenttemplate.xhtml">
+    
+	
+<ui:define name="mainContent">
+<p></p>
+    <h:form id="mainEventForm" style="height:22px">
+		
+		
+		<p:tabMenu activeIndex="#{eventMenuBean.activeMenuIndex}" > 
+			 <p:menuitem value="All Events"  action="#{eventMenuBean.menuItemClicked('eventHome')}" rendered="#{p:ifAnyGranted('ROLE_ACCESS_ADMIN,ROLE_ACCESS_MANAGER,ROLE_ACCESS_SALES')}">
+		    	
+		    </p:menuitem>
+		    
+		    <p:menuitem value="Event Type"  action="#{eventMenuBean.menuItemClicked('eventType')}" rendered="#{p:ifAnyGranted('ROLE_ACCESS_ADMIN,ROLE_ACCESS_MANAGER')}" >
+		    	
+		    </p:menuitem>
+		    
+		    <p:menuitem value="Dress Code"  action="#{eventMenuBean.menuItemClicked('dressCode')}" rendered="false" >
+		    	
+		    </p:menuitem>
+		</p:tabMenu>
+		
+		</h:form>
+		<div>
+			<ui:insert name="eventContent" />
+		</div>
+</ui:define>
+</ui:composition>

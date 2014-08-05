@@ -1,0 +1,121 @@
+<f:view xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:o="http://omnifaces.org/ui"
+	xmlns:of="http://omnifaces.org/functions"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:pm="http://primefaces.org/mobile" contentType="text/html"
+	renderKitId="PRIMEFACES_MOBILE">
+
+	<pm:page title="Admin Home">
+		<f:facet name="postinit">                        
+            <link rel="stylesheet" href="#{request.contextPath}/javax.faces.resource/calendar/calendar.css.jsf?ln=primefaces-mobile" />
+            <h:outputScript library="primefaces-mobile" name="calendar/calendar.js" />              
+
+            <script type="text/javascript">
+                (function($) {
+                	
+                })(jQuery);
+            </script>
+        </f:facet>   
+		<!-- Main View -->
+		<pm:view id="events" swatch="b">
+			<ui:include src="../menu.xhtml" />
+				<pm:header>
+					
+					<ui:include src="../header.xhtml" />
+						
+				</pm:header>
+
+				<pm:content>
+					<h:form id="rosterForm" prependId="false">
+					<p:contextMenu event="swiperight" beforeShow="PF('panelContext').show()" />
+					<h:outputText value="Select a Date"></h:outputText>
+						<p:calendar value="#{rosterBean.rosterDate}">
+							<p:ajax event="dateSelect" listener="#{rosterBean.handleDateSelect}" update="eventlist emptyevntlbl" />
+						</p:calendar>
+						
+						<h:panelGroup id="emptyevntlbl">
+							<h:outputText  value="No Events scheduled today" rendered="#{empty rosterBean.eventList}" style="font-weight:bold"/>
+						</h:panelGroup>
+						<p:dataList id="eventlist" type="inset" value="#{rosterBean.eventList}" var="event" >
+							
+		                    <p:column>
+	                            <p:commandLink update=":content :eventdetailForm:eventDetailAcdPnl" action="#{rosterBean.selectEvent}" style="#{event.styleColor}">
+	                                <f:setPropertyActionListener value="#{event.id}" target="#{rosterBean.selectEventId}" />
+	                                <h2>#{event.name}</h2>                                                
+                        			<p:outputLabel value="#{of:formatDate(event.startTime, 'hh:mm a')} - #{of:formatDate(event.endTime, 'hh:mm a')}" />
+				        
+	                            </p:commandLink>
+                        	</p:column>
+		                    
+		                </p:dataList>
+						
+                	</h:form>
+				</pm:content>
+			
+				
+		</pm:view>
+		
+		<!-- Details -->
+        <pm:view id="eventdetails" swatch="b">
+            
+				<pm:header>
+					
+					
+                <f:facet name="left">
+                	<img src="#{facesContext.externalContext.requestContextPath}/images/logo.jpg" border="0" style="border: none; height: 35px; width: 270px; " />
+				</f:facet>
+						
+				</pm:header>
+
+            <pm:content id="content">
+            	<h:form id="eventdetailForm" prependId="false">
+            	
+            	<div align="center">
+                <h:outputText value="#{rosterBean.rosterEvent.name}" escape="false" style="font-weight:bold"/>
+                </div>
+                <h:panelGrid  columns="2">
+	                <h:outputText value="Date:"/>
+	                <h:outputText  value="#{of:formatDate(rosterBean.rosterEvent.startDate, 'MM-dd-yyyy')}" escape="false" />
+	                <h:outputText value="Time:"/>
+	                <h:outputText  value="#{of:formatDate(rosterBean.rosterEvent.startTime, 'hh:mm a')} - #{of:formatDate(rosterBean.rosterEvent.endTime, 'hh:mm a')}" escape="false" />
+	                <h:outputText value="Location:"/>
+	                <h:outputText value="#{rosterBean.rosterEvent.location.address1} #{rosterBean.rosterEvent.location.city} #{rosterBean.rosterEvent.location.state.stateName}"/>
+	                <h:outputText value="Admin:"/>
+	                <h:outputText value="#{rosterBean.rosterEvent.owner.firstname} #{rosterBean.rosterEvent.owner.lastname}"/>
+	                <h:outputText value="Manager:"/>
+	                <h:outputText value="#{rosterBean.rosterEvent.coordinator.firstname} #{rosterBean.rosterEvent.coordinator.lastname}"/>
+	                <h:outputText value="Client/Host:"/>
+	                <h:outputText value="#{rosterBean.rosterEvent.hostname}"/>
+	                <h:outputText value="Notes:"/>
+	                <h:outputText value="#{rosterBean.rosterEvent.notes}"/>
+	                <h:outputText value="Description:"/>
+	                <h:outputText value="#{rosterBean.rosterEvent.description}"/>
+	                <h:outputText value="Dress:"/>
+	                <h:outputText value="#{rosterBean.rosterEvent.dressCode}"/>
+                
+                </h:panelGrid>
+                <p:accordionPanel var="eventPosition" value="#{rosterBean.allEventPositions}" id="eventDetailAcdPnl">
+                    
+                    <p:tab title="#{eventPosition.position.name},#{of:formatDate(eventPosition.startTime, 'hh:mm a')} - #{of:formatDate(eventPosition.endTime, 'hh:mm a')}" >
+                    	<span style="color: green">Filled </span>: #{fn:length(eventPosition.position.scheduledEmployees)}, <span style="color: red">Unfilled </span>: #{eventPosition.reqdNumber
+												- fn:length(eventPosition.position.scheduledEmployees)}
+                    	<p:dataList value="#{eventPosition.position.scheduledEmployees}" var="employee" type="inset">
+                    		<h:panelGroup>
+                    			<h:outputText value="#{employee.firstname} #{employee.lastname}" />
+                    			<h:outputText value="#{employee.schedule.scheduleStatusTitle}" class="ui-li-aside"/>
+                    		</h:panelGroup>
+                    		
+                    	</p:dataList>
+                    </p:tab>
+                    
+                </p:accordionPanel>  
+			</h:form>                               
+            </pm:content>
+        </pm:view>
+	</pm:page>
+
+</f:view>

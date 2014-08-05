@@ -1,0 +1,46 @@
+<f:view xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:o="http://omnifaces.org/ui"
+	xmlns:of="http://omnifaces.org/functions"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:pm="http://primefaces.org/mobile" contentType="text/html"
+	renderKitId="PRIMEFACES_MOBILE">
+
+	<pm:page title="Email">
+		<f:facet name="postinit">                        
+            
+        </f:facet>   
+		<!-- Main View -->
+		<pm:view id="email" swatch="b">
+			
+				<ui:include src="../menu.xhtml" />
+				<pm:header>
+					<ui:include src="../header.xhtml" />
+				</pm:header>
+
+				<pm:content >
+					<h:form id="employeeForm" prependId="false">
+					<p:contextMenu event="swiperight" beforeShow="PF('panelContext').show()" />
+						<p:selectManyCheckbox id="checkbox" label="Select Employees: " value="#{bulkEmailBean.allSelectedEmployees}" converter="employeeConverter">
+		                    <f:selectItems var="employee" value="#{bulkEmailBean.allActiveEmployees}" itemLabel="#{employee.firstname} #{employee.lastname}" itemValue="#{employee}" />
+		                    
+		                </p:selectManyCheckbox>
+		                <p:inputText id="mail" value="#{bulkEmailBean.emailSubject}" label="Subject:"/>
+
+                        <p:inputTextarea id="address" value="#{bulkEmailBean.emailMsg}" label="Message:"/>
+                       
+                        <p:commandButton value="Send Email" actionListener="#{bulkEmailBean.sendEmailToEmployees}">                        
+                            <f:attribute name="swatch" value="b" />
+                        </p:commandButton>                         
+					</h:form>
+				</pm:content>
+			
+				
+		</pm:view>
+		
+		
+	</pm:page>
+
+</f:view>

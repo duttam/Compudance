@@ -1,0 +1,80 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions"
+	template="../../template/admincontenttemplate.xhtml">
+    
+
+	<ui:define name="mainContent">
+		<h:form id="adminHomeForm">
+		<style type="text/css">
+		/* #left{
+		float:right;
+		width: 100px;
+		}
+		#right{
+		float:right;
+		margin-right: 90%;
+		} */
+		.fc-view {
+    overflow: hidden;
+    width: 100%;
+    }
+    .more-event, .more-event .fc-event-skin, .more-event a{
+    
+    background-color: transparent;
+    color: black;
+    border-color: transparent;
+    font-weight:bold;
+    text-decoration:underline;
+    
+}
+    	.fc-event-skin {
+    	cursor: hand; cursor: pointer;
+}
+.fc-event-time, .fc-event-title {
+    padding: 0 2px;
+   
+}
+.more-event .fc-event-time{
+	visibility: hidden; display: none; 
+} 
+
+		</style>
+		<br></br>
+		<p:panel header="Monthly Schedule">
+			<div align="right">
+				<h:panelGrid columns="2">
+					<p:selectOneMenu id="locationlist" value="#{adminScheduleHome.selectedLocation}" converter="locationconverter"  
+													 style="width: 140px" >
+						<f:selectItem itemLabel="Select Location" itemValue="" />
+						<f:selectItems value="#{locationHome.locationList}" var="location"
+										itemLabel="#{location.name}, #{location.city}, #{location.state.stateName}"
+										itemValue="#{location}"/>
+					
+						<p:ajax listener="#{adminScheduleHome.selectLocationChange}" oncomplete="myschedule.update();"/>
+					</p:selectOneMenu>
+					
+				</h:panelGrid>
+			</div>
+			
+			<div align="center">
+			<div style="width:100%;" >
+			
+			<h:panelGroup id="calenderblock" layout="block"  >
+				<p:schedule  value="#{adminScheduleHome.eventModel}" widgetVar="myschedule"   draggable="false" resizable="false" aspectRatio="3">
+					<p:ajax event="eventSelect" listener="#{adminScheduleHome.onScheduleEventSelect}" />  
+				</p:schedule>
+			</h:panelGroup>
+			 </div>
+			 </div>
+  			<p></p>
+  			
+  			
+			</p:panel>
+			
+		</h:form>
+	</ui:define>
+</ui:composition>

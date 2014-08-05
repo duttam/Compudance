@@ -1,0 +1,50 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	>
+    
+
+	
+		<div align="center">
+		<p:outputLabel value="Add Position" style="font-size: 20px;"/>
+		</div>
+		<br />
+		<div align="center">
+				
+				<p:panelGrid columns="4" >
+					<p:outputLabel value="Position Name: *" />
+					<p:spacer height="5" width="30"></p:spacer>
+					<p:inputText id="name" value="#{positionController.position.name}"></p:inputText>
+					<p:message for="name" id="nameMsg" display="text" style="padding-left:30px;"/>
+										
+					<p:outputLabel value="Choose Color: *" />
+					<p:spacer height="5" width="30"></p:spacer>
+					<p:colorPicker id="popupCP" value="#{positionController.position.positionColor}" widgetVar="picker" />  
+					
+				</p:panelGrid>
+				
+				
+              	
+				<p:panelGrid columns="1">
+					<h:outputText value="Notes: " />
+
+					<p:inputTextarea rows="6" cols="55" counter="counter" value="#{positionController.position.notes}"
+						maxlength="1500" counterTemplate="{0} characters remaining."
+						autoResize="false" />
+ 
+					<h:outputText id="counter" />
+				</p:panelGrid>
+				<br />
+				<div style="padding-left:15%; position: relative" >
+					<p:commandButton value="Add Position" action="#{positionController.addPosition}" ajax="false"/>
+				</div>
+			</div>
+			
+			
+			<br />
+			
+		
+	
+</ui:composition>

@@ -1,0 +1,72 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+				xmlns:h="http://java.sun.com/jsf/html"
+				xmlns:f="http://java.sun.com/jsf/core"
+				xmlns:p="http://primefaces.org/ui"
+				xmlns:func="http://onetouch.com/functions"
+				xmlns:o="http://omnifaces.org/ui"
+				xmlns:of="http://omnifaces.org/functions"
+				xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+				xmlns:pe="http://primefaces.org/ui/extensions">
+
+		<p:panel header="Create Group Panel" style="height:240px ; width: 300px ;">
+		<p:commandButton value="New Group" oncomplete="groupnamedlg.show();" >
+					<f:param name="action" value="addposition" />
+		</p:commandButton>
+		<p></p>
+		<p:dataTable id="emailgrouptable" var="emailGroup"
+				value="#{emailGroupHome.emailGroups}" paginator="true" rows="10" >
+
+				<p:column headerText="Group Name" sortBy="#{emailGroup.groupName}" >
+					<div align="center">
+						<p:commandLink value="#{emailGroup.greoupName}">
+							<f:param name="action" value="editgroup" />
+							<f:param name="id" value="#{emailGroup.id}" />
+						</p:commandLink>
+					</div>
+				</p:column>
+				<p:column headerText="Description" >
+					<div  align="center" >
+					
+						  <p:outputLabel value="#{emailGroup.description}"></p:outputLabel>
+					
+					</div>
+				</p:column>
+								
+				
+			</p:dataTable>
+		</p:panel>
+		<p:dialog id="groupNameDialog" header="Add Email Group" dynamic="true" widgetVar="groupnamedlg">
+				<div align="center">
+				
+				<h:panelGrid columns="3" styleClass="TOP">
+					<p:outputLabel value="Group Name: *" />
+					
+					<p:inputText id="gname" value="#{emailGroupHome.emailGroup.groupName}"></p:inputText>
+					<p:message for="gname" id="gnameMsg" display="text" style="padding-left:30px;"/>
+					 
+					 <h:outputText value="Description: " />
+					<p:inputTextarea rows="4" cols="30" value="#{emailGroupHome.emailGroup.description}"  />  
+					
+					
+				</h:panelGrid>
+				
+				<br />
+				<h:panelGrid columns="1">
+				<p:selectManyMenu  value="#{emailGroupHome.emailGroup.employees}"   
+	                                converter="employeeConverter" style="width:150px;height:150px" var="e" showCheckbox="true" >  
+						<f:selectItems value="#{employeeHome.employeeList}" var="employee" itemLabel="#{employee.firstname}" itemValue="#{employee}"/>  
+						<p:column>#{e.firstname} #{e.lastname}</p:column>  
+					</p:selectManyMenu>
+				</h:panelGrid>
+				<br />
+				<h:panelGrid columns="3">
+					<p:commandButton value="Save" actionListener="#{emailGroupHomer.addEmailGroup}" oncomplete="groupNameDialog.hide();" />
+					
+				</h:panelGrid>
+				
+			</div>
+			</p:dialog>
+	
+
+</ui:composition>

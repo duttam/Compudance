@@ -1,0 +1,39 @@
+<f:view xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pm="http://primefaces.org/mobile" contentType="text/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	renderKitId="PRIMEFACES_MOBILE">
+
+	<pm:page title="Schedule Cloud">
+
+		<!-- Main View -->
+		<pm:view id="main" swatch="b">
+			
+				<pm:header>
+					
+					<ui:include src="header.xhtml" />
+						
+				</pm:header>
+
+				<pm:content>
+					<h:form id="loginForm" prependId="false">
+					<p:growl autoUpdate="true"  />
+					<p:inputText id="j_username" label="Username:" required="true"/>
+					<p:inputText id="j_password" label="Password:" required="true"/>
+					<p:commandButton actionListener="#{loginBean.doLogin}" value="Login" ajax="false"/>
+					
+                	</h:form>
+				</pm:content>
+			
+				<pm:footer swatch="b" fixed="true">
+	                <h1 style="font-size: x-small" >Legal Notice | Copyright @ 2013 OneTouch Inc.</h1>        
+	                     
+	            </pm:footer>
+
+		</pm:view>
+
+	</pm:page>
+
+</f:view>

@@ -1,0 +1,377 @@
+package com.onetouch.model.dao.event;
+
+
+
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.sql.Types;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import javax.annotation.PostConstruct;
+
+
+import org.apache.commons.dbcp.BasicDataSource;
+import org.primefaces.event.SelectEvent;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+
+import org.springframework.jdbc.core.BatchPreparedStatementSetter;
+import org.springframework.jdbc.core.PreparedStatementSetter;
+import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.support.JdbcDaoSupport;
+import org.springframework.stereotype.Repository;
+
+import com.onetouch.model.dao.BaseDAO;
+import com.onetouch.model.domainobject.CustomUser;
+import com.onetouch.model.domainobject.Employee;
+import com.onetouch.model.domainobject.Event;
+import com.onetouch.model.domainobject.EventPosition;
+import com.onetouch.model.domainobject.EventType;
+import com.onetouch.model.domainobject.Location;
+import com.onetouch.model.domainobject.Region;
+import com.onetouch.model.domainobject.Tenant;
+
+
+import com.onetouch.model.mapper.employee.EmployeeRowMapper;
+import com.onetouch.model.mapper.event.EventDetailExtractor;
+import com.onetouch.model.mapper.event.EventHomeRowMapper;
+import com.onetouch.model.mapper.event.EventRowMapper;
+
+import com.onetouch.model.mapper.event.EventWithPositionExtractor;
+
+
+@Repository
+@Qualifier("eventDAO")
+public class EventDAO extends BaseDAO{
+
+	private final String createEventSql = "insert into event (name,owner_id,coordinator_id,event_startdate,event_enddate,start_time,end_time,dress_code,notes,description,host,location_id,status,timezone,company_id,created_by,guest_count,event_type,region_id,salesPersonNote) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+	private final String selectSalesPersonEvent = " select e.*,e1.id as creator_id, e1.firstname as creator_firstname,e1.lastname as creator_lastname,et.id as eventtype_id, et.name eventtype_name " +
+												  " FROM event e " +
+												  " left join employee e1 on e1.id = e.created_by " +
+												  " left join event_type et on et.id = e.event_type " +
+												  " WHERE e.location_id IN ( SELECT sl.loc_id from salesperson_loc sl where sl.emp_id = ? and sl.company_id = ?) and e.region_id = ? ";
+	private  String selectEventPositionByIdsql=" SELECT e.*, ep.id as eventPosId,ep.position_id,ep.reqd_number, ep.displayOrder, date_format(ep.start_time,'%l:%i %p') as starttime, " +
+												"date_format(ep.end_time,'%l:%i %p') as endtime, ep.position_name,DATE_FORMAT(ep.start_date, '%m/%d/%Y') as start_date, DATE_FORMAT(ep.end_date, '%m/%d/%Y') as end_date, " +
+												"emp1.id as adminId,emp1.firstname as adminFirstname, emp1.lastname as adminLastname, " +
+												"emp2.id as managerId,emp2.firstname as managerFirstname, emp2.lastname as managerLastname, " +
+												"emp3.id as salesPersonId, emp3.firstname as salesPersonFirstname, emp3.lastname as salesPersonlastname, " +
+												"et.id as eventtype_id,et.name as eventtype_name, " +
+												"l.id as locId,l.name as locName,l.code,l.address1,l.address2,l.city,l.state,l.zipcode,l.email,l.contact_name " +
+												"from event e left join (select event_position.*, position.name as position_name from position,event_position  " +
+												"where position.id=event_position.position_id and event_position.event_id=? and event_position.company_id = ? and event_position.region_id = ?) as ep on ep.event_id = e.id  " +
+												"left join location l on l.id = e.location_id " +
+												"left join employee emp1 on emp1.id = e.owner_id " +
+												"left join employee emp2 on emp2.id = e.coordinator_id " +
+												"left join employee emp3 on emp3.id = e.created_by  " +
+												"left join event_type et on et.id = e.event_type  " +
+												"where e.id = ? and e.company_id = ? and e.region_id = ?"; 
+	private final String updateEventSql = "update event set name=?,owner_id=?,coordinator_id=?,event_startdate=?,event_enddate=?,start_time=?,end_time=?,dress_code=?,notes=?,description=?,host=?,location_id=?,timezone=?,guest_count = ?,event_type = ? where id=? and company_id=? and region_id=?";
+	private final String eventDetailSql = "select e.*, emp1.id as owner_id, emp1.firstname as owner_firstname,emp1.lastname as owner_lastname, emp2.id as coordniator_id,emp2.firstname as coordinator_firstname, emp2.lastname as coordinator_lastname, loc.id as loc_id, loc.name as loc_name, loc.code as loc_code,loc.address1 as loc_address1, loc.city as loc_city, loc.statecode as loc_statecode, loc.state as loc_statename, loc.contact_name as loc_contactname,loc.zipcode as zipcode,loc.email as email from event e, employee emp1, employee emp2, location loc where e.owner_id = emp1.id and e.coordinator_id = emp2.id and e.location_id = loc.id and e.id = ? and e.company_id = ?";
+	
+	public List<Event> findAll(final Integer companyId,final Region region, CustomUser user){
+		String wherestatus = null;
+		String selectEventSql = "select e.*,e1.id as creator_id, e1.firstname as creator_firstname,e1.lastname as creator_lastname,et.id as eventtype_id, et.name eventtype_name " +
+								"from event e " +
+								"left join employee e1 on e1.id = e.created_by " +
+								"left join event_type et on et.id = e.event_type " +
+								"where e.company_id = ? and e.region_id = ? ";
+		String orderByClause = "order by e.event_startdate desc,e.start_time asc";
+		
+		if(user.isAdmin()){
+			return getJdbcTemplate().query(selectEventSql+orderByClause,new Object[]{companyId,region.getId()}, new EventHomeRowMapper());
+		}
+		else if(user.isManager())
+			return getJdbcTemplate().query(selectEventSql+" and e.coordinator_id = ? "+orderByClause,new Object[]{companyId,region.getId(),user.getEmp_id()}, new EventHomeRowMapper());
+		else if(user.isSalesPerson())
+			return getJdbcTemplate().query(selectSalesPersonEvent+orderByClause,new Object[]{user.getEmp_id(),companyId,region.getId()}, new EventHomeRowMapper()); 
+		else
+			return new ArrayList<Event>();
+	}
+	/*public List<Event> findAll(final Integer companyId,String[] Status, CustomUser user){
+		String wherestatus = null;
+		if(Status.length==1)
+			wherestatus= " and status='"+Status[0]+"'";
+		else
+			wherestatus = " and (status='"+Status[0]+"'"+"or status='"+Status[1]+"')";
+		if(user.isAdmin()){
+			
+			return getJdbcTemplate().query("select * from event where event.company_id = ? "+wherestatus+" order by event_startdate desc,start_time asc ",new Object[]{companyId}, new EventRowMapper());
+		}
+		else if(user.isManager())
+			return getJdbcTemplate().query("select * from event where event.company_id = ? and event.coordinator_id = ?"+wherestatus+" order by event_startdate desc,start_time asc ",new Object[]{companyId,user.getEmp_id()}, new EventRowMapper());
+		else if(user.isSalesPerson())
+			return getJdbcTemplate().query("select * from event where event.company_id = ? and event.created_by = ?"+wherestatus+" order by event_startdate desc,start_time asc ",new Object[]{companyId,user.getEmp_id()}, new EventRowMapper());
+		else
+			return new ArrayList<Event>();
+	}*/
+	
+	public List<Event> findAll(final Integer companyId, CustomUser user){
+		
+		return getJdbcTemplate().query("select * from event where  event.company_id = ? and status = 'PUBLISHED' order by event_date desc,start_time asc ",new Object[]{companyId}, new EventRowMapper());
+	}
+	
+	public List<Event> findAllByMonth(final CustomUser customUser, final Integer companyId,final Integer month){
+		if(customUser.isAdmin()){
+			String sql = "select e.*,emp1.id as owner_id, emp1.firstname as owner_firstname,emp1.lastname as owner_lastname, emp2.id as coordniator_id,emp2.firstname as coordinator_firstname, emp2.lastname as coordinator_lastname, loc.id as loc_id, loc.name as loc_name, loc.code as loc_code, loc.address1 as loc_address1, loc.city as loc_city, loc.statecode as loc_statecode, loc.state as loc_statename, loc.contact_name as loc_contactname,loc.zipcode as zipcode,loc.email as email from (select * from event  where company_id = ? and status = 'PUBLISHED' and MONTH(event_startdate)=? order by event_startdate) as e, employee emp1, employee emp2, location loc where e.owner_id = emp1.id and e.coordinator_id = emp2.id and e.location_id = loc.id  and e.company_id = ? ";
+			return getJdbcTemplate().query(sql,new Object[]{companyId,month,companyId}, new EventDetailExtractor());
+		}else if(customUser.isManager()){
+			String sql = "select e.*,emp1.id as owner_id, emp1.firstname as owner_firstname,emp1.lastname as owner_lastname, emp2.id as coordniator_id,emp2.firstname as coordinator_firstname, emp2.lastname as coordinator_lastname, loc.id as loc_id, loc.name as loc_name, loc.code as loc_code, loc.address1 as loc_address1, loc.city as loc_city, loc.statecode as loc_statecode, loc.state as loc_statename, loc.contact_name as loc_contactname,loc.zipcode as zipcode,loc.email as email from (select * from event  where coordinator_id = ? and company_id = ? and status = 'PUBLISHED' and MONTH(event_startdate)=? order by event_startdate) as e, employee emp1, employee emp2, location loc where e.owner_id = emp1.id and e.coordinator_id = emp2.id and e.location_id = loc.id  and e.company_id = ? ";
+			return getJdbcTemplate().query(sql,new Object[]{customUser.getEmp_id(),companyId,month,companyId}, new EventDetailExtractor());
+		}else
+			return new ArrayList<Event>();
+	}
+
+	public List<Event> findByLocation(Integer companyId, Integer locationId) {
+		return getJdbcTemplate().query("select * from event where (status = 'PUBLISHED' or status = 'ACTIVE') and event.location_id = ? and event.company_id = ? order by event_startdate desc,start_time asc",new Object[]{locationId,companyId}, new EventRowMapper());
+	}
+	
+	public int save(final Event event){
+			getJdbcTemplate().update(createEventSql, new PreparedStatementSetter() {
+			
+			@Override
+			public void setValues(PreparedStatement ps) throws SQLException {
+				ps.setString(1, event.getName());
+				ps.setInt(2,event.getOwner().getId());
+				ps.setInt(3,event.getCoordinator().getId());
+				SimpleDateFormat dateformat = new SimpleDateFormat("yyyy-MM-dd");
+				SimpleDateFormat timeformat = new SimpleDateFormat("HH:mm");
+				ps.setString(4,dateformat.format(event.getStartDate()));
+				ps.setString(5,dateformat.format(event.getEndDate()));
+				ps.setString(6,timeformat.format(event.getStartTime()));
+				ps.setString(7,timeformat.format(event.getEndTime()));
+				ps.setString(8,event.getDressCode());
+				ps.setString(9,event.getNotes());
+				ps.setString(10,event.getDescription());
+				ps.setString(11,event.getHostname());
+				ps.setInt(12,event.getLocation().getId());
+				ps.setString(13,"active");
+				ps.setString(14, event.getTimezone());
+				ps.setInt(15,event.getTenant().getId());
+				ps.setInt(16,event.getCreatedBy());
+				ps.setInt(17,event.getGuestCount());
+				ps.setInt(18, event.getEventType().getId());
+				ps.setInt(19,event.getEventRegion().getId());
+				ps.setString(20, event.getSalesPersonNotes());
+			}
+		});
+			return getJdbcTemplate().queryForInt( "select last_insert_id()");
+	}
+	
+	public void update(final Event event){
+		getJdbcTemplate().update(updateEventSql, new PreparedStatementSetter() {
+			
+			@Override
+			public void setValues(PreparedStatement ps) throws SQLException {
+				ps.setString(1, event.getName());
+				ps.setInt(2,event.getOwner().getId());
+				ps.setInt(3,event.getCoordinator().getId());
+				SimpleDateFormat dateformat = new SimpleDateFormat("yyyy-MM-dd");
+				SimpleDateFormat timeformat = new SimpleDateFormat("HH:mm");
+				ps.setString(4,dateformat.format(event.getStartDate()));
+				ps.setString(5,dateformat.format(event.getEndDate()));
+				ps.setString(6,timeformat.format(event.getStartTime()));
+				ps.setString(7,timeformat.format(event.getEndTime()));
+				ps.setString(8,event.getDressCode());
+				ps.setString(9,event.getNotes());
+				ps.setString(10,event.getDescription());
+				ps.setString(11,event.getHostname());
+				ps.setInt(12,event.getLocation().getId());
+				ps.setString(13, event.getTimezone());
+				ps.setInt(14,event.getGuestCount());
+				ps.setInt(15,event.getEventType().getId());
+				ps.setInt(16,event.getId());
+				ps.setInt(17,event.getTenant().getId());
+				ps.setInt(18,event.getEventRegion().getId());
+				
+			}
+		});
+	}
+
+	
+
+	
+
+	public Event findById(final Integer eventId,final Integer companyId, final Integer regionId) {
+		
+		List<Event> eventList = getJdbcTemplate().query(selectEventPositionByIdsql,new Object[]{eventId,companyId,regionId,eventId,companyId,regionId}, new EventWithPositionExtractor());
+		//List<Event> eventList = getJdbcTemplate().query("select * from event where  event.id=? and event.company_id = ? ",new Object[]{id,companyId}, new EventRowMapper());
+		return (eventList.size()>0?eventList.get(0):null);
+	}
+	
+	public Event findDetailById(final Integer id, final Integer companyId){
+		List<Event> eventList = getJdbcTemplate().query(eventDetailSql,new Object[]{id,companyId}, new EventDetailExtractor());
+		return (eventList.size()>0?eventList.get(0):null);
+	}
+
+	public void saveBatch(final List<Event> events) {
+		getJdbcTemplate().batchUpdate(createEventSql, new BatchPreparedStatementSetter() {
+			 
+			@Override
+			public void setValues(PreparedStatement ps, int i) throws SQLException {
+				
+				Event event = events.get(i);
+				
+				ps.setString(1, event.getName());
+				ps.setInt(2,event.getOwner().getId());
+				ps.setInt(3,event.getCoordinator().getId());
+				SimpleDateFormat dateformat = new SimpleDateFormat("yyyy-MM-dd");
+				SimpleDateFormat timeformat = new SimpleDateFormat("HH:mm");
+				ps.setString(4,dateformat.format(event.getStartDate()));
+				ps.setString(5,dateformat.format(event.getEndDate()));
+				ps.setString(6,timeformat.format(event.getStartTime()));
+				ps.setString(7,timeformat.format(event.getEndTime()));
+				ps.setString(8,event.getDressCode());
+				ps.setString(9,event.getNotes());
+				ps.setString(10,event.getDescription());
+				ps.setString(11,event.getHostname());
+				ps.setInt(12,event.getLocation().getId());
+				ps.setString(13,"active");
+				ps.setString(14, event.getTimezone());
+				ps.setInt(15,event.getTenant().getId());
+				ps.setInt(16,event.getCreatedBy());
+				ps.setInt(17,event.getGuestCount());
+				ps.setInt(18, event.getEventType().getId());
+				ps.setInt(19,event.getEventRegion().getId());
+				ps.setString(20, event.getSalesPersonNotes());
+			}
+		 
+			@Override
+			public int getBatchSize() {
+				return events.size();
+			}
+		  });
+	}
+
+	public void updateEventStatus(final Integer eventId,final Integer companyId) {
+		getJdbcTemplate().update("update event set status = 'published' where  id =? and company_id = ?", new PreparedStatementSetter() {
+			
+			@Override
+			public void setValues(PreparedStatement ps) throws SQLException {
+				ps.setInt(1, eventId);
+				ps.setInt(2, companyId);
+			}
+		});
+		
+	}
+
+	public List<Event> findAllByDateRange(Integer companyId, Date start, Date end, CustomUser customUser) {
+		SimpleDateFormat dateformat = new SimpleDateFormat("yyyy-MM-dd");
+		String s = dateformat.format(start);
+		String e = dateformat.format(end);
+		if(customUser.isAdmin())
+			return getJdbcTemplate().query("select * from event where  (event_startdate BETWEEN DATE(?) and DATE(?)) and event.company_id = ? and status = 'PUBLISHED' order by event_startdate desc,start_time asc",new Object[]{s,e,companyId}, new EventRowMapper());
+		else if(customUser.isManager())
+			return getJdbcTemplate().query("select * from event where  (event_startdate BETWEEN DATE(?) and DATE(?)) and event.coordinator_id = ? and event.company_id = ? and status = 'PUBLISHED' order by event_startdate desc,start_time asc",new Object[]{s,e,customUser.getEmp_id(),companyId}, new EventRowMapper());
+		else if(customUser.isSalesPerson())
+			return getJdbcTemplate().query("select * from event where  (event_startdate BETWEEN DATE(?) and DATE(?)) and event.created_by = ? and event.company_id = ? and status = 'PUBLISHED' order by event_startdate desc,start_time asc",new Object[]{s,e,customUser.getEmp_id(),companyId}, new EventRowMapper());
+		else
+			return new ArrayList<Event>();
+		
+	}
+	
+	public List<Event> findAllByDateRangeAndLocation(Integer companyId, Date start, Date end, CustomUser customUser, Location selectedLocation, final Region currentRegion) {
+		SimpleDateFormat dateformat = new SimpleDateFormat("yyyy-MM-dd");
+		String s = dateformat.format(start);
+		String e = dateformat.format(end);
+		String where = "";
+		String sql = "";
+		if(selectedLocation!=null && selectedLocation.getId()>0)
+			where = " and l.id = ?";
+		
+			
+		if(customUser.isAdmin()){
+			sql = "select temp.* from ( select * from event where  (event_startdate BETWEEN DATE(?) and DATE(?)) and event.company_id = ? and status = 'PUBLISHED' and event.region_id = ? order by event_startdate desc,start_time asc) as temp, location l where temp.location_id = l.id"; 
+			if(selectedLocation!=null && selectedLocation.getId()>0)
+				return getJdbcTemplate().query(sql+where,new Object[]{s,e,companyId,currentRegion.getId(),selectedLocation.getId()}, new EventRowMapper());
+			else
+				return getJdbcTemplate().query(sql,new Object[]{s,e,companyId,currentRegion.getId()}, new EventRowMapper());
+			
+		}
+		else if(customUser.isManager()){
+			sql = "select temp.* from ( select * from event where  (event_startdate BETWEEN DATE(?) and DATE(?)) and event.coordinator_id = ? and event.company_id = ? and status = 'PUBLISHED' and event.region_id = ?  order by event_startdate desc,start_time asc ) as temp, location l where temp.location_id = l.id";
+			if(selectedLocation!=null && selectedLocation.getId()>0)
+				return getJdbcTemplate().query(sql+where,new Object[]{s,e,customUser.getEmp_id(),companyId,currentRegion.getId(),selectedLocation.getId()}, new EventRowMapper());
+			else
+				return getJdbcTemplate().query(sql,new Object[]{s,e,customUser.getEmp_id(),companyId,currentRegion.getId()}, new EventRowMapper());
+		}
+		else if(customUser.isSalesPerson()){
+			sql = "select e.* FROM (select * from event where  (event_startdate BETWEEN DATE(?) and DATE(?)) and event.company_id = ? and status = 'PUBLISHED'  and event.region_id = ? order by event_startdate desc,start_time asc ) as e WHERE e.location_id IN ( SELECT sl.loc_id from salesperson_loc sl where sl.emp_id = ? and sl.company_id = ?) ";
+			if(selectedLocation!=null && selectedLocation.getId()>0)
+				return getJdbcTemplate().query(sql+" and e.location_id = ?",new Object[]{s,e,companyId,currentRegion.getId(),customUser.getEmp_id(),companyId,selectedLocation.getId()}, new EventRowMapper());
+			else
+				return getJdbcTemplate().query(sql,new Object[]{s,e,companyId,currentRegion.getId(),customUser.getEmp_id(),companyId}, new EventRowMapper());
+			
+		}
+		else
+			return new ArrayList<Event>();
+		
+		
+	}
+	public List<Event> findAllByEmployee(final Date timeoffDate, final Integer employeeId, final Integer companyId) {
+		SimpleDateFormat dateformat = new SimpleDateFormat("yyyy-MM-dd");
+		String date = dateformat.format(timeoffDate);
+		return getJdbcTemplate().query("select distinct eventId,eventName,emp.email from( select eventId,eventName,locationId,adminId , evposid from (select eventId,eventName, locationId, adminId , epos.id as evposid from (SELECT e.id as eventId,e.name as eventName,e.location_id as locationId,e.owner_id as adminId FROM event e where e.event_startdate = date(?) and e.company_id = ?) temp,event_position epos where eventId = epos.event_id) temp1,schedule s where temp1.evposid = s.event_pos_id and s.employee_id = ? and s.active = true ) temp2, employee emp where temp2.adminId = emp.id ",new Object[]{date,companyId,employeeId}, 
+										new RowMapper<Event>() {
+
+											@Override
+											public Event mapRow(ResultSet rs, int row)
+													throws SQLException {
+												Event event = new Event();
+												event.setId(rs.getInt("eventId"));
+												event.setName(rs.getString("eventName"));
+												Employee admin = new Employee();
+												admin.setEmail(rs.getString("email"));
+												event.setOwner(admin);
+												
+												return event;
+											}
+										});
+		
+	}
+	
+	public void delete(Event event, final Integer companyId){
+		Integer eventId = event.getId();
+		getJdbcTemplate().update("DELETE from event where id = ? AND company_id = ?",new Object[]{eventId,companyId });
+	}
+
+	public List<EventType> findAllEventTypeByRegion(final Tenant tenant, final Region selectedRegion) {
+		List<EventType> eventtypes = getJdbcTemplate().query("select * from event_type where region_id = ? and company_id = ?", new Object[]{selectedRegion.getId(),tenant.getId()}, new RowMapper<EventType>() {
+
+			@Override
+			public EventType mapRow(ResultSet rs, int row) throws SQLException {
+				EventType eventType = new EventType();
+				eventType.setId(rs.getInt("id"));
+				eventType.setName(rs.getString("name"));
+				eventType.setDescription(rs.getString("description"));
+				eventType.setTenant(tenant);
+				eventType.setRegion(selectedRegion);
+				
+				return eventType;
+			}
+		});
+		
+		return eventtypes;
+	}
+
+	public Integer saveEventType(final EventType eventType) {
+		getJdbcTemplate().update("insert into event_type(name,description,company_id,region_id) values (?,?,?,?)", new PreparedStatementSetter() {
+			
+			@Override
+			public void setValues(PreparedStatement ps) throws SQLException {
+				ps.setString(1, eventType.getName());
+				ps.setString(2, eventType.getDescription());
+				ps.setInt(3,eventType.getTenant().getId());
+				ps.setInt(4,eventType.getRegion().getId());
+					
+			}
+		});
+			return getJdbcTemplate().queryForInt( "select last_insert_id()");
+	}
+
+	
+}

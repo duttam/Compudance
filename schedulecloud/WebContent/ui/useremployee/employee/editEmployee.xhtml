@@ -1,0 +1,157 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	template="../../../template/employeecontenttemplate.xhtml">
+    <ui:define name="head">
+		
+	</ui:define>
+
+	<ui:define name="mainContent">
+		<h:form enctype="multipart/form-data" prependId="false">
+		<style type="text/css">
+			.label {
+				width:20%;
+				padding:2px;
+			}
+
+			.value {
+				width:50%;
+				padding:2px;
+			}
+			.error {
+				width: 20%;
+				padding: 2px;
+			}
+			.grid {
+				width:100%;
+			}
+		</style>
+		  <br />
+		  <p:panel header="Manage Employee Detail">
+
+                    <div align="center">
+				
+				<h:panelGrid columns="3"  columnClasses="label,value,error">
+					
+                                <p:outputLabel value="Email: *" styleClass="tableHdr2" />
+                                <p:inputText id="email" value="#{userEmployeeHome.employee.email}" title="Enter a vaild email address for eample myname@aol.com " style="width:200px" required="true" requiredMessage="Can't be Empty">
+                                	<f:converter converterId="emailconverter"/>
+                                    <f:validator validatorId="emailValidator" />
+                                	<p:ajax event="blur" process="@this" update="emailMsg"  />
+                                </p:inputText>
+                                <p:message for="email" id="emailMsg" display="text"/>
+
+                                <p:outputLabel value="Last name: *" styleClass="tableHdr2" />
+                                <p:inputText id="lastname" value="#{userEmployeeHome.employee.lastname}" required="true" requiredMessage="Can't be Empty">
+                                	<f:converter converterId="convertToUpper"/>
+                                	<p:ajax event="blur" process="@this" update="lastnameMsg" />
+                                </p:inputText>
+                                <p:message for="lastname" id="lastnameMsg" display="text"/>
+                                
+                                <p:outputLabel value="First name: *" styleClass="tableHdr2" />
+                                <p:inputText id="firstname" value="#{userEmployeeHome.employee.firstname}" required="true" requiredMessage="Can't be Empty">
+                                    <f:converter converterId="convertToUpper"/>
+                                    <p:ajax event="blur" process="@this" update="firstnameMsg" />
+                                </p:inputText>
+                                <p:message for="firstname" id="firstnameMsg" display="text"/>
+
+                                <p:outputLabel value="Address1: *" styleClass="tableHdr2"/>
+                                <p:inputText id="address1" value="#{userEmployeeHome.employee.address1}" style="width:200px" required="true" requiredMessage="Can't be Empty">
+                                	<p:ajax event="blur" process="@this" update="address1Msg" />
+                                </p:inputText>
+                                <p:message for="address1" id="address1Msg" display="text"/>
+                                
+                                <p:outputLabel value="Address2: " styleClass="tableHdr2"/>
+                                <p:inputText id="address2" value="#{userEmployeeHome.employee.address2}" style="width:200px">
+                                	<p:ajax event="blur" process="@this" update="address2Msg" />
+                                </p:inputText>
+                                <p:message for="address2" id="address2Msg" display="text"/>
+                                
+                                <p:outputLabel value="City: *" styleClass="tableHdr2"/>
+                                <p:autoComplete id="city" value="#{userEmployeeHome.employee.city}" completeMethod="#{autoCompleteBean.complete}" size="32" required="true" requiredMessage="Can't be Empty">
+                                    <p:ajax event="blur" process="@this" update="cityMsg" />
+                                </p:autoComplete>
+                                <p:message for="city" id="cityMsg" display="text"/>
+								
+                                <p:outputLabel value="State: *" styleClass="tableHdr2"/>
+                                <p:selectOneMenu id="state" value="#{userEmployeeHome.employee.state.stateName}"  style="width: 140px" >
+                                
+                                <f:selectItems value="#{supportBean.states}"  />
+                                <p:ajax process="@this" update="stateMsg" />
+                                </p:selectOneMenu>
+                                <p:message for="state" display="text" id="stateMsg"/>
+
+                                <p:outputLabel value="Zip Code: *" styleClass="tableHdr2"/>
+                                <p:inputText id="zipcode" value="#{userEmployeeHome.employee.zipcode}" maxlength="5" required="true" requiredMessage="Can't be Empty">
+                                	<f:validator validatorId="zipCodeValidator" />
+                                        <p:ajax event="blur" process="@this" update="zipcodeMsg" />
+                                </p:inputText>
+                                <p:message for="zipcode" id="zipcodeMsg" display="text"/>
+                                
+                                <p:outputLabel value="Primary Phone: *" styleClass="tableHdr2"/>
+                                <p:inputMask id="homephone" value="#{userEmployeeHome.employee.homephone}" mask="(999) 999-9999" converter="phoneconverter" required="true" requiredMessage="Can't be Empty">                                	
+                                	<p:ajax event="blur" process="@this" update="homephoneMsg" />
+                                </p:inputMask>
+                                <p:message for="homephone" id="homephoneMsg" display="text"/>
+                                
+                                <p:outputLabel value="Cell Phone: " styleClass="tableHdr2"/>
+                                <p:inputMask id="cellphone" value="#{userEmployeeHome.employee.cellphone}" mask="(999) 999-9999" converter="phoneconverter"	>                                	
+                                    <p:ajax event="blur" process="@this" update="cellphoneMsg" />
+                                </p:inputMask>
+                                <p:message for="cellphone" id="cellphoneMsg" display="text"/>
+                                
+                                <p:outputLabel value="Fax: " styleClass="tableHdr2"/>
+                                <p:inputMask id="fax" value="#{userEmployeeHome.employee.fax}" mask="(999) 999-9999" converter="phoneconverter">
+                                	<p:ajax event="blur" process="@this" update="faxMsg" />
+                                </p:inputMask>
+                                <p:message for="fax" id="faxMsg" display="text"/>
+                                
+                                <p:outputLabel value="Date of Birth: *" styleClass="tableHdr2" rendered="false"/>
+                                <p:calendar id="dob" value="#{userEmployeeHome.employee.dob}" pattern="MM/dd" required="true" requiredMessage="Can't be Empty"
+                                			rendered="false" showButtonPanel="true" navigator="true" >
+                                	<p:ajax event="blur" process="@this" update="dobMsg" />
+                                	<p:ajax event="dateSelect" process="@this" update="dobMsg"  />
+                                </p:calendar>
+                                <p:message for="dob" id="dobMsg" display="text" rendered="false"/>
+                                
+                                	
+	        						<p:outputLabel value="Emergency Contact Name:" styleClass="tableHdr2"/>  
+	        						<p:inputText value="#{userEmployeeHome.employee.emergencyContact}" />
+	        						<p:outputLabel></p:outputLabel>
+	        						
+	        						<p:outputLabel value="Emergency Phone:" styleClass="tableHdr2"/>  
+	        						<p:inputMask id="emergencyphone" value="#{userEmployeeHome.employee.emergencyPhone}" mask="(999) 999-9999" converter="phoneconverter">
+	                                	
+									</p:inputMask>
+	        					<p:outputLabel></p:outputLabel>
+	        						
+                                <p:outputLabel value="Upload Employee Photo: " styleClass="tableHdr2" />
+                                <p:fileUpload value="#{userEmployeeHome.employeeImage}" allowTypes="/(\.|\/)(gif|jpe?g|png)$/" sizeLimit="100000" mode="simple" />
+                                <p:outputLabel></p:outputLabel>
+                                <!-- 
+                                <p:outputLabel value="Mode of Contact: *" styleClass="tableHdr2"/>
+                                	<h:panelGroup>
+                                		 <p:selectBooleanCheckbox value="#{userEmployeeHome.employee.getSMS}" /> SMS
+                                		 <p:spacer height="5" width="10"/>
+                                		 <p:selectBooleanCheckbox value="#{userEmployeeHome.employee.getEmail}" /> Email
+                                	</h:panelGroup> 
+                                 
+                                <p:outputLabel></p:outputLabel>-->
+				</h:panelGrid>
+                        
+				<p></p>
+                                <p:panelGrid columnClasses="tabeleHdr2" columns="1" >
+				
+                                    <p:commandButton value="Update" action="#{userEmployeeHome.editEmployee}" ajax="false">
+                                        <f:param name="employeeid" value="#{userEmployeeHome.employee.id}" />
+                                    </p:commandButton>
+				</p:panelGrid>
+			</div>
+			<p></p>
+                  </p:panel>
+<p></p>
+                </h:form>
+	</ui:define>
+</ui:composition>

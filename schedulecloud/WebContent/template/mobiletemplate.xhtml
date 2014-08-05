@@ -1,0 +1,53 @@
+<f:view xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pm="http://primefaces.org/mobile" 
+	contentType="text/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	renderKitId="PRIMEFACES_MOBILE">
+
+	<pm:page title="Admin">
+		<f:facet name="postinit">                        
+            <link rel="stylesheet" href="#{request.contextPath}/javax.faces.resource/calendar/calendar.css.jsf?ln=primefaces-mobile" />
+            <h:outputScript library="primefaces-mobile" name="calendar/calendar.js" />              
+
+            <script type="text/javascript">
+                (function($) {
+                    
+                })(jQuery);
+            </script>
+        </f:facet>
+		<!-- Main View -->
+		<pm:view id="main" swatch="d">
+			<p:overlayPanel for="btnPanelContext" widgetVar="panelContext">
+                  
+                <p:dataList styleClass="ui-li-custom">
+                    
+                    <h:outputLink>Roster</h:outputLink>
+                    <h:outputLink>Employees</h:outputLink>
+                    <h:outputLink>Send Email</h:outputLink>
+                    <h:outputLink>Change password</h:outputLink>
+                    <h:outputLink>Log Out</h:outputLink>
+                </p:dataList>                                
+            </p:overlayPanel>
+			
+			<pm:header>
+                <f:facet name="right"><p:button id="btnPanelContext" value="" iconPos="notext" icon="bars"/></f:facet>
+                <f:facet name="left">
+                	<img src="#{facesContext.externalContext.requestContextPath}/images/logo.jpg" border="0" style="border: none; height: 35px; width: 250px; " />
+				</f:facet>
+            </pm:header>
+
+            <pm:content>
+            	<ui:insert name="content" />
+            	<p:contextMenu event="swiperight" beforeShow="PF('panelContext').show()" />
+            </pm:content>
+			
+
+
+		</pm:view>
+
+	</pm:page>
+
+</f:view>

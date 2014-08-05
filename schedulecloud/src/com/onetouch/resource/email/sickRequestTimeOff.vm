@@ -1,0 +1,35 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Schedule detail</title>
+</head>
+
+<body>
+<script language="text/css">
+	
+</script>
+<div align="left" style="padding-left:40px;">
+	
+		</p>
+    	<br/>
+		<span>I am SICK</span>
+        <br/>
+		<span>I am on the schedule,  please fill my position</span>
+        <br/>
+		<span style="font-weight:bold">Event </span> : ${eventName}</span>
+        <br/>
+		<span style="font-weight:bold">Date </span> : ${timeoffDate}</span>
+        <br/>
+		<span style="font-weight:bold">Reason </span> : ${reason}
+        
+        <br/>
+		<br/>
+		<br/>
+        <br/>
+		Thank You
+		<br/>
+		
+</div>
+</body>
+</html>

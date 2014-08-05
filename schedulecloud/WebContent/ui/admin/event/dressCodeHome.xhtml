@@ -1,0 +1,82 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:o="http://omnifaces.org/ui"
+	xmlns:of="http://omnifaces.org/functions"
+	template="eventMain.xhtml">
+    
+	
+<ui:define name="eventContent">
+    <h:form id="dressCodeForm" prependId="false">
+    <br></br>
+    	<p:panel header="Manage Dress Code">
+    		<p:growl id="dresscodegrowl" showDetail="false" life="3000" showSummary="true"/> 	
+			<br />
+			<div align="right" style="width: 90%;">
+				<p:dataTable  id="dresscodetable" var="dresscode"  rowKey="#{dresscode.id}" selection="#{dressCodeHome.dressCode}"
+								selectionMode="single" value="#{dressCodeHome.dressCodeModel}" paginator="true" rows="10" style="width:80%" >
+
+                <p:column	headerText="Dress Code" sortBy="#{dresscode.name}">
+                    
+                        <p:outputLabel value="#{dresscode.name}" style="text-align: center;"/>
+                    
+                </p:column>
+                <p:column   headerText="Description">
+                    
+                        <p:outputLabel value="#{dresscode.description}" style="text-align: center;"/>
+                    
+                </p:column>
+            	
+                
+				<f:facet name="footer">  
+            		<p:commandButton id="create" value="Create" icon="ui-icon-plusthick"  actionListener="#{dressCodeHome.addDressCode}" 
+            							oncomplete="PF('dresscodedlg').show()" update=":dresscodeDialog" />  
+                	<p:commandButton id="update" value="Edit" icon="ui-icon-pencil" action="#{dressCodeHome.editDressCode}"  update=":dialogform">
+                		
+                	</p:commandButton>
+                	<p:commandButton id="delete" value="Delete" icon="ui-icon-closethick" action="#{dressCodeHome.deleteDressCode}" rendered="false" />
+        		</f:facet>  
+        	</p:dataTable>	
+				
+			
+			</div>
+		</p:panel>
+    </h:form>		
+			<p:dialog id="dresscodeDialog" header="Add Event Type" dynamic="true" widgetVar="dresscodedlg">
+			<h:form id="dialogform" prependId="false">
+				<div align="center" id="detail">
+				
+				<h:panelGrid columns="4" >
+					<p:outputLabel value="Dress Code: *" />
+					<p:spacer height="5" width="30"></p:spacer>
+					<p:inputText id="dresscodename" value="#{dressCodeHome.dressCode.name}">
+					<p:ajax event="blur" process="@this" update="dresscodenameMsg" />
+					</p:inputText>
+					<p:message for="dresscodename" id="dresscodenameMsg" display="text" style="padding-left:30px;"/>
+					
+				</h:panelGrid>
+				
+				<br />
+				<h:panelGrid columns="1">
+				<h:outputText value="Description: " />
+					<p:inputTextarea rows="4" cols="55" id="dresscodedesc" value="#{dressCodeHome.dressCode.description}"/>  
+					
+				</h:panelGrid>
+				
+				<br />
+				<h:panelGrid>
+					<p:commandButton value="Save"  action="#{dressCodeHome.saveDressCode}" oncomplete="dresscodedlg.hide();" rendered="#{empty dressCodeHome.dressCode.id}"/>
+					<p:commandButton  value="Update" action="#{dressCodeHome.updateDressCode}" oncomplete="dresscodedlg.hide();" rendered="#{not empty dressCodeHome.dressCode.id}"/>
+				</h:panelGrid>	
+				
+			</div>
+			</h:form>
+			</p:dialog>
+    		
+    		
+    	
+</ui:define>
+</ui:composition>		
+		

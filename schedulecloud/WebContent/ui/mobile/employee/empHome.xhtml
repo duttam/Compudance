@@ -1,0 +1,133 @@
+<f:view xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:o="http://omnifaces.org/ui"
+	xmlns:of="http://omnifaces.org/functions"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:pm="http://primefaces.org/mobile" contentType="text/html"
+	renderKitId="PRIMEFACES_MOBILE">
+
+	<pm:page title="Admin Home">
+		<f:facet name="postinit">                        
+            <link rel="stylesheet" href="#{request.contextPath}/javax.faces.resource/calendar/calendar.css.jsf?ln=primefaces-mobile" />
+            <h:outputScript library="primefaces-mobile" name="calendar/calendar.js" />              
+
+            <script type="text/javascript">
+                (function($) {
+                	
+                })(jQuery);
+            </script>
+        </f:facet>   
+		<!-- Main View -->
+		<pm:view id="events" swatch="b">
+			<ui:include src="../empmenu.xhtml" />
+				<pm:header>
+					
+					<ui:include src="../header.xhtml" />
+						
+				</pm:header>
+
+				<pm:content>
+					<h:form id="empHomeForm" prependId="false">
+					<p:contextMenu event="swiperight" beforeShow="PF('panelContext').show()" />
+						
+						<p:graphicImage value="#{userEmployeeImage.loadImage}" cache="false">
+                        	<f:param name="id" value="#{userEmployeeHome.employee.id}" />
+                		</p:graphicImage>
+                		<br></br>
+                		Name : <h:outputText value="#{userEmployeeHome.employee.firstname} #{userEmployeeHome.employee.lastname} " style="font-weight:bold"/>
+                		<br></br>
+                		Company : <h:outputText value="#{userEmployeeHome.tenant.name}"/>
+                		
+						<br></br>
+						Address1 : <h:outputText value="#{userEmployeeHome.employee.address1}" />
+						<br></br>
+						Address2 : <h:outputText value="#{userEmployeeHome.employee.address2}" />
+						<br></br>
+						City : <h:outputText value="#{userEmployeeHome.employee.city}" />
+						<br></br>
+						State : <h:outputText
+							value="#{userEmployeeHome.employee.state.stateName}, #{userEmployeeHome.employee.zipcode}" />
+						<br></br>
+						ZipCode : <h:outputText value="#{userEmployeeHome.employee.email}" />
+						<br></br>
+						Primary Phone : <h:outputText value="#{userEmployeeHome.employee.homephone}" />
+						<br></br>
+						Cell Phone : <h:outputText value="#{userEmployeeHome.employee.cellphone}" />
+						<br></br>
+						Fax : <h:outputText value="#{userEmployeeHome.employee.fax}" />
+						<br></br>
+						Emergency Contact Name : <h:outputText value="#{userEmployeeHome.employee.emergencyContact}" />
+						<br></br>
+						Emergency Phone :  <h:outputText value="#{userEmployeeHome.employee.emergencyPhone}" />
+						<br></br>
+						DOB : <h:outputText
+							value="#{of:formatDate(userEmployeeHome.employee.dob, 'MM-dd-yyyy')}" />
+						<br></br>
+						<!-- <p:panel header="Positions Assigned" collapsed="true">
+		                    <p:dataList id="empposition" value="#{userEmployeeHome.employee.assignedPositions}" var="employeePosition">
+		
+								<p:column>
+									<h:outputText  value="#{employeePosition.name}"></h:outputText>
+								</p:column>
+								</p:dataList>
+		                </p:panel> -->
+						<p:commandButton value="Edit" action="pm:editemp" update=":editContactForm:content"/>
+                
+                	</h:form>
+				</pm:content>
+			
+				
+		</pm:view>
+		<pm:view id="editemp" swatch="b">
+            <h:form id="editContactForm">
+                <pm:header>
+                    <f:facet name="left">
+                	<img src="#{facesContext.externalContext.requestContextPath}/images/logo.jpg" border="0" style="border: none; height: 35px; width: 270px; " />
+				</f:facet>
+                    <f:facet name="right">
+                    	<p:commandButton value="Done" action="#{userEmployeeHome.editEmployee}" iconPos="none" update=":empHomeForm" oncomplete="PrimeFaces.back()">
+                    		<f:param name="employeeid" value="#{userEmployeeHome.employee.id}" />
+                    	</p:commandButton>
+                    </f:facet>
+                </pm:header>
+
+                <pm:content>  
+                    <p:outputPanel id="content">
+                        <p:inputText id="firstname" value="#{userEmployeeHome.employee.firstname}" label="First Name:"/>
+
+                        <p:inputText id="surname" value="#{userEmployeeHome.employee.lastname}" label="Surname:"/>
+                        
+                        <p:inputText id="address1" value="#{userEmployeeHome.employee.address1}" label="Address1:"/>
+                        
+                        <p:inputText id="address2" value="#{userEmployeeHome.employee.address2}" label="Address2:"/>
+						
+						<p:inputText id="city" value="#{userEmployeeHome.employee.city}" label="City:"/>
+						
+						<pm:field>
+		                    <h:outputLabel for="states" value="Select State: "/>
+		                    <h:selectOneMenu id="states" value="#{userEmployeeHome.employee.state.stateName}">
+		                       <f:selectItems value="#{supportBean.states}"  />
+		                    </h:selectOneMenu>
+		                </pm:field>
+						
+                        <p:inputText id="hphone" value="#{userEmployeeHome.employee.homephone}" type="tel" label="Primary Phone:"/>
+                        <p:inputText id="cphone" value="#{userEmployeeHome.employee.cellphone}" type="tel" label="Cell Phone:"/>
+                        <p:inputText id="fax" value="#{userEmployeeHome.employee.fax}" type="tel" label="Fax:"/>
+
+                        <p:inputText id="mail" value="#{userEmployeeHome.employee.email}" type="email" label="Email:"/>
+						<p:inputText id="econtact" value="#{userEmployeeHome.employee.emergencyContact}" label="Emergency Contact Name:"/>
+						<p:inputText id="ephone" value="#{userEmployeeHome.employee.emergencyPhone}" label="Emergency Phone:"/>
+                        DOB : <p:calendar value="#{userEmployeeHome.employee.dob}"/>
+                       
+                        
+                    </p:outputPanel>                                                          
+                </pm:content>                                                
+            </h:form>
+        </pm:view>
+		
+	</pm:page>
+
+</f:view>

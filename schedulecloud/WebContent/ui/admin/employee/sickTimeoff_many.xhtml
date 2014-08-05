@@ -1,0 +1,129 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	template="../../../template/admincontenttemplate.xhtml">
+  
+
+    <ui:define name="mainContent">
+	<style type="text/css"> 
+	.centeredColumn {
+	   text-align:center !important;
+	}
+	</style>
+	<br></br>
+	<p:growl id="messages" showDetail="false" showSummary="true" autoUpdate="true" sticky="true" />  
+    <h:form id="sickTimeOffForm" prependId="false">
+    	
+    	<p:panel header="TimeOff for #{adminTimeoffBean.employee.firstname} #{adminTimeoffBean.employee.lastname}">
+        <br />
+        <div align="center">
+			<p:dataTable  id="timeofftable" var="toff"  rowKey="#{toff.id}" selection="#{adminTimeoffBean.timeOff}"
+				selectionMode="single" value="#{adminTimeoffBean.requestModel}" paginator="true" rows="10" style="width:80%" >
+
+                <p:column   headerText="TimeOff Type" sortBy="#{toff.requestType}">
+                    
+                        <p:outputLabel value="#{toff.requestType}" style="text-align: center;"/>
+                    
+                </p:column>
+                <p:column   headerText="Sick Event">
+                    
+                        <p:outputLabel value="#{toff.sickEvent.name}" style="text-align: center;"/>
+                    
+                </p:column>
+            	<p:column styleClass="centeredColumn" headerText="Start Date" sortBy="#{toff.beginDate}">
+                    
+                        <h:outputText value="#{toff.beginDate}" >
+                            <f:convertDateTime pattern="MM/dd/yyyy"></f:convertDateTime>
+                        </h:outputText>                     
+                    
+                </p:column>
+
+                <p:column styleClass="centeredColumn" headerText="End Date">
+                    
+                        <h:outputText value="#{toff.endDate}" >
+                            <f:convertDateTime pattern="MM/dd/yyyy"></f:convertDateTime>
+                        </h:outputText>
+                   
+                </p:column>
+                
+				<p:column styleClass="centeredColumn" headerText="Reason">
+                    
+                        <h:outputText value="#{toff.reason}" >
+                            
+                        </h:outputText>
+                
+                </p:column>
+                <p:column style="width:4%" rendered="false">  
+		            <p:commandButton id="selectButton" update=":dialog" action="#{adminTimeoffBean.editSickTimeoff}" oncomplete="PF('timeoffdlg').show()" icon="ui-icon-search" title="View">  
+		                <f:setPropertyActionListener value="#{toff}" target="#{adminTimeoffBean.timeOff}" ></f:setPropertyActionListener>
+		            </p:commandButton>  
+		        </p:column>
+				<f:facet name="footer">  
+            		<p:commandButton id="create" value="Create" icon="ui-icon-plusthick"  actionListener="#{adminTimeoffBean.addNewSickTimeoff}" oncomplete="PF('timeoffdlg').show()" update=":dialog" />  
+                	<p:commandButton id="update" value="Edit" icon="ui-icon-pencil" action="#{adminTimeoffBean.editSickTimeoff}"  update=":dialogform:timeoffreqgrd">
+                		
+                	</p:commandButton>
+                	<p:commandButton id="delete" value="Delete" icon="ui-icon-closethick" action="#{adminTimeoffBean.deleteSickTimeoff}"  />
+        		</f:facet>  
+        	</p:dataTable>
+            
+            
+        </div>
+        </p:panel>
+        <br />
+    </h:form>
+    
+    <p:dialog id="dialog" header="Sick Timeoff Detail" widgetVar="timeoffdlg" resizable="true" showEffect="clip" hideEffect="fold" dynamic="true">  
+  				<h:form id="dialogform" prependId="false">
+		        <h:panelGrid  columns="3"  cellpadding="5" cellspacing="5" id="timeoffreqgrd">
+                <p:outputLabel value="Request Type: " />
+                <p:outputLabel id="reqtype" value="#{adminTimeoffBean.timeOff.requestType}"></p:outputLabel>
+                <p:message for="reqtype" id="reqMsg" display="text"/>
+
+                <p:outputLabel value="Start Date: *" />
+                <p:calendar id="startDt" value="#{adminTimeoffBean.timeOff.beginDate}" required="true" requiredMessage="#{msg['message.empty']}">
+                	<p:ajax event="blur" process="@this" update="startMsg" />
+                    <p:ajax event="dateSelect" listener="#{adminTimeoffBean.handleDateSelect}" update="startMsg"/>   
+                </p:calendar>
+                <p:message for="startDt" id="startMsg" display="text"/>
+				
+				<p:outputLabel value="End Date: *" />
+                <p:calendar id="endDt" value="#{adminTimeoffBean.timeOff.endDate}"  required="true" requiredMessage="#{msg['message.empty']}">
+	                	<p:ajax event="blur" process="@this" update="endMsg" />
+	                    <p:ajax event="dateSelect" listener="#{adminTimeoffBean.handleDateSelect}"   update="endMsg"/>
+	                </p:calendar>
+                <p:message for="endDt" id="endMsg" display="text" />
+                
+				<h:panelGroup id="eventlbl">
+				<p:outputLabel value="Events: *" />
+                </h:panelGroup>
+                <h:panelGroup id="eventlistmenu">
+						<p:selectManyMenu id="eventlist"
+							value="#{adminTimeoffBean.selectedSickEvents}"
+							style="width:auto;height:200px" var="e"
+							converter="selectitemeventconverter" showCheckbox="true">
+							<f:selectItems value="#{adminTimeoffBean.sickEventList}"
+								var="event" itemLabel="#{event.name}" itemValue="#{event}" />
+							<p:column>#{e.name}</p:column>
+						</p:selectManyMenu>
+					</h:panelGroup>
+                <h:panelGroup id="eventmsg">
+                <p:message for="eventlist" id="eventlistMsg" display="text" />
+                </h:panelGroup>
+                
+                <p:outputLabel value="Reason:" />
+                
+                <p:inputTextarea cols="20" value="#{adminTimeoffBean.timeOff.reason}"></p:inputTextarea>
+                <p:outputLabel  />
+                
+                <p:outputLabel  />
+                
+                <p:commandButton id="reqtimeoffBtn" value="Save Sick TimeOff" action="#{adminTimeoffBean.addSickTimeOffRequest}" oncomplete="timeoffdlg.hide();" rendered="#{empty adminTimeoffBean.timeOff.id}"/>
+                <p:commandButton  value="Update Sick TimeOff" action="#{adminTimeoffBean.addSickTimeOffRequest}" oncomplete="timeoffdlg.hide();" rendered="#{not empty adminTimeoffBean.timeOff.id}"/>
+            	</h:panelGrid>
+            	</h:form>
+		    </p:dialog>  
+    </ui:define>
+</ui:composition>

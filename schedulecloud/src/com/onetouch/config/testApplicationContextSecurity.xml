@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:util="http://www.springframework.org/schema/util"
+    xmlns:security="http://www.springframework.org/schema/security"
+    xmlns:context="http://www.springframework.org/schema/context"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans
+                        http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+                        http://www.springframework.org/schema/util
+                        http://www.springframework.org/schema/util/spring-util-3.1.xsd
+                        http://www.springframework.org/schema/context
+                        http://www.springframework.org/schema/context/spring-context-3.1.xsd
+                        http://www.springframework.org/schema/security
+                        http://www.springframework.org/schema/security/spring-security-3.1.xsd">
+
+    <security:http pattern="/ui/error/error.html" security="none"/>
+	<security:http pattern="/ui/login/login.jsf" security="none"/>
+	<security:http pattern="/ui/login/loginresolve.jsp" security="none"/>
+	<security:http pattern="/ui/jqmobile/login.html" security="none"/>
+	<security:http pattern="/ui/SC/**" security="none"/>
+	<security:http pattern="/ui/useremployee/registration/EmployeeRegistration.jsf" security="none"/>
+	<security:http pattern="/index.jsp" security="none"/>
+	<security:http pattern="/css/**" security="none"/>
+	<security:http pattern="/template/sitetemplate.jsf" security="none"/>
+	<!-- <security:http create-session="never" auto-config="false" realm="Restricted Service" pattern="/rest/**" use-expressions="true" >
+    	
+        <security:intercept-url pattern="/rest/employees/**" access="hasRole('ROLE_ACCESS_SECURED')" />
+        <security:intercept-url pattern="/**" access="isAuthenticated()"/> 
+        <security:http-basic />
+        <security:logout />
+    </security:http> -->
+    
+    <!-- Creates the springSecurityFilterChain with the customer filter customRestFilter injected. -->
+    <security:http create-session="stateless" entry-point-ref="authenticationEntryPoint" authentication-manager-ref="restAuthenticationManager" pattern="/rest/**">
+        <security:custom-filter ref="customRestFilter" position="BASIC_AUTH_FILTER" />
+        <security:intercept-url pattern="/**" access="ROLE_SECURED" />
+    </security:http>
+
+	    <!-- The authenticationEntryPoint allows us to customise to start the authentication process (i.e. bring up the dialog box when no header is present)
+	The realmName will be displayed in the dialog box, hence not wise to put the username and password in it.
+	-->
+    <bean id="authenticationEntryPoint" class="org.springframework.security.web.authentication.www.BasicAuthenticationEntryPoint">
+        <property name="realmName" value="Please enter a valid username and/or password" />
+    </bean>
+
+    <!-- Our customer Basic Authentication Filter. This can be replaced with what ever authentication process you wish -->
+    <bean id="customRestFilter" class="com.onetouch.view.security.rest.CustomRestSecurityFilter">
+        <constructor-arg name="authenticationManager" ref="restAuthenticationManager" />
+    </bean>
+
+    <security:authentication-manager id="restAuthenticationManager">
+        <security:authentication-provider ref="restAuthenticationProvider"/>
+    </security:authentication-manager>
+
+	    <!-- The restAuthenticationProvider is the class responsible for verifying that the username and password are valid and
+	returning an AuthenticationToken matching the user requesting the resource and the user's access level.
+	This is the place where you would normally hook into a more complex authentication system and user data layer. -->
+    <bean id="restAuthenticationProvider" class="com.onetouch.view.security.rest.RestAuthenticationProvider" />
+    
+    
+    
+    <!-- Form based authetication for users -->
+	<security:http use-expressions="true" auto-config="true">
+		<security:intercept-url pattern="/template/admincontenttemplate.jsf" access="hasRole('ROLE_ACCESS_ADMIN','ROLE_ACCESS_SUPERADMIN')"/>
+		<security:intercept-url pattern="/template/employeecontenttemplate.jsf" access="hasRole('ROLE_ACCESS_SECURED')"/>
+		<security:intercept-url pattern="/ui/admin/registration/**" access="hasRole('ROLE_ACCESS_SUPERADMIN')"/>
+        <security:intercept-url pattern="/ui/admin/**" access="hasRole('ROLE_ACCESS_ADMIN')"/>
+        <security:intercept-url pattern="/ui/employee/**" access="hasRole('ROLE_ACCESS_SECURED')" />
+        <security:intercept-url pattern="/ui/**" access="isAuthenticated()"/>
+        <security:form-login login-page="/ui/login/login.jsf" authentication-success-handler-ref="customAuthSuccessUrlResolver" />
+        <security:logout logout-success-url="http://demo1.superiortechnology.com/schedulecloud" delete-cookies="JSESSIONID"/>
+        <!-- <security:logout success-handler-ref="customLogoutHandler" /> -->
+        <security:remember-me />
+        <security:session-management invalid-session-url="/ui/login/login.jsf">
+           <!-- <security:concurrency-control max-sessions="1" error-if-maximum-exceeded="true" />  -->
+        </security:session-management>
+
+    </security:http>
+    
+    <bean id="customAuthSuccessUrlResolver" class="com.onetouch.view.security.CustomTargetUrlResolver">
+    	<property name="employeeSuccessUrl" value="ui/useremployee/employee/employeeHome.jsf"/>
+        <property name="adminSuccessUrl" value="ui/admin/adminHome.jsf"/>
+        <property name="superAdminSuccessUrl" value="ui/admin/registration/companyHome.jsf"/>
+        <property name="defaultTargetUrl" value="ui/useremployee/employee/employeeHome.jsf"/>
+        
+    </bean>
+    <bean id="customLogoutHandler" class="com.onetouch.view.security.CustomLogoutHandler"/>
+    	
+	<!-- authentication manager and password hashing -->
+    <security:authentication-manager alias="authenticationManager">
+        <security:authentication-provider ref="daoAuthenticationProvider"/>
+    </security:authentication-manager>
+
+    <bean id="daoAuthenticationProvider" class="org.springframework.security.authentication.dao.DaoAuthenticationProvider">
+        <property name="userDetailsService" ref="userDetailsService"/>
+        <property name="saltSource" ref="saltSource"/>
+        <property name="passwordEncoder" ref="passwordEncoder"/>
+    </bean>
+	
+	<bean id="userDetailsService"  class="com.onetouch.model.dao.CustomJdbcUserDetailsManager">
+        <property name="dataSource" ref="dataSource"/>
+        
+        <!-- enable lookup of permissions via user's group -->
+		<property name="enableGroups" value="true"/>
+		
+		<!-- disable direct lookup of user's permissions (require lookup via group) -->
+		<property name="enableAuthorities" value="false"/>  
+		<property name = "usersByUsernameQuery" value = "select username,password,enabled,emp_id,company.* from users,company where users.tenant_id = company.id and username = ?" />
+		<property name="deleteUserSql" value="update users set enabled = false where username = ?"></property>
+		<property name="shaPasswordEncoder" ref="passwordEncoder"/>
+		<property name="saltSource" ref="saltSource"/>  
+    </bean>
+    <bean id="passwordEncoder" class="org.springframework.security.authentication.encoding.ShaPasswordEncoder">
+        <constructor-arg index="0" value="1"/>
+    </bean>
+    <bean id="saltSource" class="org.springframework.security.authentication.dao.ReflectionSaltSource">
+    	<property name="userPropertyToUse" value="username"/>
+     </bean>
+    <!-- authorities config -->
+    
+    <bean id="roleVoter" class="org.springframework.security.access.vote.RoleVoter ">
+    	<property name="rolePrefix" value="ROLE_" />
+  	</bean>
+
+  	<bean id="authenticatedVoter" class="org.springframework.security.access.vote.AuthenticatedVoter" />
+ 
+  	<bean id="accessDecisionManager" class="org.springframework.security.access.vote.AffirmativeBased">
+	    <property name="decisionVoters">
+	      <list>
+	        <ref bean="roleVoter" />
+	        <ref bean="authenticatedVoter" />
+	      </list>
+	    </property>
+  	</bean>
+  
+  	<security:global-method-security secured-annotations="enabled" access-decision-manager-ref="accessDecisionManager" />
+</beans>

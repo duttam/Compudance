@@ -1,0 +1,93 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+				xmlns:h="http://java.sun.com/jsf/html"
+				xmlns:f="http://java.sun.com/jsf/core"
+				xmlns:p="http://primefaces.org/ui"
+				xmlns:func="http://onetouch.com/functions"
+				xmlns:o="http://omnifaces.org/ui"
+				xmlns:of="http://omnifaces.org/functions"
+				xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+				xmlns:pe="http://primefaces.org/ui/extensions">
+
+	
+	<p:dataTable id="printstaffscheduleTable" var="srlReport"
+		value="#{rosterBean.staffReqtListRpt}">
+
+		<f:facet name="header">  
+			<h:outputText value="Region #{regionBean.selectedRegion.name}- #{regionBean.selectedRegion.description}"/>   
+		</f:facet>
+		
+		 
+  
+
+		<p:columnGroup type="header">
+
+
+			<p:row>
+				<p:column headerText="EventID"/>
+				<p:column headerText="Event Time" />
+				<p:column headerText="Event Type" />
+				<p:column headerText="Event name" />
+				<p:column headerText="Event Location" />
+				<p:column headerText="Count" />
+				<p:column headerText="Required" />
+				<p:column headerText="Staffed" />
+				<p:column headerText="Open" />
+				<p:column headerText="Pending Notification" />
+			</p:row>
+		</p:columnGroup>
+		<p:subTable var="event" value="#{srlReport.eventList}">  
+        <f:facet name="header">  
+            <h:outputText value="#{srlReport.eventDate}"/>  
+        </f:facet>  
+        <p:column>
+			 <h:outputText value="#{event.id}"/>
+		</p:column>
+		<p:column>
+			<h:outputText value="#{of:formatDate(event.startTime, 'hh:mm a')}" />
+		</p:column>
+		<p:column>
+			<h:outputText value="#{event.eventType.name}" />
+		</p:column>
+		<p:column>
+			<h:outputText value="#{event.name}" />
+		</p:column>
+		<p:column>
+			<p:outputLabel value="#{event.location.locationTitle} #{event.location.name}" />
+		</p:column>
+		<p:column>
+			<h:outputText value="#{event.guestCount}"></h:outputText>
+		</p:column>
+		<p:column>
+			<h:outputText value="#{event.positionRequiredCount}"></h:outputText>
+		</p:column>
+		<p:column>
+			<h:outputText value="#{event.positionStaffedCount}"></h:outputText>
+		</p:column>
+		<p:column>
+			<h:outputText value="#{event.positionOpenCount}"></h:outputText>
+		</p:column>
+		<p:column>
+			 <h:outputText value="#{event.pendingNotificationCount}"/>
+		</p:column>
+		<p:columnGroup type="footer">  
+            <p:row>  
+                <p:column colspan="3" footerText="Daily Event Count: #{fn:length(srlReport.eventList)}" /> 
+                
+                <p:column colspan="2" footerText="Total for Day: " />
+                <p:column footerText="#{srlReport.totalGuestCnt}"/>  
+                <p:column footerText="#{srlReport.totalReqd}"/>  
+                <p:column footerText="#{srlReport.totalStaffed}"/>
+                <p:column footerText="#{srlReport.totalReqd	- srlReport.totalStaffed}"/>  
+                <p:column /> 
+            </p:row>  
+        </p:columnGroup>
+		</p:subTable>
+		
+		
+	</p:dataTable>
+
+
+	
+
+</ui:composition>

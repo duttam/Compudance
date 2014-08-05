@@ -1,0 +1,59 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions"
+	template="../../../template/admincontenttemplate.xhtml">
+    
+
+	<ui:define name="mainContent">
+		<h:form id="reportForm" prependId="false">
+		<style type="text/css">
+			
+			#quotescointainer{
+			    width: 100%;
+			    font-size: 12px;
+			    overflow: hidden; /* contain floated elements */
+			    
+			}
+			#quotesleft {
+			
+			    float: left; 
+			    width: 90%;
+			    
+			}
+			#quotescenter { 
+			    float: left;
+			    width: 10%;
+			}
+			.downloadButton {
+			    width: 40px;
+			    height: 40px;
+			}
+			
+			
+			.ui-state-default .ui-icon-xls {
+				background-image: url(../../../images/excel.png);
+			    width: 40px;
+			    height: 40px;
+			    left: 30%;
+			    top : 30%
+			}
+		</style>
+		<br></br>
+		
+        
+			<div style="height:100%">
+			<p:messages autoUpdate="true" />
+				<p:panel header="Reports">
+				<h:panelGroup id="reportView">
+						<ui:include src="#{reportHome.reportView}" />
+					
+					</h:panelGroup>
+						
+				</p:panel>
+			</div>
+		</h:form>
+	</ui:define>
+</ui:composition>

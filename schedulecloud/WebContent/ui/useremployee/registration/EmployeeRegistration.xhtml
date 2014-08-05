@@ -1,0 +1,68 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	template="../../../template/sitetemplate.xhtml">
+    
+
+	<ui:define name="content">
+		<f:metadata>
+          <f:viewParam name="employeeId" value="#{registerEmployeeBean.employeeId}" />
+          <f:viewParam name="tenantId" value="#{registerEmployeeBean.tenantId}" />
+          <f:event listener="#{registerEmployeeBean.init}" type="preRenderView" />
+      </f:metadata>
+		<h:form id="employeeRegistrationForm" prependId="false">
+		<p:messages autoUpdate="true" showSummary="true"></p:messages>
+		<br />
+		<div align="center" style="padding-top:5%">
+			<p:panel style="width: 30%;" header="Setup your Schedule-Cloud account">
+			<p></p>
+			
+			<h:panelGrid columns="3" cellpadding="10" cellspacing="10" >
+					
+					<p:outputLabel value="Enter Invitation Code *" />
+					<p:inputText id="name" value="#{registerEmployeeBean.inviteCode}" required="true" requiredMessage="#{msg['message.empty']}" style="width:100%">
+						<p:ajax event="blur" process="@this" update="nameMsg" />
+					</p:inputText>
+					<p:message for="name" id="nameMsg" display="text" style="padding-left:30px;"/>
+					
+					<p:outputLabel value="Enter Username *"/>
+					<p:inputText id="j_username" value="#{registerEmployeeBean.username}" required="true" requiredMessage="#{msg['message.empty']}" style="width:100%">
+						<f:validator validatorId="usernameValidator" />
+						<p:ajax event="blur" process="@this" update="usernameMsg" />
+					</p:inputText>
+					<p:message for="j_username" id="usernameMsg" display="text" style="padding-left:30px;"/>
+					
+					<p:outputLabel value="Enter Password *"/>
+					<p:inputText id="j_password" binding="#{password}"  value="#{registerEmployeeBean.password}" required="true" requiredMessage="#{msg['message.empty']}" style="width:100%">
+						<p:ajax event="blur" process="@this" update="passwordMsg" />
+					</p:inputText>
+					<p:message for="j_password" id="passwordMsg" display="text" style="padding-left:30px;"/>
+					
+					<p:outputLabel value="Confirm Password: *" />
+                    <p:password id="confirmpassword" required="true" requiredMessage="Reenter Password" style="width:100%">
+                    	<f:validator validatorId="passwordConfirmValidator" />
+                        <f:attribute name="password" value="#{password.value}" />
+                        <p:ajax event="blur" process="@this" update="confirmpasswordMsg" />
+                    </p:password>
+                    <p:message for="confirmpassword" id="confirmpasswordMsg" display="text"/>          
+					
+					<h:outputLabel></h:outputLabel>
+					<p:commandButton id="add" value="Create Account" action="#{registerEmployeeBean.registerEmployee}" ajax="false" />
+			
+						
+			</h:panelGrid>
+			
+			
+			
+			<p></p>
+			
+			
+		</p:panel>
+		</div>
+		</h:form>
+		
+		
+	</ui:define>
+</ui:composition>

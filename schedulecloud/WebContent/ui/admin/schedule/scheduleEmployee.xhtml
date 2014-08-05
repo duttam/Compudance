@@ -1,0 +1,72 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+				xmlns:h="http://java.sun.com/jsf/html"
+				xmlns:f="http://java.sun.com/jsf/core"
+				xmlns:p="http://primefaces.org/ui"
+				xmlns:func="http://onetouch.com/functions"
+				xmlns:o="http://omnifaces.org/ui"
+				xmlns:of="http://omnifaces.org/functions"
+				xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+				xmlns:pe="http://primefaces.org/ui/extensions">
+
+
+	<p:selectManyMenu id="scroll"  scrollHeight="350" style="width:700px;" 
+								value="#{scheduleEventPosition.notifyAndAcceptedEmployees}" filter="true" 
+								converter="employeeConverter"
+								var="emp" showCheckbox="true" rendered="true" >
+								
+								<f:selectItems value="#{scheduleEventPosition.allEmployees}"
+									var="employee" itemLabel="#{employee.firstname}"
+									itemValue="#{employee}" />
+
+
+
+								
+								<p:column style="text-align:center">
+									<p:outputLabel value="N" style="font-weight:bold" onmouseover="displayNotifiedPosition([{name:'empid',value:'#{emp.id}'}]); " rendered="#{emp.alreadyNotified}"  />
+									<p:remoteCommand name="displayNotifiedPosition" actionListener="#{scheduleEventPosition.displayNotifiedEventPosition}" oncomplete="notifydlg.show()"></p:remoteCommand>
+								</p:column>
+								<p:column>
+									<h:graphicImage url="/images/redAsterisk.jpg"
+										rendered="#{emp.declinedBefore}"
+										title="employee has declined offer previously">
+									</h:graphicImage>
+								</p:column>
+								<p:column>
+									<h:graphicImage url="/images/callout.png"
+										rendered="#{emp.sick}"
+										title="Employee has submitted callout request previously">
+									</h:graphicImage>
+								</p:column>
+								<p:column>  
+				                 #{emp.lastname},  #{emp.firstname}
+				            </p:column>
+								<p:column>
+									<p:rating value="#{emp.rating}" readonly="true"></p:rating>
+								</p:column>
+								<p:column>
+									<h:panelGroup>
+
+										<h:outputText value="#{emp.homephone}"
+											converter="phoneconverter" />
+
+									</h:panelGroup>
+
+								</p:column>
+									<h:outputText value="#{emp.id}" rendered="#{emp.available}"/>
+								<p:column>
+									
+								</p:column>
+								<p:column>
+									<h:graphicImage url="/images/#{emp.availableLabel}"
+										onmouseover="testRemote([{name:'empid',value:'#{emp.id}'}]); ">
+									</h:graphicImage>
+									<p:remoteCommand name="testRemote"
+										actionListener="#{scheduleEventPosition.displayEmployeeAvailability}"
+										oncomplete="availabilitydlg.show()"></p:remoteCommand>
+								</p:column>
+							</p:selectManyMenu>
+	
+
+
+</ui:composition>

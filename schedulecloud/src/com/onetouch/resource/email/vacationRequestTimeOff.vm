@@ -1,0 +1,27 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Schedule detail</title>
+</head>
+
+<body>
+<script language="text/css">
+	
+</script>
+<div align="left" style="padding-left:40px;">
+	
+		</p>
+    	<br/>
+		<span>I am requesting time off for VACATION</span>
+		<br/>
+		<span style="font-weight:bold"></span> ${timeoffStartDate} - ${timeoffEndDate}</span>
+        <br/>
+		<span>I will not be available for scheduling during this time.</span>
+        
+		<br/>
+        <br/>
+		Thank You
+</div>
+</body>
+</html>

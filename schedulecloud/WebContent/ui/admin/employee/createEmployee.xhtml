@@ -1,0 +1,300 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	template="../../../template/admincontenttemplate.xhtml">
+    <ui:define name="head">
+		
+	</ui:define>
+
+	<ui:define name="mainContent">
+		
+		<h:form prependId="false">
+		<style type="text/css">
+			
+			.label {
+				width:40%;
+				padding:2px;
+			}
+
+			.value {
+				width:40%;
+				padding:2px;
+			}
+			.error {
+				width: 20%;
+				padding: 2px;
+			}
+			.grid {
+				width:80%;
+			}
+			#quotescointainer{
+			    width: 100%;
+			    font-size: 12px;
+			    overflow: hidden; /* contain floated elements */
+			    
+			}
+			#quotesleft {
+			    float: left; 
+			    width: 10%;
+			    
+			}
+			#quotescenter { 
+			    float: left;
+			    
+			    width: 45%;
+			}
+			#quotesright{
+			    float: left;
+			    width: 45%;
+			    
+			}
+			
+			#container{width:100%;}
+			#left{float:left;width:200px;}
+					
+			#center{margin:0 auto;width:auto;}
+			
+		</style>
+		
+		<br />
+			<p:panel id="editEmployeePanel" header="Update Employee Detail">
+				<div id="quotescointainer">
+    				<div id="quotesleft">
+    						<p:outputLabel value="test" style="visibility:hidden"></p:outputLabel>
+							<p:graphicImage value="/images/#{eventSupport.tenant.code}/#{employeeController.employee.imageName}"  style="width:90%" rendered="false">
+							                	
+							</p:graphicImage>
+			                
+			        </div>
+    				
+    				<div id="quotescenter">
+			        <h:panelGrid id="empEditGrd" columns="3"  columnClasses="label,value,error" >
+									
+									<p:outputLabel value="Username: " />
+									<p:inputText value="#{employeeController.employee.userName}"/>
+									<p:outputLabel />
+									
+									<p:outputLabel value="Create User Account: " />
+									<h:panelGroup >
+									<p:selectBooleanCheckbox value="#{employeeController.employee.createUserAccount}"></p:selectBooleanCheckbox>
+									<p:outputLabel value="  [default password is schedule]" style="vertical-align: top;"></p:outputLabel>
+									</h:panelGroup>
+									<p:outputLabel />
+									
+									<p:outputLabel value="Email: *" />
+									
+	                                <p:inputText id="email" value="#{employeeController.employee.email}" title="Enter a vaild email address for eample myname@aol.com " style="width:200px" >
+	                                	<f:converter converterId="emailconverter"/>
+										<f:validator validatorId="emailValidator" />
+	                                	<p:ajax event="blur" process="@this" update="emailMsg"  />
+									</p:inputText>
+									<p:message for="email" id="emailMsg" display="text"/>
+	                                
+									
+									
+	        						<p:outputLabel value="Last name: *" />
+									<p:inputText id="lastname" value="#{employeeController.employee.lastname}" disabled="#{not p:ifGranted('ROLE_ACCESS_ADMIN')}">
+	                                	<f:converter converterId="convertToUpper"/>
+	                                	<p:ajax event="blur" process="@this" update="lastnameMsg" />
+									</p:inputText>
+	                                <p:message for="lastname" id="lastnameMsg" display="text"/>
+	                                
+	                                <p:outputLabel value="First name: *" />
+	                                
+	                                <p:inputText id="firstname" value="#{employeeController.employee.firstname}" disabled="#{not p:ifGranted('ROLE_ACCESS_ADMIN')}">
+	                                	<f:converter converterId="convertToUpper"/>
+	                                <p:ajax event="blur" process="@this" update="firstnameMsg" />
+									</p:inputText>
+	                                <p:message for="firstname" id="firstnameMsg" display="text"/>
+	
+	                                <p:outputLabel value="Address1: " />
+	                                
+	                                <p:inputText id="address1" value="#{employeeController.employee.address1}" style="width:200px" disabled="#{not p:ifGranted('ROLE_ACCESS_ADMIN')}">
+	                                	<p:ajax event="blur" process="@this" update="address1Msg" />
+									</p:inputText>
+	                                <p:message for="address1" id="address1Msg" display="text"/>
+	                                
+	                                <p:outputLabel value="Address2: " />
+	                                
+	                                <p:inputText id="address2" value="#{employeeController.employee.address2}" style="width:200px" disabled="#{not p:ifGranted('ROLE_ACCESS_ADMIN')}">
+	                                	<p:ajax event="blur" process="@this" update="address2Msg" />
+									</p:inputText>
+	                                <p:message for="address2" id="address2Msg" display="text"/>
+	                                
+	                                <p:outputLabel value="City: " />
+	                                
+	                                <p:autoComplete id="city" value="#{employeeController.employee.city}" completeMethod="#{autoCompleteBean.complete}" size="32" disabled="#{not p:ifGranted('ROLE_ACCESS_ADMIN')}">
+	                                		<p:ajax event="blur" process="@this" update="cityMsg" />
+	            					</p:autoComplete>
+	                                <p:message for="city" id="cityMsg" display="text"/>
+									
+									<p:outputLabel value="State: " />
+									
+									<p:selectOneMenu id="state" value="#{employeeController.employee.state.stateName}"  style="width: 140px" disabled="#{not p:ifGranted('ROLE_ACCESS_ADMIN')}">  
+							            <f:selectItem itemLabel="Select One" itemValue="" />  
+	            						<f:selectItems value="#{supportBean.states}"  />  
+	            						<p:ajax process="@this" update="stateMsg" />
+							        </p:selectOneMenu> 
+							        <p:message for="state" display="text" id="stateMsg"/>
+																	
+	                                <p:outputLabel value="Zip Code: " />
+	                                
+	                                <p:inputText id="zipcode" value="#{employeeController.employee.zipcode}" maxlength="5" disabled="#{not p:ifGranted('ROLE_ACCESS_ADMIN')}">
+	                                	<f:validator validatorId="zipCodeValidator" />
+										<p:ajax event="blur" process="@this" update="zipcodeMsg" />
+									</p:inputText>
+	                                <p:message for="zipcode" id="zipcodeMsg" display="text"/>
+	                                
+	                                <p:outputLabel value="Primary Phone: " />
+	                                
+	                                <p:inputMask id="homephone" value="#{employeeController.employee.homephone}" mask="(999) 999-9999" converter="phoneconverter">
+	                                	
+	                                	<p:ajax event="blur" process="@this" update="homephoneMsg" />
+									</p:inputMask>
+	                                <p:message for="homephone" id="homephoneMsg" display="text"/>
+	                                
+									<p:outputLabel value="Cell Phone: " />
+									
+	                                <p:inputMask id="cellphone" value="#{employeeController.employee.cellphone}" mask="(999) 999-9999" converter="phoneconverter"	>
+	                                	
+	                                	<p:ajax event="blur" process="@this" update="cellphoneMsg" />
+									</p:inputMask>
+	                                <p:message for="cellphone" id="cellphoneMsg" display="text"/>
+	                                
+	                                <p:outputLabel value="Fax: " />
+	                                
+	                                <p:inputMask id="fax" value="#{employeeController.employee.fax}" mask="(999) 999-9999" converter="phoneconverter">
+	                                	<p:ajax event="blur" process="@this" update="faxMsg" />
+									</p:inputMask>
+	                                <p:message for="fax" id="faxMsg" display="text"/>
+	                                
+									<p:outputLabel value="Date of Birth: *" rendered="false"/>
+	                                
+	                                <p:calendar id="dob" value="#{employeeController.employee.dob}" pattern="MM/dd" required="true" requiredMessage="Can't be Empty" disabled="#{not p:ifGranted('ROLE_ACCESS_ADMIN')}" 
+	                                			rendered="false" showButtonPanel="true" navigator="true" >
+	                                	<p:ajax event="blur" process="@this" update="dobMsg" />
+                                	<p:ajax event="dateSelect" process="@this" update="dobMsg"  />
+	                                </p:calendar>
+	                                <p:message for="dob" id="dobMsg" display="text" rendered="false"/>
+	                                
+	                                
+	        						<h:outputText value="Hourly Rate: *" />
+						            <p:inputText id="rate" value="#{employeeController.employee.empRate.hourlyRate}" required="true" requiredMessage="Can't be Empty" disabled="#{not p:ifGranted('ROLE_ACCESS_ADMIN')}">
+						            	<p:ajax event="blur" process="@this" update="rateMsg"  />
+						            </p:inputText>
+						            <p:message for="rate" id="rateMsg" display="text"/>
+            						
+            						<p:outputLabel value="Hire Effective Date: *" />
+	                                
+	                                <p:calendar id="effdate" value="#{employeeController.employee.empRate.rateStartDate}" pattern="MM/dd/yyyy" required="true" requiredMessage="#{msg['message.empty']}" disabled="#{not p:ifGranted('ROLE_ACCESS_ADMIN')}">
+	                                	<p:ajax event="blur" process="@this" update="effDateMsg"  />
+        								<p:ajax event="dateSelect" process="@this" update="effDateMsg" listener="#{employeeController.verifyRateDate}" />
+	                                </p:calendar>
+	                                <p:message for="effdate" id="effDateMsg" display="text"/>
+	                                
+	                                <p:outputLabel value="Employee Rating:" />  
+	        						<p:rating value="#{employeeController.employee.rating}" disabled="#{not p:ifGranted('ROLE_ACCESS_ADMIN')}"/>
+	        						<p:outputLabel></p:outputLabel>
+	        						
+	        						<p:outputLabel value="Employee Code:" />  
+	        						<p:inputText value="#{employeeController.employee.code}" />
+	        						<p:outputLabel></p:outputLabel>
+	        						
+	        						<p:outputLabel value="Emergency Contact Name:" />  
+	        						<p:inputText value="#{employeeController.employee.emergencyContact}" />
+	        						<p:outputLabel></p:outputLabel>
+	        						
+	        						<p:outputLabel value="Emergency Phone:" />  
+	        						<p:inputMask id="emergencyphone" value="#{employeeController.employee.emergencyPhone}" mask="(999) 999-9999" converter="phoneconverter">
+	                                	
+									</p:inputMask>
+	        						<p:outputLabel></p:outputLabel>
+	        						
+	        						<p:outputLabel></p:outputLabel>
+	        						<h:panelGroup>
+									<p:commandButton value="Save" action="#{employeeController.saveEmployee}" ajax="false" />
+									
+									</h:panelGroup>
+									<p:outputLabel/>
+									<p:outputLabel/>
+									<p:outputLabel/>
+									<p:outputLabel/>
+					</h:panelGrid>
+					
+					
+			        </div>
+    				
+    				
+    				<div id="quotesright">
+    							<h:panelGrid columns="1" style="width:95%">
+    								<h:panelGroup>
+    								<p:outputLabel value="Select Positions" style="font-weight:bold"></p:outputLabel>
+    								<p></p>
+	                                <p:selectManyMenu  value="#{employeeController.employee.assignedPositions}"   
+	                                converter="positionconverter" style="width:150px;height:200px;" var="p" showCheckbox="true" >  
+							            <f:selectItems value="#{positionSupport.positions}" var="position" itemLabel="#{position.name}" itemValue="#{position}"/>  
+							  
+							            <p:column>  
+							                #{p.name}
+							            </p:column>  
+							        </p:selectManyMenu>
+							        </h:panelGroup>
+							    </h:panelGrid>
+							        <p></p>
+							    <h:panelGrid columns="3" style="width:95%">
+							        <h:panelGroup>
+							        <h:outputLabel value="Special Notes" style="font-weight:bold"/>
+							        <p></p>
+							        <p:inputTextarea value="#{employeeController.employee.specialNotes}" autoResize="true" />
+							        <p></p>
+							        <p:selectBooleanCheckbox id="adminchkbx" value="#{employeeController.employee.scAdmin}" 
+							        						itemLabel="Admin" rendered="#{p:ifGranted('ROLE_ACCESS_ADMIN')}"
+							        						 valueChangeListener="#{employeeController.adminValueChanged}" disabled="#{employeeController.employee.scSalesPerson}">
+							        	<p:ajax  update="saleschkbx"></p:ajax>
+							        </p:selectBooleanCheckbox>
+							        <p></p>
+									<p:selectBooleanCheckbox id="managerchkbx" value="#{employeeController.employee.scManager}" itemLabel="Manager" 
+															 valueChangeListener="#{employeeController.managerValueChanged}" disabled="#{employeeController.employee.scSalesPerson}">
+										<p:ajax  update="saleschkbx"></p:ajax>
+									</p:selectBooleanCheckbox>
+															 
+									<p></p>
+									<p:selectBooleanCheckbox id="saleschkbx" value="#{employeeController.employee.scSalesPerson}" itemLabel="Sales Person" 
+															 valueChangeListener="#{employeeController.salesPersonValueChanged}" disabled="#{employeeController.employee.scAdmin or employeeController.employee.scManager}">
+										<p:ajax update="salespositiongrp,adminchkbx,managerchkbx"></p:ajax>
+									</p:selectBooleanCheckbox>
+									
+									</h:panelGroup>
+									<p:spacer width="50"/>
+									<h:panelGroup id="salespositiongrp">
+										<p:outputLabel  value="SalesPerson Location" style="font-weight:bold" rendered="#{employeeController.employee.scSalesPerson}"></p:outputLabel>
+										<p></p>
+										<h:panelGroup id="saleslocationlist">
+										<p:selectManyMenu  value="#{employeeController.employee.assignedSalesPersonLocations}"
+											rendered="#{employeeController.employee.scSalesPerson}"
+											converter="locationconverter" style="width:auto;height:200px"
+											var="l" showCheckbox="true">
+											<f:selectItems value="#{locationHome.locationList}"
+												var="location" itemLabel="#{location.name}"
+												itemValue="#{location}" />
+											<p:column>  
+											                #{l.code}
+											            </p:column>
+											<p:column>  
+											                #{l.name}
+											            </p:column>
+										</p:selectManyMenu>
+										</h:panelGroup>
+									</h:panelGroup>
+								</h:panelGrid>
+							<p></p>
+									
+    				</div>
+				</div>
+				
+			</p:panel>
+		</h:form>
+	</ui:define>
+</ui:composition>

@@ -1,0 +1,94 @@
+<f:view xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:o="http://omnifaces.org/ui"
+	xmlns:of="http://omnifaces.org/functions"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:pm="http://primefaces.org/mobile" contentType="text/html"
+	renderKitId="PRIMEFACES_MOBILE">
+
+	<pm:page title="Admin Home">
+		<f:facet name="postinit">                        
+            <link rel="stylesheet" href="#{request.contextPath}/javax.faces.resource/calendar/calendar.css.jsf?ln=primefaces-mobile" />
+            <h:outputScript library="primefaces-mobile" name="calendar/calendar.js" />              
+
+            <script type="text/javascript">
+                (function($) {
+                	
+                })(jQuery);
+            </script>
+        </f:facet>   
+		<!-- Main View -->
+		<pm:view id="notificationlist" swatch="b">
+			<ui:include src="../empmenu.xhtml" />
+				<pm:header>
+					
+					<ui:include src="../header.xhtml" />
+						
+				</pm:header>
+
+				<pm:content>
+					<p:growl id="notificationMsg" autoUpdate="true" />
+					<h:form id="notificationForm">
+					
+					<p:contextMenu event="swiperight" beforeShow="PF('panelContext').show()" />
+						<h:panelGroup id="avllistlbl">
+							<h:outputText  value="No Notification found" rendered="#{empty notificationHome.notifiedSchedules}" style="font-weight:bold"/>
+						</h:panelGroup>
+						
+						<p:dataList id="notificationlst" value="#{notificationHome.notifiedSchedules}" var="notification" paginator="true" rows="4" type="inset">  
+						<f:attribute name="paginatorText" value="More Availability..." />
+		                    <p:commandLink  action="pm:notificationdetails" update=":content">
+		                    <h1>#{notification.position.name}, #{notification.event.name}</h1>
+		                    <p:outputLabel style="color:red" value="#{of:formatDate(notification.event.startDate, 'yyyy-MM-dd')}, #{of:formatDate(notification.eventPosition.startTime, 'hh:mm a')} - #{of:formatDate(notification.eventPosition.endTime, 'hh:mm a')} " />
+				            <f:setPropertyActionListener value="#{notification}" target="#{notificationHome.selectedNotification}" />    
+		                    </p:commandLink>
+		                </p:dataList>
+				</h:form>
+        	</pm:content>
+		</pm:view>
+		
+		<!-- Details -->
+        <pm:view id="notificationdetails" swatch="b">
+            
+				<pm:header>
+					
+					
+                <f:facet name="left">
+                	<img src="#{facesContext.externalContext.requestContextPath}/images/logo.jpg" border="0" style="border: none; height: 35px; width: 270px; " />
+				</f:facet>
+						
+				</pm:header>
+
+            <pm:content id="content">
+            	<h:form id="notificationdetailForm" prependId="false">
+            		<div align="center">
+	                	<h:outputText value=" Notification Detail " style="font-weight:bold"/>
+	                </div>
+            	    <h:panelGrid  columns="2">
+	                	<h:outputText value="Position"></h:outputText>
+	                	<h:outputText value="#{notificationHome.selectedNotification.position.name}" escape="false"/>
+	                	<h:outputText value="Event"></h:outputText>
+	                	<h:outputText value="#{notificationHome.selectedNotification.event.name}" escape="false"/>
+		                <h:outputText value="Date:"/>
+		                <h:outputText  value="#{of:formatDate(notificationHome.selectedNotification.event.startDate, 'MM-dd-yyyy')}" escape="false" />
+		                <h:outputText value="Time:"/>
+		                <h:outputText  value="#{of:formatDate(notificationHome.selectedNotification.eventPosition.startTime, 'hh:mm a')} - #{of:formatDate(notificationHome.selectedNotification.eventPosition.endTime, 'hh:mm a')}" escape="false" />
+		                <h:outputText value="Location:"/>
+		                <h:outputText value="#{notificationHome.selectedNotification.event.location.name} ,#{notificationHome.selectedNotification.event.location.address1} #{notificationHome.selectedNotification.event.location.city} #{notificationHome.selectedNotification.event.location.state.stateName}"/>
+		                <h:outputText value="Dress:"/>
+		                <h:outputText value="#{notificationHome.selectedNotification.event.dressCode}"/>
+	                </h:panelGrid>
+	                <br></br>
+	                <span style="font-weight:bold"> Accept or Decline to confirm schedule </span>
+	                <p:commandButton value="Accept" actionListener="#{notificationHome.acceptNotification}" update=":notificationForm :notificationMsg" oncomplete="PrimeFaces.back()"></p:commandButton>
+	              
+	                <p:commandButton value="Decline" actionListener="#{notificationHome.declineNotification}" update=":notificationForm :notificationMsg" oncomplete="PrimeFaces.back()"></p:commandButton>
+            	</h:form>                               
+            </pm:content>
+        </pm:view>
+	</pm:page>
+
+</f:view>

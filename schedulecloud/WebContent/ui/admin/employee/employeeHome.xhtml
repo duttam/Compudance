@@ -1,0 +1,115 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions"
+	template="../../../template/admincontenttemplate.xhtml">
+    <ui:define name="head">
+    
+    	<style type="text/css">
+    		.icon {
+                width:30%;
+                padding:4px;
+            }
+    	</style>
+    	
+    </ui:define>
+
+	<ui:define name="mainContent">
+	
+    <h:form id="employeeForm">
+    	<p:growl id="growl" showDetail="true" sticky="false" showSummary="false"/>
+    	<br />
+    	<p:panel header="Manage Employee">
+        
+        <br />
+        <div align="right"  style="width: 90%;">
+        <h:panelGrid columns="4"  >
+        		<p:button value="Create Employee" outcome="createEmployee" rendered="#{p:ifGranted('ROLE_ACCESS_ADMIN')}">
+                        <f:param name="action" value="saveemployee" />
+                </p:button>
+				<p:button value="Invite Employee" outcome="inviteEmployee" rendered="#{p:ifGranted('ROLE_ACCESS_ADMIN')}">
+                        <f:param name="action" value="inviteemployee" />
+                </p:button>
+				<p:selectOneMenu id="locationlist" value="#{employeeHome.selectedPosition}" converter="positionconverter"
+												 style="width: 140px" >
+					<f:selectItem itemLabel="All Position" itemValue=""/>
+					<f:selectItems value="#{positionHome.positionList}" var="position" itemLabel="#{position.name}" itemValue="#{position}"/> 
+					 	
+					<p:ajax update="employeeForm:employeetable" listener="#{employeeHome.selectPositionChange}" event="change"/>
+				</p:selectOneMenu>
+            <p:selectOneMenu id="employeestatus" value="#{employeeHome.employeeStatus}" >
+                <f:selectItem itemLabel="Active" itemValue="active" />
+                <f:selectItem itemLabel="InActive" itemValue="inactive" />
+                <f:selectItem itemLabel="Invite Sent" itemValue="invitesent" />
+                <f:ajax event="change" listener="#{employeeHome.selectEmployeeStatusChange}" execute="@this" render="employeeForm:employeetable"></f:ajax>  
+               
+            </p:selectOneMenu>
+
+        </h:panelGrid>
+        			
+	
+        </div>
+        
+        <br />
+        <div align="center">
+        <p:dataTable  id="employeetable" var="employee" emptyMessage="No employees found with given criteria" 
+                value="#{employeeHome.employeeList}" paginator="true" rows="10" style="width:80%" filteredValue="#{employeeHome.filteredEmployeeList}">
+				<p:column styleClass="hdr1Black" headerText="EMP ID" filterBy="#{employee.id}"  filterMatchMode="contains">
+                    <div  align="center">
+                        <h:outputText styleClass="cellBoldCenter" value="#{employee.id}"/>
+                    </div>
+                </p:column>
+				
+                <p:column styleClass="hdr1Black" headerText="Last Name" sortBy="#{employee.lastname}" filterBy="#{employee.lastname}"  filterMatchMode="contains" >
+                    <div  align="center">
+                    	<p:commandLink styleClass="cellBoldCenter" value="#{employee.lastname}" action="#{employeeHome.employeeSelected}" ajax="false">
+						    <f:setPropertyActionListener target="#{employeeHome.selectedEmployee}" value="#{employee}" />
+                        	
+						</p:commandLink>
+                        
+                    </div>
+                </p:column>
+               <p:column styleClass="hdr1Black" headerText="First Name" sortBy="#{employee.firstname}" filterBy="#{employee.firstname}"  filterMatchMode="contains">
+                <div  align="center">
+                    <p:outputLabel styleClass="cellBoldCenter" value="#{employee.firstname}"  />
+                        
+                    
+                </div>
+                </p:column>
+
+                
+
+                <p:column styleClass="hdr1Black" headerText="Email" filterBy="#{employee.email}"  filterMatchMode="contains">
+                    <div  align="center">
+                    <p:outputLabel  styleClass="cellBoldCenter" value="#{employee.email}" />
+                    </div>
+                </p:column>
+
+                <p:column styleClass="hdr1Black" headerText="Primary Phone">
+                    <div  align="center">
+                        <h:outputText styleClass="cellBoldCenter" value="#{employee.homephone}"  converter="phoneconverter" />
+                    </div>
+                </p:column>
+                <p:column headerText="Status" sortBy="#{employee.employeeStatus}" >
+                    <div  align="center">
+                    <h:outputText styleClass="cellBoldCenter"  value="#{employee.employeeStatus}" />
+                    </div>
+                </p:column>
+                <p:column headerText="Rating" sortBy="#{employee.rating}" >
+                    <div  align="center">
+                    <p:rating  styleClass="cellBoldCenter" value="#{employee.rating}" readonly="true"/>
+                    </div>
+                </p:column>
+                
+
+
+        </p:dataTable>
+             <br />
+        
+        </div>
+        </p:panel>
+    </h:form>
+	</ui:define>
+</ui:composition>

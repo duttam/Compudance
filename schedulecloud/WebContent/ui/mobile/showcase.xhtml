@@ -1,0 +1,31 @@
+<ui:composition template="../../template/mobiletemplate.xhtml" 
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pm="http://primefaces.org/mobile"
+	xmlns:o="http://omnifaces.org/ui"
+	xmlns:of="http://omnifaces.org/functions" 
+	contentType="text/html"
+	renderKitId="PRIMEFACES_MOBILE">
+	<ui:define name="content">
+		<h:form>
+            	<h4>Model</h4>
+                <p:accordionPanel value="#{rosterBean.players}" var="player">  
+                    <p:tab title="#{player.name}">  
+                        <h:panelGrid columns="2" cellpadding="10">  
+                            <h:outputText value="Name: " />  
+                            <h:outputText value="#{player.name}" style="font-weight: bold"/>  
+
+                            <h:outputText value="Number: " />  
+                            <h:outputText value="#{player.number}" style="font-weight: bold"/>  
+
+                            <h:outputText value="Position: " />  
+                            <h:outputText value="#{player.position}" style="font-weight: bold"/>  
+                        </h:panelGrid>  
+                    </p:tab>  
+                </p:accordionPanel> 
+                </h:form>
+	</ui:define>
+</ui:composition>

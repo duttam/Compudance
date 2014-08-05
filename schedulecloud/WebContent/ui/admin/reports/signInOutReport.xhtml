@@ -1,0 +1,105 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions"
+	xmlns:o="http://omnifaces.org/ui"
+	xmlns:of="http://omnifaces.org/functions">
+
+
+	<div align="left">
+		<p:selectOneMenu id="eventlist"
+			value="#{signInOutReport.selectedReportEvent}" converter="eventconverter"
+			style="width: 200px" var="evnt" panelStyle="width:250px">
+			<f:selectItem itemLabel="Select Event" itemValue="" />
+			<f:selectItems value="#{signInOut.publishedEventList}" var="event"
+				itemLabel="#{event.name}" itemValue="#{event}" />
+			<p:column>
+				<h:outputText value="#{evnt.name}">
+
+				</h:outputText>
+			</p:column>
+			<p:column>
+				<h:outputText value="#{evnt.eventDate}">
+					<f:convertDateTime pattern="MM/dd/yyyy" />
+				</h:outputText>
+			</p:column>
+
+			<p:ajax listener="#{signInOutReport.changeReportEvent}"
+				update="signinoutreporttbl" />
+		</p:selectOneMenu>
+	</div>
+	<br></br>
+	<p:dataTable id="signinoutreporttbl" var="employee"
+		value="#{signInOutReport.employeeSignInOutList}" paginator="false" rows="10"
+		scrollable="true">
+
+		<p:column headerText="First Name"
+			sortBy="#{employee.firstname} #{employee.lastname}">
+			<div align="center">
+				<p:outputLabel value="#{employee.firstname} #{employee.lastname}"
+					style="font-weight:bold" />
+
+			</div>
+		</p:column>
+
+		<p:column headerText="Position" sortBy="#{employee.position.name}">
+			<div align="center">
+				<p:outputLabel value="#{position.name}" style="font-weight:bold" />
+
+			</div>
+		</p:column>
+
+		<p:column headerText="Shift Start">
+			
+				<p:outputLabel
+					value="#{of:formatDate(employee.signInOut.startTime, 'hh:mm a')}"
+					 />
+			
+		</p:column>
+
+		<p:column headerText="Break Start">
+			
+				<p:outputLabel
+					value="#{of:formatDate(employee.signInOut.breakStartTime, 'hh:mm a')}"
+					 />
+			
+		</p:column>
+		<p:column headerText="Break End">
+			
+				<p:outputLabel
+					value="#{of:formatDate(employee.signInOut.breakEndTime, 'hh:mm a')}"
+					 />
+			
+		</p:column>
+
+		<p:column headerText="Shift End">
+			
+				<p:outputLabel
+					value="#{of:formatDate(employee.signInOut.endTime, 'hh:mm a')}"
+					 />
+			
+		</p:column>
+		<p:column headerText="Total">
+			<div align="center">
+				<h:outputText value="#{employee.hours} hrs #{employee.minutes} mins" />
+			</div>
+		</p:column>
+		<p:column headerText="Total(without break)">
+			<div align="center">
+				<h:outputText
+					value="#{employee.hours-employee.breakHours} hrs #{employee.minutes-employee.breakMinutes} mins" />
+			</div>
+		</p:column>
+		<p:column headerText="Remarks">
+			<p:outputLabel id="remark" value="#{employee.signInOut.remarks}" />
+		</p:column>
+		
+
+
+	</p:dataTable>
+
+
+
+</ui:composition>

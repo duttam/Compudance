@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc-3.1.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
+
+  <bean id="dataSource" class="com.onetouch.view.context.TenantRoutingDataSource">
+    <property name="targetDataSources">
+      <map>
+        <entry key="dfyoung"
+          value-ref="dfyoungDataSource"/>
+        <entry key="superior" 
+          value-ref="superiorDataSource"/>
+      </map>
+    </property>
+    <property name="defaultTargetDataSource" 
+      ref="dfyoungDataSource"/>
+  </bean>
+
+  <bean id="defaultDataSource" 
+    parent="baseDataSource"
+    p:url="${jdbc.dfyoungurl}"/>
+
+  <bean id="dfyoungDataSource" parent="baseDataSource" p:url='${jdbc.dfyoungurl}'/>
+  <bean id="superiorDataSource" parent="baseDataSource" p:url='${jdbc.superiorurl}'/>
+  
+ <!-- <jdbc:initialize-database data-source="dfyoungDataSource">
+    <jdbc:script location="classpath:/com/onetouch/sql/onetouch-schema.sql"/>
+    <jdbc:script location="classpath:/com/onetouch/sql/data-dfyoung.sql"/>
+  </jdbc:initialize-database>
+  <jdbc:initialize-database data-source="superiorDataSource">
+    <jdbc:script location="classpath:/com/onetouch/sql/onetouch-schema.sql"/>
+    <jdbc:script location="classpath:/com/onetouch/sql/data-superior.sql"/>
+  </jdbc:initialize-database> -->
+</beans>

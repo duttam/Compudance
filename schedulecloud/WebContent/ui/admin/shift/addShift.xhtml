@@ -1,0 +1,47 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	>
+    
+
+	<ui:define name="mainContent">
+		
+		<div align="center">
+		<p:outputLabel value="Add Shift" style="font-size: 20px;"/>
+		
+		<p />
+			<p:panelGrid columns="4" >
+					<p:outputLabel value="Shift Tag: *" />
+					<p:outputLabel />
+					<p:inputText id="name" value="#{shiftController.shift.name}"></p:inputText>
+					<p:message for="name" id="nameMsg" display="text" style="padding-left:30px;"/>
+					<p:outputLabel value="Choose Color: *" />
+					<p:outputLabel />
+					<p:colorPicker id="popupCP" value="#{shiftController.shift.shiftColor}" widgetVar="picker" />  
+					<p:message for="popupCP"/>
+					
+					<p:outputLabel value="Start Time"/>
+					<p:outputLabel />
+					<p:calendar id="starttime" value="#{shiftController.shift.startTime}" timeOnly="true" pattern="hh:mm a"/>
+					<p:message for="starttime"/>
+					<p:outputLabel value="End Time"/>
+					<p:outputLabel />
+					<p:calendar id="endtime" value="#{shiftController.shift.endTime}" timeOnly="true" pattern="hh:mm a"/>
+					<p:message for="endtime"/>
+			</p:panelGrid>
+			<p:panelGrid columns="1">										
+					<p:outputLabel value="Notes"/>
+					
+					<p:inputTextarea id="notes" value="#{shiftController.shift.notes}" cols="50" rows="4"/>
+					
+			</p:panelGrid>
+			<p></p>
+			<p:commandButton id="add" value="Add Shift" action="#{shiftController.addShift}" ajax="false" />
+			
+			</div>
+			 
+		
+	</ui:define>
+</ui:composition>

@@ -1,0 +1,116 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+    
+
+		<br></br>
+		
+        
+					
+						<p:dataTable id="vactimeoffreporttbl" var="keys" value="#{employeeScheduleReport.vacationTimeOffMap}" >
+							  <p:columnGroup type="header">  
+							        
+							        <p:row>  
+							            <p:column headerText="Start Date"/>  
+							            <p:column headerText="End Date"/>  
+							            <p:column headerText="Reason"/>
+							            <p:column headerText="Total Days"/>
+							        </p:row>  
+							    </p:columnGroup>
+    												    	  
+						  <p:subTable var="timeoff" value="#{keys.value}">  
+					            <f:facet name="header">  
+					              Vacation   
+					            </f:facet>
+						            
+					            	<p:column styleClass="hdr1Black"  sortBy="#{timeoff.beginDate}">
+					                    	
+					                        <h:outputText value="#{timeoff.beginDate}" >
+					                            <f:convertDateTime pattern="MM/dd/yyyy"></f:convertDateTime>
+					                        </h:outputText>                     
+					                    
+					                </p:column>
+					
+					                <p:column styleClass="hdr1Black" >
+					                    
+					                    
+					                        <h:outputText value="#{timeoff.endDate}" >
+					                            <f:convertDateTime pattern="MM/dd/yyyy"></f:convertDateTime>
+					                        </h:outputText>
+					                    
+					                </p:column>
+					                
+									<p:column styleClass="hdr1Black" >
+					                    
+					                    
+					                        <h:outputText value="#{timeoff.reason}" >
+					                            
+					                        </h:outputText>
+					                    
+					                </p:column> 
+					                
+					                <p:column styleClass="hdr1Black" >
+					                    
+					                    
+					                        <h:outputText value="#{timeoff.numDays}" >
+					                            
+					                        </h:outputText>
+					                    
+					                </p:column> 
+								</p:subTable>
+						</p:dataTable>  
+						
+						<br></br>
+						<p:dataTable id="sicktimeoffreporttbl" var="keys" value="#{employeeScheduleReport.sickTimeOffMap}" >
+								<p:columnGroup type="header">  
+							        
+							        <p:row>  
+							        	<p:column headerText="Event Name"/>
+							            <p:column headerText="Date"/>  
+							            <p:column headerText="Reason"/>
+							            
+							        </p:row>  
+							    </p:columnGroup>  
+    												    	  
+						  <p:subTable var="timeoff" value="#{keys.value}">  
+					            <f:facet name="header">  
+					              Sick   
+					            </f:facet>
+						            
+						            <p:column styleClass="hdr1Black"  sortBy="#{timeoff.sickEvent.name}">
+					                    
+					                        <h:outputText value="#{timeoff.sickEvent.name}" >
+					                            
+					                        </h:outputText>                     
+					                    
+					                </p:column>
+						            
+					            	<p:column styleClass="hdr1Black"  sortBy="#{timeoff.beginDate}">
+					                    
+					                        <h:outputText value="#{timeoff.beginDate}" >
+					                            <f:convertDateTime pattern="MM/dd/yyyy"></f:convertDateTime>
+					                        </h:outputText>                     
+					                    
+					                </p:column>
+					
+					                
+					                
+									<p:column styleClass="hdr1Black" >
+					                    
+					                        <h:outputText value="#{timeoff.reason}" >
+					                            
+					                        </h:outputText>
+					                   
+					                </p:column>  
+								</p:subTable>
+						</p:dataTable>
+						<p:spacer height="30"/>  
+  
+				
+						      
+						  
+
+</ui:composition>

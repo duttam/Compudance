@@ -1,0 +1,47 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	template="../tools/toolHome.xhtml">
+    
+
+	
+		<br />
+			
+				<div align="left">
+					<p:outputLabel value="Manage Position" style="font-size: 20px;"></p:outputLabel>
+				</div>
+			
+			<br />
+			<div align="right">
+				<p:commandButton value="Add Position" action="addPosition" ajax="false">
+					<f:param name="action" value="addposition" />
+				</p:commandButton>
+			</div>
+			<br />
+			<div align="center">
+			<p:dataTable id="positiontable" var="position"
+				value="#{positionHome.positionList}" paginator="true" rows="10" style="width:80%">
+
+				<p:column headerText="Position Name">
+					<div align="center">
+						<p:commandLink value="#{position.name}" action="addPosition">
+							<f:param name="action" value="editposition" />
+							<f:param name="id" value="#{position.id}" />
+						</p:commandLink>
+					</div>
+				</p:column>
+				<p:column headerText="Position Color" style="background-color: #{position.positionColor}">
+					<div  align="center" >
+					
+						  
+					
+					</div>
+				</p:column>
+								
+				
+			</p:dataTable>
+			</div>
+		
+</ui:composition>

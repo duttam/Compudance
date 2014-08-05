@@ -1,0 +1,113 @@
+<f:view xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:o="http://omnifaces.org/ui"
+	xmlns:of="http://omnifaces.org/functions"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:pm="http://primefaces.org/mobile" contentType="text/html"
+	renderKitId="PRIMEFACES_MOBILE">
+
+	<pm:page title="Admin Home">
+		<f:facet name="postinit">                        
+            <link rel="stylesheet" href="#{request.contextPath}/javax.faces.resource/calendar/calendar.css.jsf?ln=primefaces-mobile" />
+            <h:outputScript library="primefaces-mobile" name="calendar/calendar.js" />              
+
+            <script type="text/javascript">
+                (function($) {
+                	
+                })(jQuery);
+            </script>
+        </f:facet>   
+		<!-- Main View -->
+		<pm:view id="avails" swatch="b">
+			<ui:include src="../empmenu.xhtml" />
+				<pm:header>
+					
+					<ui:include src="../header.xhtml" />
+						
+				</pm:header>
+
+				<pm:content>
+					<p:growl id="avlMsg" autoUpdate="true" />
+					<h:form id="avlForm">
+					
+					<p:contextMenu event="swiperight" beforeShow="PF('panelContext').show()" />
+						<h:panelGroup id="avllistlbl">
+							<h:outputText  value="No Availability found" rendered="#{empty availHome.allAvailability}" style="font-weight:bold"/>
+						</h:panelGroup>
+						
+						<p:dataList id="availlst" value="#{availHome.allAvailability}" var="avail" paginator="true" rows="4" >  
+						<f:attribute name="paginatorText" value="More Availability..." />
+		                    <f:attribute name="iconSplit" value="true" />                    
+		                    <p:commandLink  action="#{availHome.editAvailability}" update=":newAvailForm:content">
+		                    <h1>#{avail.title}</h1>
+		                        <p:outputLabel style="color:red" value="#{of:formatDate(avail.availDate, 'yyyy-MM-dd')}, #{of:formatDate(avail.startTime, 'hh:mm a')} - #{of:formatDate(avail.endTime, 'hh:mm a')} " />
+				                <f:setPropertyActionListener target="#{availHome.availability}" value="#{avail}"/>  
+		                        <f:attribute name="icon" value="delete" />                                  
+		                    </p:commandLink>
+		                    <p:commandLink oncomplete="PF('delDialog').show()">
+		                    	<f:setPropertyActionListener target="#{availHome.availability}" value="#{avail}"/>
+		                    </p:commandLink>
+		                    
+		                     
+		                </p:dataList>
+						
+					<p:dialog id="conf" widgetVar="delDialog" modal="true"> 
+						<p class="ui-confirm-dialog-message">Are you sure?</p>               
+                        <p:commandButton value="Yes" styleClass="ui-confirmdialog-yes" inline="true" icon="check" actionListener="#{availHome.deleteAvailability}"
+									update="@form,:avlMsg" oncomplete="PF('delDialog').hide()">
+                                                          
+                        </p:commandButton>  
+                        <p:commandButton value="No" styleClass="ui-confirmdialog-no" inline="true" icon="delete" onclick="PF('delDialog').hide()"/>
+                                                                                   
+                    </p:dialog>
+					
+				</h:form>
+                	
+				</pm:content>
+				
+            
+				
+				<pm:footer swatch="b" fixed="true">
+					<pm:navBar>
+                    	<p:commandButton value="New Availability" action="#{availHome.createNewAvailability}" />
+                    </pm:navBar>
+				</pm:footer>
+		</pm:view>
+		<!-- New Availability -->
+        <pm:view id="newempavl" swatch="b">
+            
+                <pm:header >
+                    <img src="#{facesContext.externalContext.requestContextPath}/images/logo.jpg" border="0" style="border: none; height: 35px; width: 270px; " />
+                </pm:header>
+
+                <pm:content>  
+                <h:form id="newAvailForm">
+                	<h:outputText value="Enter Availability" style="font-weight:bold"></h:outputText> 
+                    <p:outputPanel id="content" autoUpdate="true">
+                    	<p:inputText value="#{availHome.availability.title}"></p:inputText>
+                    	<p:calendar value="#{availHome.availability.startDate}"></p:calendar>                            
+                        <p:calendar value="#{availHome.availability.endDate}" ></p:calendar>
+                        <p:selectBooleanCheckbox id="booleanCheckbox" value="#{availHome.availability.allday}" itemLabel="All Day" >
+                        	<p:ajax update="stime etime"></p:ajax>
+                        </p:selectBooleanCheckbox>
+                        <p:calendar id="stime" value="#{availHome.availability.startTime}" rendered="#{not availHome.availability.allday}" pattern="hh:mm a" timeOnly="true"></p:calendar>                            
+                        <p:calendar id="etime" value="#{availHome.availability.endTime}" rendered="#{not availHome.availability.allday}" pattern="hh:mm a" timeOnly="true"></p:calendar>
+                        
+                        <p:commandButton value="Save" actionListener="#{availHome.addAvailability}" update=":avlForm :avlMsg" oncomplete="PrimeFaces.back()" rendered="#{empty availHome.availability.id}"/>
+                        <p:commandButton value="Update" actionListener="#{availHome.updateAvailability}" update=":avlForm :avlMsg" oncomplete="PrimeFaces.back()" rendered="#{not empty availHome.availability.id}"/>
+                          
+                    </p:outputPanel>   
+                    </h:form>     
+                    <p:growl id="errorMsg" life="800" autoUpdate="true"/>                                                   
+                </pm:content> 
+                                                             
+            
+            
+        </pm:view>
+		
+	</pm:page>
+
+</f:view>

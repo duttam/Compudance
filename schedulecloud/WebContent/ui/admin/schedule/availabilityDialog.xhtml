@@ -1,0 +1,28 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+				xmlns:h="http://java.sun.com/jsf/html"
+				xmlns:f="http://java.sun.com/jsf/core"
+				xmlns:p="http://primefaces.org/ui"
+				xmlns:func="http://onetouch.com/functions"
+				xmlns:o="http://omnifaces.org/ui"
+				xmlns:of="http://omnifaces.org/functions"
+				xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+				xmlns:pe="http://primefaces.org/ui/extensions">
+	
+
+	<!-- availability dialog for schedule  -->
+
+					<p:dialog id="availdialog" header="Employee Availability"
+						showEffect="fade" hideEffect="fade" widgetVar="availabilitydlg"
+						dynamic="true" closeOnEscape="true" >
+						
+						<ui:repeat value="#{scheduleEventPosition.viewEmployeeAvailability}"
+							var="availability">
+					            	     #{of:formatDate(availability.startTime, 'hh:mm a')} - #{of:formatDate(availability.endTime, 'hh:mm a')}
+					            	     <br></br>
+						</ui:repeat>
+
+
+					</p:dialog>
+						
+</ui:composition>

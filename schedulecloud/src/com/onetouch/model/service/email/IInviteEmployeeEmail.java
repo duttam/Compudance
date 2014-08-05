@@ -1,0 +1,14 @@
+package com.onetouch.model.service.email;
+
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.mail.MailException;
+import org.springframework.mail.SimpleMailMessage;
+
+import com.onetouch.model.domainobject.Region;
+import com.onetouch.model.domainobject.Tenant;
+
+public interface IInviteEmployeeEmail {
+	public void inviteEmployee(Tenant tenant, Region region, Map<Object, Object> hTemplateVariables,String recipient, String sender, String operation)throws MailException;
+}

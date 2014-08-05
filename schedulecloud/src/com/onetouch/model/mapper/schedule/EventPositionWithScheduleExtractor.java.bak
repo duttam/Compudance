@@ -1,0 +1,163 @@
+package com.onetouch.model.mapper.schedule;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
+import org.springframework.dao.DataAccessException;
+import org.springframework.jdbc.core.ResultSetExtractor;
+
+import com.onetouch.model.domainobject.Employee;
+import com.onetouch.model.domainobject.EventPosition;
+import com.onetouch.model.domainobject.Position;
+import com.onetouch.model.domainobject.Schedule;
+import com.onetouch.model.domainobject.State;
+import com.onetouch.view.util.DateUtil;
+
+public class EventPositionWithScheduleExtractor implements ResultSetExtractor<List<EventPosition>>{
+	
+	@Override
+	public List<EventPosition> extractData(ResultSet rs) throws SQLException,
+			DataAccessException {
+		
+		Map<Integer,EventPosition> eventPositionMap = new LinkedHashMap<Integer, EventPosition>();
+		EventPosition eventPosition = null;
+		while(rs.next()){
+			Integer eventPosId = rs.getInt("event_posId");
+			eventPosition = eventPositionMap.get(eventPosId);
+			if(eventPosition==null){
+				eventPosition = new EventPosition();
+				eventPosition.setId(eventPosId);
+				Position position = new Position();
+				position.setId(rs.getInt("position_id"));
+				position.setDescription(rs.getString("description"));
+				position.setNotes(rs.getString("notes"));
+				position.setName(rs.getString("name"));
+				eventPosition.setPosition(position);
+				SimpleDateFormat dateformat = new SimpleDateFormat("yyyy-MM-dd");
+				SimpleDateFormat timeformat = new SimpleDateFormat("HH:mm");
+				
+				try {
+					Date shiftStartTime = timeformat.parse(rs.getString("start_time"));
+					Date shiftEndTime = timeformat.parse(rs.getString("end_time"));
+					Date shiftStartDate = dateformat.parse(rs.getString("start_date"));
+					Date shiftEndDate = dateformat.parse(rs.getString("end_date"));
+					Date shiftStartDateTime = createShiftDateTime(shiftStartDate,shiftStartTime);
+					Date shiftEndDateTime = createShiftDateTime(shiftEndDate,shiftEndTime);
+					eventPosition.setStartTime(shiftStartDateTime);
+					eventPosition.setEndTime(shiftEndDateTime);
+					eventPosition.setStartDate(shiftStartDate);
+					eventPosition.setEndDate(shiftEndDate);
+					
+				} catch (ParseException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				eventPosition.setReqdNumber(rs.getInt("reqd_number"));
+				eventPosition.setDisplayOrder(rs.getInt("PosDisplayOrder"));
+				eventPosition.setActive(rs.getBoolean("eposActive"));
+				eventPosition.setNotes(rs.getString("eposNotes"));
+				eventPositionMap.put(eventPosId,eventPosition);
+			}
+			List<Employee> allScheduledEmployee = eventPosition.getPosition().getScheduledEmployees();
+			if(allScheduledEmployee==null){
+				allScheduledEmployee = new ArrayList<Employee>();
+				eventPosition.getPosition().setScheduledEmployees(allScheduledEmployee);
+				
+			}
+			
+			
+			Integer employeeId = rs.getInt("employee_id");
+			if(employeeId>0){
+				Employee employee = new Employee();
+				employee.setId(employeeId);
+				Schedule schedule = new Schedule();
+				schedule.setId(rs.getInt("scheduleId"));
+				schedule.setSchedulestatus(rs.getInt("status"));
+				SimpleDateFormat datetimeformat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+				try {
+					if(rs.getString("notify_expiretime")!=null)
+						schedule.setExpiretime(datetimeformat.parse(rs.getString("notify_expiretime")));
+					if(rs.getString("notify_updatetime")!=null)
+						schedule.setUpdatetime(datetimeformat.parse(rs.getString("notify_updatetime")));
+				} catch (ParseException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				employee.setFirstname(rs.getString("firstname"));
+				employee.setLastname(rs.getString("lastname"));
+				employee.setLastname(rs.getString("lastname"));
+				employee.setAddress1(rs.getString("address1"));
+				employee.setAddress2(rs.getString("address2"));
+				employee.setCity(rs.getString("city"));
+				State state = new State();
+				state.setStateName(rs.getString("state"));
+				state.setStateCode(rs.getString("statecode"));
+				employee.setState(state);
+				employee.setZipcode(rs.getString("zipcode"));
+				employee.setHomephone(rs.getString("homephone"));
+				employee.setCellphone(rs.getString("cellphone"));
+				employee.setFax(rs.getString("fax"));
+				employee.setEmail(rs.getString("email"));
+				if(rs.getString("getemail")!=null && rs.getString("getemail").equalsIgnoreCase("Y"))
+					employee.setGetEmail(true);
+				else
+					employee.setGetEmail(false);
+				if(rs.getString("getemail")!=null && rs.getString("getsms").equalsIgnoreCase("N"))
+					employee.setGetSMS(true);
+				else
+					employee.setGetSMS(false);
+				
+				employee.setImageName(rs.getString("image_name"));
+				employee.setImageType(rs.getString("image_type"));
+				employee.setInputStream(rs.getBinaryStream("image_bytes"));
+				employee.setRating(rs.getInt("rating"));
+				employee.setSchedule(schedule);
+				int sftHours = 0,sftMinutes = 0;
+				if(eventPosition.getStartTime()!=null && eventPosition.getEndTime()!=null){
+					if(DateUtil.compareTimeOnly(eventPosition.getStartTime(), eventPosition.getEndTime())<=0){
+						sftHours = DateUtil.getHours(eventPosition.getStartTime(), eventPosition.getEndTime());
+						sftMinutes = DateUtil.getMinutes(eventPosition.getStartTime(), eventPosition.getEndTime());
+					}
+					else{
+						sftHours = 23 - (DateUtil.getHours(eventPosition.getEndTime(),eventPosition.getStartTime()));
+						sftMinutes = 60-(DateUtil.getHours(eventPosition.getEndTime(),eventPosition.getStartTime()));
+					}
+				}
+				employee.setHours(sftHours);
+				employee.setMinutes(sftMinutes);
+				allScheduledEmployee.add(employee);
+			}
+			else
+			{}
+		
+		}
+		return new ArrayList<EventPosition>(eventPositionMap.values());
+	}
+	
+	private Date createShiftDateTime(Date date, Date time){
+		DateFormat timingFormat = new SimpleDateFormat("hh:mm a", Locale.US);
+		DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy", Locale.US);
+		String event_date = dateFormat.format(date);
+		String event_time = timingFormat.format(time);
+		DateFormat dateTimeFormat = new SimpleDateFormat("MM/dd/yyyy hh:mm a", Locale.US);
+		Date datetime = null;
+		try {
+			datetime = dateTimeFormat.parse(event_date+" "+event_time);
+		}catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return datetime;
+	}
+}

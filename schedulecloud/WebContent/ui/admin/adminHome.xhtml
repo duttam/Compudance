@@ -1,0 +1,83 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions"
+	template="../../template/admincontenttemplate.xhtml">
+    
+
+	<ui:define name="mainContent">
+		
+		<h:form id="adminHomeForm">
+		<style type="text/css">
+		
+    	.pending-schedule, .pending-schedule .fc-event-skin, .pending-schedule a{
+		    background-color: red;
+		    color: black;
+		    border-color: red;
+		}
+		.booked-schedule, .booked-schedule .fc-event-skin, .booked-schedule a{
+		    background-color: yellow;
+		    color: black;
+		    border-color: black;
+		}
+		.more-event, .more-event .fc-event-skin, .more-event a{
+		    background-color: green;
+		    color: black;
+		    border-color: greenyellow;
+		} 
+    	/* .fc-event-skin {
+    		cursor: hand; cursor: pointer;
+		} */
+		.fc-event {
+		   cursor: pointer;
+		    font-size: 0.85em;
+		}
+		
+		.fc-event-time, .fc-event-title {
+		    padding: 0 2px;
+		   
+		}
+ 		.fc-header-right {
+		    text-align: right;
+		    width: 25%;
+		}
+
+		</style>
+		<br></br>
+		<p:panel header="Monthly Schedule">
+			<div align="right">
+				<h:panelGrid columns="2">
+					<p:selectOneMenu id="locationlist" value="#{adminScheduleHome.selectedLocation}" converter="locationconverter"  
+													 style="width: 200px" filter="true">
+						<f:selectItem itemLabel="All Locations" itemValue="" />
+						<f:selectItems value="#{locationHome.locationList}" var="location"
+										itemLabel="#{location.name}, #{location.city}, #{location.state.stateName}"
+										itemValue="#{location}"/>
+					
+						<p:ajax listener="#{adminScheduleHome.selectLocationChange}" oncomplete="myschedule.update();"/>
+					</p:selectOneMenu>
+					
+				</h:panelGrid>
+			</div>
+			
+			<div align="center">
+			<div style="width:100%;" >
+			
+			<h:panelGroup id="calenderblock" layout="block"  >
+				<p:schedule id="alleventschedules" value="#{adminScheduleHome.eventModel}"  widgetVar="myschedule"   draggable="false" resizable="false" aspectRatio="3" timeZone="EST" >
+					<p:ajax event="eventSelect" listener="#{adminScheduleHome.onScheduleEventSelect}" process="@this"/>  
+				</p:schedule>
+			</h:panelGroup>
+			 </div>
+			 </div>
+  			<p></p>
+  			
+  			
+			</p:panel>
+			
+			
+		</h:form>
+	</ui:define>
+</ui:composition>

@@ -1,0 +1,132 @@
+<f:view xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:o="http://omnifaces.org/ui"
+	xmlns:of="http://omnifaces.org/functions"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:pm="http://primefaces.org/mobile" contentType="text/html"
+	renderKitId="PRIMEFACES_MOBILE">
+
+	<pm:page title="Admin Home">
+		<f:facet name="postinit">                        
+            
+            <script type="text/javascript">
+                (function($) {
+                	
+                })(jQuery);
+            </script>
+        </f:facet>   
+		<!-- Main View -->
+		<pm:view id="events" swatch="b">
+			<ui:include src="../empmenu.xhtml" />
+				<pm:header>
+					
+					<ui:include src="../header.xhtml" />
+						
+				</pm:header>
+
+				<pm:content>
+					<h:form id="schForm" prependId="false">
+					<p:contextMenu event="swiperight" beforeShow="PF('panelContext').show()" />
+						<h:panelGroup id="schlistlbl">
+							<h:outputText  value="No Schedule found" rendered="#{empty employeeScheduleHome.allSchedules}" style="font-weight:bold"/>
+						</h:panelGroup>
+						<p:dataList id="schlist" type="inset" value="#{employeeScheduleHome.allSchedules}" var="schedule" paginator="true" rows="4">
+							
+							<f:attribute name="paginatorText" value="More Schedules..." />
+		                    <p:column>
+	                            <p:commandLink update=":content" action="pm:schdetails">
+	                                <f:setPropertyActionListener value="#{schedule}" target="#{employeeScheduleHome.schedule}" />
+	                                <h2>#{schedule.event.name} / #{schedule.position.name}</h2>                                                
+                        			<p:outputLabel style="color:red" value="#{of:formatDate(schedule.event.startDate, 'yyyy-MM-dd')}, #{of:formatDate(schedule.eventPosition.startTime, 'hh:mm a')} - #{of:formatDate(schedule.eventPosition.endTime, 'hh:mm a')} " />
+				        
+	                            </p:commandLink>
+                        	</p:column>
+		                    
+		                </p:dataList>
+						
+                	</h:form>
+				</pm:content>
+				<pm:footer swatch="b" fixed="true">
+					<pm:navBar>
+					<p:commandButton value="Today" actionListener="#{employeeScheduleHome.filterMobileSchedules}" update=":schForm:schlist :schForm:schlistlbl" styleClass="ui-btn-active ui-state-persist">
+                    		<f:param value="today" name="mode"></f:param>
+                    	</p:commandButton>
+                    	<p:commandButton value="Past" actionListener="#{employeeScheduleHome.filterMobileSchedules}" update=":schForm:schlist :schForm:schlistlbl">
+                    		<f:param value="past" name="mode"></f:param>
+                    	</p:commandButton>
+						<p:commandButton value="Future" actionListener="#{employeeScheduleHome.filterMobileSchedules}" update=":schForm:schlist :schForm:schlistlbl">
+							<f:param value="future" name="mode"></f:param>
+						</p:commandButton>
+						
+                	</pm:navBar>
+					
+                </pm:footer>
+				
+		</pm:view>
+		
+		<!-- Details -->
+        <pm:view id="schdetails" swatch="b">
+            
+				<pm:header>
+					
+					
+                <f:facet name="left">
+                	<img src="#{facesContext.externalContext.requestContextPath}/images/logo.jpg" border="0" style="border: none; height: 35px; width: 270px; " />
+				</f:facet>
+						
+				</pm:header>
+
+            <pm:content id="content">
+            	<h:form id="schdetailForm" prependId="false">
+            	
+                 <h:commandLink action="#{employeeScheduleHome.processMobilePDF}" rendered="#{employeeScheduleHome.schedule.position.viewReports}" >
+						<p:graphicImage value="/images/pdf.png" title="export as pdf" />
+					</h:commandLink>
+            	<div align="center">
+                <h:outputText value="#{employeeScheduleHome.schedule.position.name}, #{of:formatDate(employeeScheduleHome.schedule.eventPosition.startTime, 'hh:mm a')} - #{of:formatDate(employeeScheduleHome.schedule.eventPosition.endTime, 'hh:mm a')}" style="font-weight:bold"/>
+                </div>
+                
+                
+                <h:panelGrid  columns="2">
+                	<h:outputText value="Event Name:"/>
+	                <h:outputText  value="#{employeeScheduleHome.schedule.event.name}" />
+	                <h:outputText value="Event Date:"/>
+	                <h:outputText  value="#{of:formatDate(employeeScheduleHome.schedule.event.startDate, 'MM-dd-yyyy')}" escape="false" />
+	                <h:outputText value="Location:"/>
+	                <h:outputText value="#{employeeScheduleHome.schedule.event.location.address1}, #{employeeScheduleHome.schedule.event.location.city} #{employeeScheduleHome.schedule.event.location.state.stateName}"/>
+	                <h:outputText value="Parking Direction:"/>
+	                <h:outputText value="#{employeeScheduleHome.schedule.event.location.parkingDirection}"></h:outputText>
+	                <h:outputText value="Notes:"/>
+	                <h:outputText value="#{employeeScheduleHome.schedule.event.notes}"/>
+	                <h:outputText value="Description:"/>
+	                <h:outputText value="#{employeeScheduleHome.schedule.event.description}"/>
+	                <h:outputText value="Dress:"/>
+	                <h:outputText value="#{employeeScheduleHome.schedule.event.dressCode}"/>
+	                <h:outputText value="Position Notes:"/>
+	                <h:outputText value="#{employeeScheduleHome.schedule.position.notes}"/>
+                
+                </h:panelGrid>
+                <p:separator rendered="false"></p:separator>
+                <h:outputText value="Sign InOut Details" rendered="false"/>
+                
+                <h:panelGrid  columns="2" rendered="false">
+	                <h:outputText value="SignIn Time: "/>
+	                <h:outputText value="#{of:formatDate(employeeScheduleHome.schedule.signInOut.startTime, 'hh:mm a')}" escape="false" />
+	                <h:outputText value="SignOutTime: "/>
+	                <h:outputText value="#{of:formatDate(employeeScheduleHome.schedule.signInOut.endTime, 'hh:mm a')}"/>
+	                <h:outputText value="Break Start Time: "/>
+	                <h:outputText value="#{of:formatDate(employeeScheduleHome.schedule.signInOut.breakStartTime, 'hh:mm a')}" />
+	                <h:outputText value="Break End Time: "/>
+	                <h:outputText value="#{of:formatDate(employeeScheduleHome.schedule.signInOut.breakEndTime, 'hh:mm a')}"/>
+                
+                </h:panelGrid>
+                
+			</h:form>                               
+            </pm:content>
+        </pm:view>
+	</pm:page>
+
+</f:view>

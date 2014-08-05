@@ -1,0 +1,142 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions"
+	xmlns:o="http://omnifaces.org/ui"
+	xmlns:of="http://omnifaces.org/functions">
+	
+	<div id="quotescointainer">
+			<div id="quotesleft" align="left">
+			<h:panelGrid columns="2" cellspacing="10">
+			<h:outputLabel value="Generate reports by Month"></h:outputLabel>	
+				
+						<p:selectOneMenu value="#{eventDetailReport.selectedMonth}">  
+				            <f:selectItems value="#{eventDetailReport.months}"/>
+							<p:ajax update="eventDetailtbl" listener="#{eventDetailReport.changeMonth}" />
+						</p:selectOneMenu>
+			</h:panelGrid>
+			<h:panelGrid columns="5" cellpadding="5">	
+				<h:outputLabel value="Generate reports by DateRange"></h:outputLabel>		
+				<p:outputLabel value="Start Date:" style="font-weight:bold"/>
+		        <p:calendar id="startdate" value="#{eventDetailReport.reportStartDate}" pattern="MM/dd/yyyy" showButtonPanel="true" navigator="true"
+		        			required="true" requiredMessage="#{msg['message.empty']}" >
+		        	<p:ajax event="dateSelect" listener="#{eventDetailReport.filterEventDetailReport}" process="@this" update="eventDetailtbl"  />
+		        </p:calendar>
+	        	
+	        	
+	        	<p:outputLabel  value="End Date:" style="font-weight:bold"/>
+	       		<p:calendar id="enddate" value="#{eventDetailReport.reportEndDate}" pattern="MM/dd/yyyy" showButtonPanel="true" navigator="true" required="true" requiredMessage="#{msg['message.empty']}" >
+		        	<p:ajax event="dateSelect" listener="#{eventDetailReport.filterEventDetailReport}" process="@this" update="eventDetailtbl"  />
+		        </p:calendar>
+		   		
+	        	</h:panelGrid>
+			</div>
+			<div id="quotescenter" align="right">
+				<p:commandButton styleClass="downloadButton" ajax="false"
+					icon="ui-icon-xls" iconPos="right" title="Download Report">
+	
+					<pe:exporter type="xlsx" target="#{reportHome.reportViewTarget}" fileName="#{reportHome.filename}" subTable="true" 
+								preProcessor="#{eventDetailReport.preProcessorXLS}" postProcessor="#{eventDetailReport.postProcessXLS}" facetFontSize="14"/>  
+				</p:commandButton>
+			</div>
+		</div>
+	
+    
+    <br></br>
+    
+    <p:dataTable id="eventDetailtbl" var="onetouchreport" value="#{eventDetailReport.eventDetailList}">  
+  
+				        <f:facet name="header">  
+				            Monthly Event Detail  
+				        </f:facet>  
+				  
+				        <p:columnGroup type="header">  
+				             
+				  
+				            <p:row>
+				            <p:column headerText="Event Name" />  
+				                <p:column headerText="Date" />  
+				                <p:column headerText="Location" />
+				                <p:column headerText="Admin" />  
+				                <p:column headerText="Manager" />
+				                <p:column headerText="Host" />  
+				                <p:column headerText="Start Time" />  
+				                <p:column headerText="End Time" />
+				                <p:column headerText="Total Forecast Labor" />  
+				                <p:column headerText="Total Actual Labor" />  
+				                <p:column headerText="Over/Under" />  
+				                 
+				            </p:row>  
+				        </p:columnGroup>  
+				  
+				        <p:subTable var="event" value="#{onetouchreport.eventList}">  
+				            <f:facet name="header">  
+				              <h:outputText value="#{onetouchreport.month}" />   
+				            </f:facet>  
+				  
+				            <p:column sortBy="#{event.name}">  
+				                 <h:outputText value="#{event.name} " />
+				            </p:column>  
+				  			<p:column>
+				  				<h:outputText value="#{of:formatDate(event.startDate, 'MM-dd-yyyy')}"/>
+                        	</p:column>
+				            <p:column >  
+				                <h:outputText value="#{event.location.name} #{event.location.locationTitle}" />  
+				            </p:column>  
+				  
+				            <p:column>  
+				                <h:outputText value="#{event.owner.firstname}" />  
+				            </p:column>  
+				            
+				            <p:column>  
+				                 <h:outputText value="#{event.coordinator.firstname}" />
+				            </p:column>  
+				  
+				            <p:column>  
+				                <h:outputText value="#{event.hostname}" />  
+				            </p:column>  
+				  
+				            <p:column>  
+				                <h:outputText value="#{of:formatDate(event.startTime, 'hh:mm a')}" />  
+				            </p:column>  
+				  
+				            <p:column>  
+				                <h:outputText value="#{of:formatDate(event.endTime, 'hh:mm a')}" />  
+				            </p:column>
+				  			
+				  			<p:column>  
+				                <p:outputLabel value="#{event.totalForecastLaborCost}">
+					            	<f:convertNumber currencySymbol="$" minFractionDigits="2" maxFractionDigits="2"/>
+					            </p:outputLabel>
+				            </p:column>  
+				  
+				            <p:column>  
+				                  <p:outputLabel value="#{event.totalActualLaborCost}">
+					            	<f:convertNumber currencySymbol="$" minFractionDigits="2" maxFractionDigits="2"/>
+					            </p:outputLabel>
+				            </p:column>  
+				  
+				            <p:column>  
+				                <p:outputLabel value="#{event.overUnder}">
+					            	<f:convertNumber currencySymbol="$" minFractionDigits="2" maxFractionDigits="2"/>
+					            </p:outputLabel>
+				            </p:column>
+				  			<p:columnGroup type="footer">  
+					            <p:row>  
+					                <p:column footerText="Total" style="text-align:right" colspan="8"/>  
+					                <p:column footerText="#{onetouchreport.totalMonthlyForecastcost}"  /> 
+					                <p:column footerText="#{onetouchreport.totalMonthlyActaulcost}" /> 
+					                <p:column footerText="#{onetouchreport.totalMonthlyOverUnder }"/> 
+					            </p:row>  
+					        </p:columnGroup>
+				              
+				        </p:subTable>  
+				    </p:dataTable>
+			
+					<p:spacer height="30"/>  
+  
+					  
+
+</ui:composition>

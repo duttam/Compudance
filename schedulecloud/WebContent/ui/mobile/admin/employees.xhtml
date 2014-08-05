@@ -1,0 +1,116 @@
+<f:view xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:o="http://omnifaces.org/ui"
+	xmlns:of="http://omnifaces.org/functions"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:pm="http://primefaces.org/mobile" contentType="text/html"
+	renderKitId="PRIMEFACES_MOBILE">
+
+	<pm:page title="Employees">
+		<f:facet name="preinit">
+			
+		</f:facet>
+		<f:facet name="postinit">                        
+            
+        </f:facet>   
+		<!-- Main View -->
+		<pm:view id="employees" swatch="b">
+			<ui:include src="../menu.xhtml" />
+				<pm:header>
+					<ui:include src="../header.xhtml" />
+				</pm:header>
+
+				<pm:content>
+					<h:form id="employeeForm" prependId="false">
+					<p:contextMenu event="swiperight" beforeShow="PF('panelContext').show()" />
+					<h:panelGroup id="employeelbl">
+						<h:outputText  value="No Employees found" rendered="#{empty employeeHome.employeeList}" style="font-weight:bold"/>
+					</h:panelGroup>
+					<p:dataList id="employeelist" var="employee"
+						value="#{employeeHome.employeeList}" paginator="true" rows="5">
+					<f:attribute name="paginatorText" value="More Employees..." />
+					<f:attribute name="filter" value="true" />
+						<p:column>
+							<p:commandLink update=":content" action="#{employeeHome.selectEmployee}">
+	                            <f:setPropertyActionListener value="#{employee.id}" target="#{employeeHome.employeeId}" />
+								
+								<p:graphicImage
+									value="/images/#{eventSupport.tenant.code}/#{employee.imageName}" rendered="false"/>
+								<h2>#{employee.firstname} #{employee.lastname}</h2>
+								<p>#{employee.email}</p>
+								<p>#{employee.homephone}</p>
+
+							</p:commandLink>
+
+
+						</p:column>
+
+					</p:dataList>
+
+				</h:form>
+				</pm:content>
+				<pm:footer swatch="b" fixed="true">
+					<pm:navBar>
+                    	<p:commandButton value="Active" action="#{employeeHome.filterEmployeeList('active')}" update=":employeeForm:employeelist :employeeForm:employeelbl" styleClass="ui-btn-active ui-state-persist"/>
+						<p:commandButton value="Invited" action="#{employeeHome.filterEmployeeList('invitesent')}" update=":employeeForm:employeelist :employeeForm:employeelbl"/>
+                	</pm:navBar>
+					
+                </pm:footer>
+				
+		</pm:view>
+		
+		<!-- Details -->
+        <pm:view id="employeedetails" swatch="b">
+            <pm:header>
+            
+            	<img src="#{facesContext.externalContext.requestContextPath}/images/logo.jpg" border="0" style="border: none; height: 40px; width: 300px; " />
+            
+            </pm:header>
+
+            <pm:content id="content">
+            	<h:form id="employeedetailForm" prependId="false">
+            	
+
+
+					<h:outputText
+						value="#{employeeHome.selectedEmployee.firstname} #{employeeHome.selectedEmployee.lastname}" style="font-weight:bold"/>
+					<br></br>
+					<h:outputText value="#{employeeHome.selectedEmployee.address1}" />
+					<br></br>
+					<h:outputText value="#{employeeHome.selectedEmployee.address2}" />
+					<br></br>
+					<h:outputText value="#{employeeHome.selectedEmployee.city}" />
+					<br></br>
+					<h:outputText
+						value="#{employeeHome.selectedEmployee.state.stateName}, #{employeeHome.selectedEmployee.zipcode}" />
+					<br></br>
+					<h:outputText
+						value="#{of:formatDate(employeeHome.selectedEmployee.dob, 'MM-dd-yyyy')}" />
+					<br></br>
+					<h:outputText
+						value="#{employeeHome.selectedEmployee.empRate.hourlyRate}" />
+
+					<br></br>
+                <ul id="actionList" data-role="listview" data-inset="true">
+                	<li><a href="mailto:#{employeeHome.selectedEmployee.email}">Send Email<p>#{employeeHome.selectedEmployee.email}</p> </a></li>
+                	<li><a href="tel:#{employeeHome.selectedEmployee.homephone}">Call Home<p>#{employeeHome.selectedEmployee.homephone}"</p> </a></li>
+                	<li><a href="tel:#{employeeHome.selectedEmployee.cellphone}">Call Cell<p>#{employeeHome.selectedEmployee.cellphone}"</p> </a></li>
+                </ul>
+                <p:panel header="Positions Assigned" collapsed="true">
+                    <p:dataList id="empposition" var="position"
+						value="#{employeeHome.selectedEmployee.assignedPositions}">
+
+						<p:column>
+							<h:outputText value="#{position.name}"></h:outputText>
+						</p:column>
+						</p:dataList>
+                </p:panel>
+                
+			</h:form>                               
+            </pm:content>
+        </pm:view>
+	</pm:page>
+
+</f:view>

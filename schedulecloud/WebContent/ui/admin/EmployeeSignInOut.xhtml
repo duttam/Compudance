@@ -1,0 +1,173 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions"
+	xmlns:o="http://omnifaces.org/ui"
+	xmlns:of="http://omnifaces.org/functions"
+	template="../../template/admincontenttemplate.xhtml">
+    
+
+	<ui:define name="mainContent">
+		<h:form id="signinoutForm" prependId="false">
+		<style type="text/css">
+		
+		#shiftIds_content.ui-widget-content{
+				border:0px ;
+			}
+		
+		</style>
+		<br></br>
+		<div style="height:100%">
+		<p:panel header="Employee SignIn and SignOut">
+			
+  			<h:panelGrid columns="4">
+				
+				<p:selectOneMenu id="eventlist" value="#{signInOut.signInOutEvent}" converter="eventconverter"  
+												 style="width: 200px" var="evnt" panelStyle="width:250px">
+					
+					<f:selectItems value="#{signInOut.publishedEventList}"
+						var="event"
+						itemLabel="#{event.name}"
+						itemValue="#{event}" />
+						<p:column>  
+					                <h:outputText value="#{evnt.name}">  
+                						
+            						</h:outputText>  
+					            </p:column>
+		                        <p:column>  
+					                <h:outputText value="#{evnt.startDate}">  
+                						<f:convertDateTime pattern="MM/dd/yyyy" />  
+            						</h:outputText>  
+					            </p:column>
+					             
+					<p:ajax listener="#{signInOut.selectEventListener}" update="posGrp"/>
+				</p:selectOneMenu>
+				<p:spacer width="100" height="5"></p:spacer>
+				<h:panelGroup>
+					<p:fieldset legend="Event Detail" toggleable="true" toggleSpeed="500"> 
+						<span style="font-weight : bold">Event name : </span> <p:outputLabel value="#{signInOut.signInOutEvent.name}"></p:outputLabel>,
+						<span style="font-weight : bold">Event Date : </span> <h:outputText value="#{signInOut.signInOutEvent.startDate}">
+								<f:convertDateTime pattern="MM/dd/yyyy" />
+							</h:outputText>,
+						
+						<span style="font-weight : bold">Starting From </span> <h:outputText value="#{signInOut.signInOutEvent.startTime}">  
+	                		<f:convertDateTime pattern="hh:mm a" />  
+	            		</h:outputText>
+	            		<span style="font-weight : bold"> Ending At </span> <h:outputText value="#{signInOut.signInOutEvent.endTime}">  
+	                		<f:convertDateTime pattern="hh:mm a" />  
+            			</h:outputText>
+					</p:fieldset>
+				</h:panelGroup>
+				</h:panelGrid>
+  				<h:panelGroup id="posGrp">
+  					<p:dataList id="posIds"  value="#{signInOut.scheduledPositions}" var="position" style="border:0px;" rendered="#{signInOut.scheduledPositions ne null}">
+						<p:column>
+							
+									<p:dataTable  id="employeetable" var="employee" value="#{position.scheduledEmployees}" paginator="false" rows="10" editable="true" editMode="cell" scrollable="true" >
+											  
+											<p:column  headerText="First Name" sortBy="#{employee.firstname} #{employee.lastname}" style="width:20%">
+							                <div  align="center">
+							                    <p:outputLabel value="#{employee.firstname} #{employee.lastname}"  style="font-weight:bold" />
+							                    
+							                </div>
+							                </p:column>
+											
+											<p:column  headerText="Position" sortBy="#{employee.position.name}" style="width:10%">
+							                <div  align="center">
+							                    <p:outputLabel value="#{position.name}"  style="font-weight:bold" />
+							                    
+							                </div>
+							                </p:column>
+							                
+							                <p:column headerText="Shift Start" >
+							                    <h:panelGroup id="shiftsigninbtnid" style="display:block; text-align:center">
+							                    	<p:commandButton  value="In" actionListener="#{signInOut.enterSignInTime}" rendered="#{employee.signInOut.startTime == null}" update="employeetable">
+							                    		<f:param name="posid" value="#{position.id}" />
+							                    		<f:param name="empid" value="#{employee.id}" />
+                        								<f:param name="scheduleid" value="#{employee.scheduleId}" />
+							                    	</p:commandButton>
+							                    </h:panelGroup>
+							                    <h:panelGroup id="shiftsigninlblid" style="display:block; text-align:center">
+							                    <p:outputLabel value="#{of:formatDate(employee.signInOut.startTime, 'hh:mm a')}" rendered="#{not empty employee.signInOut.startTime}"/>
+							                    </h:panelGroup>
+							                </p:column>
+							                
+							                <p:column headerText="Break Start" >
+							                    <div id="breaksigninid" align="center">
+							                    <p:commandButton  value="Out" actionListener="#{signInOut.enterBreakSignInTime}" rendered="#{employee.signInOut.breakStartTime == null}" 
+							                    				  disabled="#{employee.signInOut.disableBreakStartTimeBtn}" update="employeetable">
+							                    	<f:param name="empid" value="#{employee.id}" />
+                        							<f:param name="posid" value="#{position.id}" />
+                        							<f:param name="scheduleid" value="#{employee.scheduleId}" />
+							                    </p:commandButton>
+							                    <p:outputLabel value="#{of:formatDate(employee.signInOut.breakStartTime, 'hh:mm a')}" rendered="#{not empty employee.signInOut.breakStartTime}"/>
+							                    </div>
+							                </p:column>
+							                <p:column headerText="Break End" >
+							                    <div id="breaksignoutid" align="center">
+							                    <p:commandButton  value="In" actionListener="#{signInOut.enterBreakSignOutTime}" rendered="#{employee.signInOut.breakEndTime == null}" 
+							                    				 disabled="#{employee.signInOut.breakStartTime == null}"	update="employeetable">
+							                    	<f:param name="empid" value="#{employee.id}" />
+                        							<f:param name="posid" value="#{position.id}" />
+                        							<f:param name="scheduleid" value="#{employee.scheduleId}" />
+							                    </p:commandButton>
+							                    <p:outputLabel value="#{of:formatDate(employee.signInOut.breakEndTime, 'hh:mm a')}" rendered="#{not empty employee.signInOut.breakEndTime}"/>
+							                    </div>
+							                </p:column>
+							                
+							                <p:column headerText="Shift End" >
+							                    <div id="shiftsignoutid" align="center">
+							                    <p:commandButton  value="Out" actionListener="#{signInOut.enterSignOutTime}" rendered="#{employee.signInOut.endTime == null}" 
+							                    					disabled="#{employee.signInOut.startTime == null}" update="employeetable">
+							                    	<f:param name="empid" value="#{employee.id}" />
+                        							<f:param name="posid" value="#{position.id}" />
+                        							<f:param name="scheduleid" value="#{employee.scheduleId}" />
+							                    </p:commandButton>
+							                    <p:outputLabel value="#{of:formatDate(employee.signInOut.endTime, 'hh:mm a')}" rendered="#{not empty employee.signInOut.endTime}"/>
+							                    </div>
+							                </p:column>
+							                <p:column headerText="Total" style="width:10%">
+							                    <h:panelGroup id="total" layout="block" style="align:center" >
+							                    	<h:outputText  value="#{employee.hours} hrs #{employee.minutes} mins" rendered="#{employee.hours gt 0 or employee.minutes gt 0}"/> 
+							                    </h:panelGroup>
+							                </p:column>
+							                <p:column headerText="Total(w/o break)" >
+							                    <h:panelGroup id="totalwo" layout="block" style="align:center" >
+							                    	<h:outputText  value="#{employee.hours-employee.breakHours} hrs #{employee.minutes-employee.breakMinutes} mins" rendered="#{employee.hours gt 0 or employee.minutes gt 0}"/> 
+							                    </h:panelGroup>
+							                </p:column>
+											<p:column headerText="Remarks">
+							                    <p:outputLabel id="remark" value="#{employee.signInOut.remarks}"/>
+							                </p:column>
+											<p:column style="width:4%">  
+								                <p:commandButton id="selectButton" update="remarkDlg"  oncomplete="remarkDialog.show()" icon="ui-icon-pencil" title="Remark">  
+								                	  
+								            	</p:commandButton>
+								            	<p:dialog header="Remark" widgetVar="remarkDialog" resizable="false" id="remarkDlg"  
+											                showEffect="fade" hideEffect="explode" modal="true" width="250" dynamic="true">  
+											  
+											         <h:panelGrid columns="1" style="margin:0 auto;">
+											            <p:inputTextarea value="#{employee.signInOut.remarks}" cols="25" rows="5"/>  
+											  			<p:commandButton value="Submit" actionListener="#{signInOut.submitRemarks}" oncomplete="remarkDialog.hide()" update="remark">
+											  				<f:param name="empid" value="#{employee.id}" />
+                        									<f:param name="posid" value="#{position.id}" />
+											  			</p:commandButton>
+											        </h:panelGrid>
+											    </p:dialog>  
+								        	</p:column>  
+											
+											
+							        </p:dataTable>
+							       
+							       
+						</p:column>
+						 <br></br>
+					</p:dataList>
+  				</h:panelGroup>
+		</p:panel>
+		</div>
+		</h:form>
+	</ui:define>
+</ui:composition>

@@ -1,0 +1,126 @@
+<f:view xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:o="http://omnifaces.org/ui"
+	xmlns:of="http://omnifaces.org/functions"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:pm="http://primefaces.org/mobile" contentType="text/html"
+	renderKitId="PRIMEFACES_MOBILE">
+
+	<pm:page title="Admin Home">
+		<f:facet name="postinit">                        
+            <link rel="stylesheet" href="#{request.contextPath}/javax.faces.resource/calendar/calendar.css.jsf?ln=primefaces-mobile" />
+            <h:outputScript library="primefaces-mobile" name="calendar/calendar.js" />              
+
+            <script type="text/javascript">
+                (function($) {
+                	
+                })(jQuery);
+            </script>
+        </f:facet>   
+		<!-- Main View -->
+		<pm:view id="requests" swatch="b">
+			<ui:include src="../empmenu.xhtml" />
+				<pm:header>
+					
+					<ui:include src="../header.xhtml" />
+						
+				</pm:header>
+				
+				<pm:content >
+					<h:form id="reqForm" >
+					
+					
+					<p:contextMenu event="swiperight" beforeShow="PF('panelContext').show()" />
+						<h:panelGroup id="reqlistlbl">
+							<h:outputText  value="No Requests found" rendered="#{empty timeoffHome.timeoffList}" style="font-weight:bold"/>
+						</h:panelGroup>
+						<p:dataList id="reqlist" type="inset" var="timeoff"
+                value="#{timeoffHome.timeoffList}" paginator="true" rows="4">
+							<f:attribute name="paginatorText" value="More Requests..." />
+		                    <p:column>
+	                            <p:commandLink>
+	                                
+	                                <h2>#{timeoff.requestType}</h2>                                                
+                        			<p:outputLabel style="color:red" value="#{of:formatDate(timeoff.beginDate, 'yyyy-MM-dd')}" />
+				        
+	                            </p:commandLink>
+                        	</p:column>
+		                </p:dataList>
+					</h:form>	
+                	 <p:growl id="requestMsg" life="8000"/>
+				</pm:content>
+				
+				
+				<pm:footer swatch="b" fixed="true">
+					<pm:navBar>
+                    	<p:commandButton value="Sick Request" action="#{timeoffBean.newSickRequest}" update=":newSickReqForm:content" />
+						<p:commandButton value="Vacation Request" action="#{timeoffBean.newVacationRequest}" />
+                	</pm:navBar>
+					
+                </pm:footer>
+		</pm:view>
+		
+		<!-- New Sick Request -->
+        <pm:view id="newsickreq" swatch="b">
+            <h:form id="newSickReqForm" prependId="false">
+                <pm:header >
+                    <img src="#{facesContext.externalContext.requestContextPath}/images/logo.jpg" border="0" style="border: none; height: 35px; width: 270px; " />
+                </pm:header>
+
+                <pm:content>  
+                
+                	<h:outputText value="Enter Sick Request" style="font-weight:bold"></h:outputText> 
+                    <p:outputPanel id="content">
+                    
+                    	<p:calendar value="#{timeoffBean.timeOff.beginDate}" >
+                    		<p:ajax event="dateSelect" listener="#{timeoffBean.timeOffReqChanged}" update="sickevents growl" />
+                    	</p:calendar>                            
+                        <pm:field>
+		                    <h:outputLabel for="sickevents" value="Select Events: "/>
+		                    <h:selectOneMenu id="sickevents" value="#{timeoffBean.sickEvent}" converter="selectitemeventconverter">
+		                       <f:selectItems value="#{timeoffBean.sickEventList}" var="event"
+                        						itemLabel="#{event.name}" itemValue="#{event}" />
+		                    </h:selectOneMenu>
+		                </pm:field>
+		                <p:inputTextarea  value="#{timeoffBean.timeOff.reason}" label="Reason:"/>
+                        <p:commandButton value="Save" action="#{timeoffBean.addTimeOffRequest}"  iconPos="none" ajax="false"/>
+                        
+                    </p:outputPanel>  
+                <p:growl id="growl" life="800"/>                                                            
+                </pm:content>    
+                                                          
+            </h:form>
+            
+        </pm:view>
+		
+		<!-- New Vacation Request -->
+        <pm:view id="newvacationreq" swatch="b">
+            <h:form id="newVacationReqForm" prependId="false">
+                <pm:header >
+                    <img src="#{facesContext.externalContext.requestContextPath}/images/logo.jpg" border="0" style="border: none; height: 35px; width: 270px; " />
+                </pm:header>
+
+                <pm:content>
+                 
+                	<h:outputText value="Enter Vacation Request" style="font-weight:bold"></h:outputText> 
+                    <p:outputPanel  autoUpdate="true">
+                    
+                    	<p:calendar value="#{timeoffBean.timeOff.beginDate}">
+                    		
+                    	</p:calendar>                            
+                        <p:calendar value="#{timeoffBean.timeOff.endDate}">
+                    		
+                    	</p:calendar>
+		                <p:inputTextarea  value="#{timeoffBean.timeOff.reason}" label="Reason:"/>
+                        <p:commandButton value="Save" action="#{timeoffBean.addTimeOffRequest}" ajax="false" iconPos="none" />
+                        
+                    </p:outputPanel>                                                           
+                </pm:content>                                                
+            </h:form>
+        </pm:view>
+	</pm:page>
+
+</f:view>

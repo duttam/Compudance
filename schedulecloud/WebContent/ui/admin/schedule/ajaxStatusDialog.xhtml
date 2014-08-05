@@ -1,0 +1,21 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+				xmlns:h="http://java.sun.com/jsf/html"
+				xmlns:f="http://java.sun.com/jsf/core"
+				xmlns:p="http://primefaces.org/ui"
+				xmlns:func="http://onetouch.com/functions"
+				xmlns:o="http://omnifaces.org/ui"
+				xmlns:of="http://omnifaces.org/functions"
+				xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+				xmlns:pe="http://primefaces.org/ui/extensions">
+
+
+	<!-- notify dialog for schedule  -->
+
+	<p:dialog modal="true" widgetVar="statusDialog" header="Processing..."
+		draggable="false" closable="false">
+		<p:graphicImage value="/images/design/ajaxloadingbar.gif" />
+	</p:dialog>
+
+
+</ui:composition>

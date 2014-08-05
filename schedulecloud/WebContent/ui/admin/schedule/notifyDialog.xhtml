@@ -1,0 +1,47 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+				xmlns:h="http://java.sun.com/jsf/html"
+				xmlns:f="http://java.sun.com/jsf/core"
+				xmlns:p="http://primefaces.org/ui"
+				xmlns:func="http://onetouch.com/functions"
+				xmlns:o="http://omnifaces.org/ui"
+				xmlns:of="http://omnifaces.org/functions"
+				xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+				xmlns:pe="http://primefaces.org/ui/extensions">
+	
+
+	<!-- notify dialog for schedule  -->
+
+					<p:dialog id="notifieddialog" header="Employee Notified on the following Event/Positions"
+						showEffect="fade" hideEffect="fade" widgetVar="notifydlg"
+						dynamic="true" closeOnEscape="true">
+						
+							
+						<ui:repeat value="#{scheduleEventPosition.notifiedEventPositions}"
+							var="notifiedEVP">
+					          <h:panelGrid columns="2" cellpadding="5">
+				        			<h:outputLabel  value="Event Name: " />
+									<h:outputLabel  value="#{notifiedEVP.event.name}" />
+									
+									<h:outputLabel  value="Event Date: " />
+									<h:outputLabel  value="#{of:formatDate(notifiedEVP.event.startDate, 'MM-dd-yyyy')}" />
+									
+									
+							        
+							        <h:outputLabel  value="Position Name: " />  
+						            <h:outputLabel  value="#{notifiedEVP.position.name}" />
+						            
+						            <h:outputLabel  value="Start Time: " />  
+						            <h:outputLabel  value="#{of:formatDate(notifiedEVP.eventPosition.startTime, 'h:mm a')}" />
+						            <h:outputLabel  value="End Time: " />  
+						            <h:outputLabel  value="#{of:formatDate(notifiedEVP.eventPosition.endTime, 'h:mm a')}" />
+						      </h:panelGrid>  	     
+					          <p:separator/>     
+							
+						</ui:repeat>
+
+
+					</p:dialog>
+
+						
+</ui:composition>

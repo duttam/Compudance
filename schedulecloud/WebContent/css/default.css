@@ -1,0 +1,522 @@
+.TOP td {
+			    vertical-align: top;
+		}
+.TOP1 td:first-child{
+   vertical-align: top;
+   
+}
+.label {
+	width: 100%;
+	padding: 2px;
+}
+
+.value {
+	width: 100%;
+	padding: 2px;
+}
+
+.error {
+	width: 100%;
+	padding: 2px;
+}
+
+body {
+	margin: 0px;
+	padding: 0;
+	color: #616161;
+}
+
+h1,h2,h3 {
+	margin-top: 0;
+}
+
+h1 {
+	font-size: 1.6em;
+	font-weight: normal;
+}
+
+h2 {
+	font-size: 1.6em;
+}
+
+h3 {
+	font-size: 1em;
+	margin-top: 20px;
+}
+
+ul {
+	
+}
+
+a {
+	text-decoration: underline;
+}
+
+a:hover {
+	color:#00679A; text-decoration: underline;
+}
+
+a img {
+	border: none;
+}
+
+img.left {
+	float: left;
+	margin: 0 20px 0 0;
+}
+
+img.right {
+	float: right;
+	margin: 0 0 0 20px;
+}
+
+/* Header */
+#header {
+	padding: 4px 0px;
+	height: 50px;
+	position: relative;
+}
+
+#logo {
+	text-align: left;
+	padding-left: 20px;
+}
+
+/* Menu */
+#menu {
+	position: absolute;
+	top: 25px;
+	right: 15px;
+	padding: 0;
+	height: 59px;
+	overflow: hidden;
+}
+
+#menu ul {
+	margin: 0;
+	list-style: none;
+}
+
+#menu li {
+	display: inline;
+}
+
+#menu li a {
+	display: block;
+	float: left;
+	height: 42px;
+	margin: 0;
+	padding: 18px 40px 0 40px;
+	text-decoration: none;
+	font-size: 20px;
+}
+
+#menu li a:hover {
+	text-decoration: underline;
+}
+
+#globalthemeswitcher {
+	position: absolute;
+	top: 5px;
+	right: 50px;
+}
+
+/* Page */
+#page {
+	padding-right: 20px;
+	padding-left: 20px;
+	padding-top: 10px;
+	background: #FFFFFF;
+	min-height: 590px;
+	height: auto !important;
+	height: 590px;
+	
+}
+.ui-menuitem-text{
+	font-family: Arial, Helvetica, sans-serif;
+}
+.ui-widget button{
+	font-family: Arial, Helvetica, sans-serif;
+}
+/* Content */
+#content {
+	width: 70%;
+	float: left;
+}
+
+.post {
+	padding-bottom: 15px;
+	float: right;
+	width: 80%;
+	border: 1px solid #A8A8A8;
+}
+
+.post h1 {
+	font-weight: normal;
+}
+
+.title {
+	height: 30px;
+	margin-left: 10px;
+	padding: 8px 0 0 20px;
+}
+
+.title a {
+	border-bottom: none;
+	color: #FFFFFF;
+}
+
+.title a:hover {
+	border-bottom: 1px dotted #000000;
+}
+
+.submenu-title {
+	padding: 4px 10px;
+}
+
+.submenu-content {
+	text-align: center;
+}
+
+.byline {
+	margin: -60px 20px 20px 20px;
+}
+
+.byline a {
+	color: #DC8700;
+}
+
+.tag {
+	padding: 0 15px;
+}
+
+.entry {
+	padding: 0 20px;
+}
+
+.entry p {
+	line-height: 200%;
+}
+
+.links {
+	padding: 4px 0px;
+	text-align: right;
+	font-weight: bold;
+}
+
+.links a {
+	border: none;
+}
+
+.links a:hover {
+	
+}
+
+#sidebar {
+	float: left;
+	width: 16%;
+	padding: 0 10px;
+	margin-left: -1px;
+	overflow: hidden;
+}
+
+#sidebar a.ui-state-hover,#sidebar a.ui-state-highlight {
+	border: 0 none;
+	text-decoration: none;
+	font-weight: normal;
+}
+
+#sidebar table {
+	width: 100%;
+}
+
+#sidebar table td {
+	vertical-align: top;
+}
+
+#sidebar ul {
+	padding: 0;
+	margin: 0;
+}
+
+#sidebar ul li {
+	list-style-type: none;
+	padding: 1px;
+}
+
+/* Footer */
+#footer {
+	margin: 0 auto;
+	padding: 0 20px;
+	font-size: 14px;
+	position: fixed;
+	left: 0px;
+	bottom: 0px;
+	height: 30px;
+	width: 100%;
+}
+
+#footer p {
+	margin: 0;
+	padding: 15px 0 0 0;
+	text-align: center;
+}
+
+#footer a {
+	
+}
+
+#footer .link {
+	float: right;
+}
+
+#footer .copyright {
+	float: left;
+}
+
+.homeText {
+	line-height: 175%;
+}
+
+.homeMenu {
+	width: 200px;
+	float: left;
+	margin-right: 10px
+}
+
+.themeMenu {
+	overflow: auto;
+	height: 300px;
+	width: 200px;
+}
+
+.dp-xml {
+	width: 1000px;
+}
+
+.ui-themeswitcher a.ui-selectonemenu-label-container {
+	text-decoration: none !important;
+}
+
+.ui-widget {
+	font-size: 12px !important;
+	
+}
+
+.ui-menu {
+	width: 250px;
+}
+
+.ui-panelgrid tr, .ui-panelgrid td {
+border:0 !important;
+} 
+#subNavBar {
+	background-image: url("/assets/images/subNavBarBackground.jpg");
+	background-repeat: repeat-x;
+	border-bottom: 1px solid #97B472;
+	clear: both;
+	display: inline;
+	float: left;
+	height: 30px;
+	width: 100%;
+}
+
+#mainContent {
+	min-height: 800px;
+	overflow: hidden;
+	padding-bottom: 16px;
+	display: block;
+}
+
+.fc-content .fc-state-default {
+	border-style: solid;
+	border-color: #FF00FF; /* inner border color */
+}
+
+.table1 {
+        border-width: 0;
+}
+.tableRow1 {
+	font-family: Arial, Helvetica, sans-serif;
+	color: #203034;
+        background-color: #FFFFFF;
+        height: auto
+}
+.tableRowShade1 {
+	font-family: Arial, Helvetica, sans-serif;
+	color: #203034;
+        background-color: #999999;
+        height: auto
+}
+.bodywhiteBLD {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 11.5px;
+	color: #FFFFFF;
+	font-weight: bold;
+}
+.tableHdr1 {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 14px;
+	color: #00679A;
+       	font-weight: bold;
+        text-align: center
+}
+.tableHdr2 {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	color: #00679A;        
+	font-weight: bold;
+}
+.tableHdr3 {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	color: #FFFFFF;
+        background-color: #203034;
+	font-weight: bold;
+        border-width: 1px 1px;
+        border-style: solid;
+        border-color: white;
+}
+.tableHdr4 {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	color: #ED1C24;
+        background-color: #203034;
+	font-weight: bold;
+        text-align: right
+}
+.tableCellSelection {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 11.5px;
+	color: #203034;
+	font-weight: bold;
+        background-color: #efefef;
+}
+.tableCellBold{
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	font-weight: bold;
+	color: #203034;
+        border: 0;
+        padding: 2px;
+}
+.cellBoldCenter{
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	font-weight: bold;
+	color: #203034;
+        border: 0;
+        padding: 2px;
+        text-align: center;
+}
+.tableCellLessBold{
+
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	font-weight: bold;
+	color: #777777;
+        border: 0;
+        padding: 2px;
+}
+.tableCellError {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 11px;
+	font-weight: bold;
+	color: maroon;
+        border: 1px;
+        border-color: maroon;
+        padding: 2px;
+}
+.tableCell1 {
+
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 11px;
+	color: #203034;
+        border: 0;
+        padding: 2px;
+}
+.tableCell1Shade {
+
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 11px;
+	color: #203034;
+        background-color: #999999;
+        height: auto;
+        border: 0;
+        padding: 2px;
+}
+.tableCell1Center {
+
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 11px;
+	color: #203034;
+        border: 0;
+        padding: 2px;
+        text-align: center;
+   }
+.tableCell1Right {
+
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 11px;
+	color: #203034;
+        border: 0;
+        padding: 2px;
+        text-align: right;
+        vertical-align: right;
+   }
+.tableCellSub {
+
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 11px;
+        font-style: italic;
+	color: #203034;
+        border: 0;
+        padding: 2px;
+}
+.tableCellDeEmph {
+
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 11px;
+        font-style: italic;
+	color: gray;
+        border: 0;
+        padding: 2px;
+}
+.bodyError {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 11.5px;
+	color: #203034;
+	font-weight: bold;
+}
+.bodyErrorRed {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 11.5px;
+	color: red;
+	font-weight: bold;
+}
+.bodyRed {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12.5px;
+	color: red;
+	font-weight: bold;
+}
+.tiny1 {
+    color: #203034;
+    font-family: Arial,Helvetica,sans-serif;
+    font-size: 9px;
+}
+.ui-datalist-data {
+                list-style-type: none;
+                padding:2px;
+            }
+/* .ui-widget-content {
+    background: none repeat scroll 0 0 #FFFFFF;
+    border: 1px solid #A8A8A8;
+    color: #4F4F4F;
+} */
+.ui-datalist-item {
+                padding:2px;
+            }
+/* .ui-accordion {
+    width: 70%;
+} */

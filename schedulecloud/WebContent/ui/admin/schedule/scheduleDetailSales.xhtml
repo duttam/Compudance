@@ -1,0 +1,112 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:func="http://onetouch.com/functions"
+	xmlns:o="http://omnifaces.org/ui"
+	xmlns:of="http://omnifaces.org/functions"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+	xmlns:pe="http://primefaces.org/ui/extensions"
+	template="../../../template/admincontenttemplate.xhtml">
+    
+
+	<ui:define name="mainContent">
+		<h:form id="scheduleDetail" prependId="false">
+		<style type="text/css">
+		
+			.sickStyle {
+			    
+			    color: green;
+			    width:65%;
+			}
+			.noStyle{
+				width:65%;
+			}
+			.ui-carousel .ui-carousel-header .ui-carousel-header-title {
+   				display:inline;
+			}
+			#repeatId_content.ui-widget-content{
+				border:0px ;
+			}
+			.ui-datagrid .ui-datagrid-header, .ui-datagrid .ui-datagrid-footer {
+			    padding: 10px 10px;
+			    text-align: center;
+			    height: 25px;
+			}
+			.ui-orderlist .ui-orderlist-list {
+			    
+			    width: 99.5%;
+			}
+			#quotescointainer{
+			    width: 100%;
+			    font-size: 12px;
+			    overflow: hidden; /* contain floated elements */
+			    
+			}
+			#quotesleft {
+			    float: left; 
+			    width: 25%;
+			    
+			}
+			#quotescenter { 
+			    float: left;
+			    
+			    width: 10%;
+			}
+			#quotesright{
+			    float: left;
+			    width: 65%;
+			    
+			}
+			#left {
+			    display: table-cell;
+			    min-width: 350px;
+			}
+			#center {
+			    display: table-cell;
+			    min-width: 10px;
+			}
+			#right {
+			    display: table-cell;
+			    width: 100%;
+			    vertical-align: top;
+			}
+		</style>
+			<br></br>
+			<div style="height:100%">
+			<p:growl id="growl" showDetail="true" sticky="false" showSummary="false"/>
+			<p:panel header="Event Detail">
+				
+				<f:facet name="actions">  
+					<h:panelGroup layout="block" style="float:right">
+		            	<h:panelGrid columns="3">
+								<h:panelGroup>
+								<h:commandLink action="#{scheduleDetailBean.employeeSchedulePreProcessorPDF('landscape')}">
+									<p:graphicImage value="/images/pdf.png" title="export as pdf" />
+								</h:commandLink>
+								<br></br>
+								<h:outputLabel value="Landscape"></h:outputLabel>
+								</h:panelGroup>
+								<h:outputLabel></h:outputLabel>
+								<h:panelGroup>
+								<h:commandLink action="#{scheduleDetailBean.employeeSchedulePreProcessorPDF('potrait')}">
+									<p:graphicImage value="/images/pdf.png" title="export as pdf" />
+								</h:commandLink>
+								<br></br>
+								<h:outputLabel value="Potrait"></h:outputLabel>
+								</h:panelGroup>
+							</h:panelGrid>
+		            </h:panelGroup>
+		        </f:facet>
+		        
+    				<ui:include src="eventDetailFacelet.xhtml" />
+    				<p></p>
+    				<ui:include src="pdfSchEmpRpt.xhtml" />
+				</p:panel>
+			</div>
+						
+		</h:form>
+				
+	</ui:define>
+</ui:composition>

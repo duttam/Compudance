@@ -1,0 +1,751 @@
+package com.onetouch.model.domainobject;
+
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Map;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.List;
+
+import javax.faces.context.FacesContext;
+import javax.faces.event.PhaseId;
+import javax.xml.bind.annotation.XmlRootElement;
+
+import org.apache.commons.io.IOUtils;
+import org.codehaus.jackson.map.annotate.JsonSerialize;
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeComparator;
+import org.joda.time.LocalDate;
+import org.joda.time.LocalTime;
+import org.primefaces.model.DefaultStreamedContent;
+import org.primefaces.model.StreamedContent;
+import org.primefaces.model.UploadedFile;
+
+
+
+@XmlRootElement
+@JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
+public class Employee implements Serializable{
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	private Integer id; // primary key, increment by 1 
+	private String invitecode; 
+	private String userName;
+	private String firstname; 
+	private String lastname; 
+	private Date dob;
+	private String email; 
+	private String oldPassword;
+	private String password;
+	private String encodedNewPassword;
+	private String address1;  
+	private String address2;
+	private String city; 
+	private State state=new State("", "");
+	private String zipcode; 
+	private String homephone; 
+	private String cellphone;
+	private String fax;
+	private boolean getSMS; // char to boolean mapping, Y/y is true, N/n is false
+	private boolean getEmail; //char to boolean mapping, Y/y is true, N/n is false
+	private String imageName; // folder location of employee photo
+	private String imageType;
+	private byte[] imageBytes;
+	private Tenant tenant; // company to which the employee belong
+	private Region region;
+	private EmployeeRate empRate;
+	private Integer hours=0;
+	private Integer minutes=0;
+	private Integer breakHours = 0;
+	private Integer breakMinutes = 0;
+	private BigDecimal totalCost;
+	private String adminNotes;
+	private boolean accept_policy;
+	private String employeeStatus;
+	private String employeeUploadStatus;
+	private Schedule schedule; // latest schedule
+	private SignInOut signInOut;
+	private Event currentScheduledEvent;
+	private List<Position> assignedPositions = new ArrayList<Position>();
+	 
+	private List<Integer>  assignedPositionIds = new ArrayList<Integer>();
+	private List<Availability> allAvailability;
+	
+	private boolean selected;
+	private boolean disable;
+	private Integer rating = -1;
+	private Integer check;
+	private Integer scheduleId; //temporarily hold scheduleid for update purpose
+	private Integer eventPositionId;// temporarily hold event position id
+	private InputStream inputStream;
+	private Position position;
+	private List<String> modeContact;
+	private List<TimeOffRequest> timeOffList;
+	
+	private String positionName;
+	private Date shiftStartTime;
+	private Date shiftEndTime;
+	private String sickStyle;
+	private boolean sick;
+	private String uploadedPositionString;
+	private boolean scAdmin;
+	private boolean scManager;
+	private boolean scSalesPerson;
+	private boolean oldSCAdmin;
+	private boolean oldSCManager;
+	private boolean oldSCSalesPerson;
+	private String availableLabel;
+	private boolean available;
+	private List<Location> assignedSalesPersonLocations;
+	private List<Location> restrictedLocations;
+	private Map<Object,Object> emailAttributes;
+	
+	public Map<Object, Object> getEmailAttributes() {
+		return emailAttributes;
+	}
+	public void setEmailAttributes(Map<Object, Object> emailAttributes) {
+		this.emailAttributes = emailAttributes;
+	}
+	public boolean isOldSCAdmin() {
+		return oldSCAdmin;
+	}
+	public void setOldSCAdmin(boolean oldSCAdmin) {
+		this.oldSCAdmin = oldSCAdmin;
+	}
+	public boolean isOldSCManager() {
+		return oldSCManager;
+	}
+	public void setOldSCManager(boolean oldSCManager) {
+		this.oldSCManager = oldSCManager;
+	}
+	
+	public boolean isScSalesPerson() {
+		return scSalesPerson;
+	}
+	public void setScSalesPerson(boolean scSalesPerson) {
+		this.scSalesPerson = scSalesPerson;
+	}
+	public boolean isOldSCSalesPerson() {
+		return oldSCSalesPerson;
+	}
+	public void setOldSCSalesPerson(boolean oldSCSalesPerson) {
+		this.oldSCSalesPerson = oldSCSalesPerson;
+	}
+	public String getPositionName() {
+		return positionName;
+	}
+	public void setPositionName(String positionName) {
+		this.positionName = positionName;
+	}
+	public Date getShiftStartTime() {
+		return shiftStartTime;
+	}
+	public void setShiftStartTime(Date shiftStartTime) {
+		this.shiftStartTime = shiftStartTime;
+	}
+	public Date getShiftEndTime() {
+		return shiftEndTime;
+	}
+	public void setShiftEndTime(Date shiftEndTime) {
+		this.shiftEndTime = shiftEndTime;
+	}
+	public Employee() {
+		
+	}
+	public Employee(Tenant tenant){
+		this.tenant = tenant;
+	}
+	public Employee(Tenant tenant,String employeeStatus){
+		this.tenant = tenant;
+		this.employeeStatus = employeeStatus;
+	}
+	public Employee(String firstname, String lastname) {
+		
+		this.firstname = firstname;
+		this.lastname = lastname;
+	}
+
+
+	public Employee(int id) {
+		this.id = id;
+	}
+	public Employee(Integer id, Tenant tenant) {
+		this.id = id;
+		this.tenant = tenant;
+	}
+	public Integer getId() {
+		return id;
+	}
+	public void setId(Integer id) {
+		this.id = id;
+	}
+		
+	public String getInvitecode() {
+		return invitecode;
+	}
+	public void setInvitecode(String invitecode) {
+		this.invitecode = invitecode;
+	}
+	public String getFirstname() {
+		return firstname;
+	}
+	public void setFirstname(String firstname) {
+		this.firstname = firstname;
+	}
+	public String getLastname() {
+		return lastname;
+	}
+	public void setLastname(String lastname) {
+		this.lastname = lastname;
+	}
+	public String getEmail() {
+		return email;
+	}
+	public void setEmail(String email) {
+		this.email = email;
+	}
+	public String getAddress1() {
+		return address1;
+	}
+	public void setAddress1(String address1) {
+		this.address1 = address1;
+	}
+	public String getAddress2() {
+		return address2;
+	}
+	public void setAddress2(String address2) {
+		this.address2 = address2;
+	}
+	public String getCity() {
+		return city;
+	}
+	public void setCity(String city) {
+		this.city = city;
+	}
+	/*public String getState() {
+		return state;
+	}
+	public void setState(String state) {
+		this.state = state;
+	}
+	public String getStatecode() {
+		return statecode;
+	}
+	public void setStatecode(String statecode) {
+		this.statecode = statecode;
+	}*/
+	
+	public String getZipcode() {
+		return zipcode;
+	}
+	public String getUserName() {
+		return userName;
+	}
+	public void setUserName(String userName) {
+		this.userName = userName;
+	}
+	public State getState() {
+		return state;
+	}
+	public void setState(State state) {
+		this.state = state;
+	}
+	public void setZipcode(String zipcode) {
+		this.zipcode = zipcode;
+	}
+	public String getHomephone() {
+		return homephone;
+	}
+	public void setHomephone(String homephone) {
+		this.homephone = homephone;
+	}
+	public String getCellphone() {
+		return cellphone;
+	}
+	public void setCellphone(String cellphone) {
+		this.cellphone = cellphone;
+	}
+	public String getFax() {
+		return fax;
+	}
+	public void setFax(String fax) {
+		this.fax = fax;
+	}
+	public boolean isGetSMS() {
+		return getSMS;
+	}
+	public void setGetSMS(boolean getSMS) {
+		this.getSMS = getSMS;
+	}
+	public boolean isGetEmail() {
+		return getEmail;
+	}
+	public void setGetEmail(boolean getEmail) {
+		this.getEmail = getEmail;
+	}
+		
+	public byte[] getImageBytes() {
+		return imageBytes;
+	}
+	public void setImageBytes(byte[] imageBytes) {
+		this.imageBytes = imageBytes;
+	}
+	public String getImageName() {
+		return imageName;
+	}
+	public void setImageName(String imageName) {
+		this.imageName = imageName;
+	}
+	public String getImageType() {
+		return imageType;
+	}
+	public void setImageType(String imageType) {
+		this.imageType = imageType;
+	}
+	public Tenant getTenant() {
+		return tenant;
+	}
+	public void setTenant(Tenant tenant) {
+		this.tenant = tenant;
+	}
+	
+	public String getPassword() {
+		return password;
+	}
+	public void setPassword(String password) {
+		this.password = password;
+	}
+	public EmployeeRate getEmpRate() {
+		return empRate;
+	}
+	public void setEmpRate(EmployeeRate empRate) {
+		this.empRate = empRate;
+	}
+	public Schedule getSchedule() {
+		return schedule;
+	}
+
+
+	public void setSchedule(Schedule schedule) {
+		this.schedule = schedule;
+	}
+
+
+	public String getAdminNotes() {
+		return adminNotes;
+	}
+
+
+	public void setAdminNotes(String adminNotes) {
+		this.adminNotes = adminNotes;
+	}
+	public boolean isAccept_policy() {
+		return accept_policy;
+	}
+	public void setAccept_policy(boolean accept_policy) {
+		this.accept_policy = accept_policy;
+	}
+	public Date getDob() {
+		return dob;
+	}
+	public void setDob(Date dob) {
+		this.dob = dob;
+	}
+	public List<Availability> getAllAvailability() {
+		return allAvailability;
+	}
+	public void setAllAvailability(List<Availability> allAvailability) {
+		this.allAvailability = allAvailability;
+	}
+	
+	public String getEmployeeStatus() {
+		return employeeStatus;
+	}
+	public void setEmployeeStatus(String employeeStatus) {
+		this.employeeStatus = employeeStatus;
+	}
+	
+	
+	public List<Position> getAssignedPositions() {
+		return assignedPositions;
+	}
+	public void setAssignedPositions(List<Position> assignedPositions) {
+		this.assignedPositions = assignedPositions;
+	}
+	
+	public List<Integer> getAssignedPositionIds() {
+		return assignedPositionIds;
+	}
+	public void setAssignedPositionIds(List<Integer> assignedPositionIds) {
+		this.assignedPositionIds = assignedPositionIds;
+	}
+	
+	public Integer getRating() {
+		return rating;
+	}
+	public void setRating(Integer rating) {
+		this.rating = rating;
+	}
+	public boolean isSelected() {
+		return selected;
+	}
+	public void setSelected(boolean selected) {
+		this.selected = selected;
+	}
+	
+	public Integer getCheck() {
+		return check;
+	}
+	public void setCheck(Integer check) {
+		this.check = check;
+	}
+	
+	public Integer getScheduleId() {
+		return scheduleId;
+	}
+	public void setScheduleId(Integer scheduleId) {
+		this.scheduleId = scheduleId;
+	}
+	public InputStream getInputStream() {
+		return inputStream;
+	}
+	public void setInputStream(InputStream inputStream) {
+		this.inputStream = inputStream;
+	}
+	
+	public Position getPosition() {
+		return position;
+	}
+	public void setPosition(Position position) {
+		this.position = position;
+	}
+	public StreamedContent getLoadImage() {
+	    InputStream dbStream;
+	    StreamedContent dbImage=null;
+	    FacesContext context = FacesContext.getCurrentInstance();
+	    if (context==null)
+        	return new DefaultStreamedContent();
+        if (context.getCurrentPhaseId() == PhaseId.RENDER_RESPONSE) {
+            // So, we're rendering the HTML. Return a stub StreamedContent so that it will generate right URL.
+            return new DefaultStreamedContent();
+        }else{
+        	try {
+        	    dbStream = this.inputStream;
+        	    //dbStream = new ByteArrayInputStream(this.imageBytes);
+
+        	    dbImage = new DefaultStreamedContent(dbStream,this.imageType,this.imageName);
+        	    }catch (Exception e) {
+        			// TODO: handle exception
+        		}
+        	    return dbImage;
+        }
+	    
+	}
+	public StreamedContent getImage() throws IOException {
+        FacesContext context = FacesContext.getCurrentInstance();
+        if (context==null)
+        	return new DefaultStreamedContent();
+        if (context.getCurrentPhaseId() == PhaseId.RENDER_RESPONSE) {
+            // So, we're rendering the HTML. Return a stub StreamedContent so that it will generate right URL.
+            return new DefaultStreamedContent();
+        }
+        else {
+            
+            return new DefaultStreamedContent(new ByteArrayInputStream(this.imageBytes),this.imageType,this.imageName);
+        }
+    }
+	
+	public boolean isDisable() {
+		return disable;
+	}
+	public void setDisable(boolean disable) {
+		this.disable = disable;
+	}
+	
+	/*public String getLoadImage(){
+		File file = new File(this.imageName);
+		OutputStream output = null;
+		try {
+			output = new FileOutputStream(file);
+			IOUtils.copy(this.inputStream, output);
+		} catch (Exception e) {
+			// TODO: handle exception
+		}finally {
+			IOUtils.closeQuietly(output);
+		}
+		return this.imageName;
+    }*/
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		return result;
+	}
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Employee other = (Employee) obj;
+		if (id == null) {
+			if (other.id != null)
+				return false;
+		} else if (!id.equals(other.id))
+			return false;
+		return true;
+	}
+	
+	public SignInOut getSignInOut() {
+		return signInOut;
+	}
+	public void setSignInOut(SignInOut signInOut) {
+		this.signInOut = signInOut;
+	}
+	public Integer getHours() {
+		if(tenant!=null && tenant.getBreakOption().equalsIgnoreCase("paid"))
+			return hours;
+		else
+			return (hours-breakHours);
+	}
+	public void setHours(Integer hours) {
+		this.hours = hours;
+	}
+	public Integer getMinutes() {
+		//if(tenant!=null && tenant.getBreakOption()!=null){
+			if(tenant!=null && tenant.getBreakOption().equalsIgnoreCase("paid"))
+				return minutes;
+			else
+				return (minutes - breakMinutes);
+		/*}else
+			return 0;*/
+			
+	}
+	public void setMinutes(Integer minutes) {
+		this.minutes = minutes;
+	}
+	
+	public Integer getBreakHours() {
+		return breakHours;
+	}
+	public void setBreakHours(Integer breakHours) {
+		this.breakHours = breakHours;
+	}
+	public Integer getBreakMinutes() {
+		return breakMinutes;
+	}
+	public void setBreakMinutes(Integer breakMinutes) {
+		this.breakMinutes = breakMinutes;
+	}
+	/*public BigDecimal getTotalCost() {
+		hours = hours==0?0:hours;
+		minutes = minutes==0?0:minutes;
+		BigDecimal shiftHrs = new BigDecimal(hours);
+		BigDecimal shiftMins = new BigDecimal(minutes);
+		this. totalCost = hourlyRate.multiply(shiftHrs).add((hourlyRate.divide(new BigDecimal(60),2).multiply(shiftMins)));
+		
+		return totalCost;
+	}
+	*/
+	
+	
+	public void setTotalCost(BigDecimal totalCost) {
+		this.totalCost = totalCost;
+	}
+	public String getSickStyle() {
+		return sickStyle;
+	}
+	public void setSickStyle(String sickStyle) {
+		this.sickStyle = sickStyle;
+	}
+	public boolean isSick() {
+		return sick;
+	}
+	public void setSick(boolean sick) {
+		this.sick = sick;
+	}
+	public String getOldPassword() {
+		return oldPassword;
+	}
+	public void setOldPassword(String oldPassword) {
+		this.oldPassword = oldPassword;
+	}
+	public List<TimeOffRequest> getTimeOffList() {
+		return timeOffList;
+	}
+	public void setTimeOffList(List<TimeOffRequest> timeOffList) {
+		this.timeOffList = timeOffList;
+	}
+	public Event getCurrentScheduledEvent() {
+		return currentScheduledEvent;
+	}
+	public void setCurrentScheduledEvent(Event currentScheduledEvent) {
+		this.currentScheduledEvent = currentScheduledEvent;
+	}
+	
+	public BigDecimal getRegPay() {
+		BigDecimal regPay = new BigDecimal(0.0);
+		if(empRate!=null && empRate.getHourlyRate()!=null){
+			regPay = getTotalLaborCost(empRate.getHourlyRate());
+		}
+		return regPay;
+	}
+	// more than 8 hours
+	public BigDecimal getOtPay() {
+		BigDecimal otPay = new BigDecimal(0.0);
+		int otHour = this.getHours()-8;
+		if(tenant!=null && tenant.getOvertimeOption()!=null){
+			if(tenant.getOvertimeOption().equalsIgnoreCase("dayOT") && otHour>=0){
+				
+				BigDecimal overtimeRatefactor = new BigDecimal(tenant.getOvertimeRate());
+				BigDecimal overtimeRate = empRate.getHourlyRate().multiply(overtimeRatefactor);
+				if(otHour>0){
+					
+					int otMin = this.getMinutes();
+					otPay = overtimeRate.multiply(new BigDecimal(otHour)).add((overtimeRate.divide(new BigDecimal(60),2).multiply(new BigDecimal(otMin))));
+				}else{
+					int otMin = this.getMinutes();
+					if(otMin>0){
+						otPay = overtimeRate.divide(new BigDecimal(60),2).multiply(new BigDecimal(otMin));
+					}
+				}
+			}
+		}
+		/*if(empRate!=null && empRate.getOvertimeHourlyrate()!=null){
+			// calculate ot 
+		}
+		else if(empRate!=null && empRate.getHourlyRate()!=null){
+			otPay = getTotalLaborCost(empRate.getHourlyRate());
+		}else{}*/
+		return otPay;
+	}
+	// more than 12 hours
+	public BigDecimal getDtPay() {
+		BigDecimal dtPay = new BigDecimal(0.0);
+		return dtPay;
+	}
+	public BigDecimal getTotalPay(){
+		BigDecimal totalPay = new BigDecimal(0.0);
+		totalPay = this.getRegPay().add(this.getOtPay().add(this.getDtPay()));
+		return totalPay;
+	}
+	public BigDecimal getTotalLaborCost(BigDecimal hourlyRate) {
+		BigDecimal totalLaborCost = new BigDecimal(0.0);
+		hours = hours==0?0:hours;
+		minutes = minutes==0?0:minutes;
+		BigDecimal shiftHrs = new BigDecimal(hours);
+		BigDecimal shiftMins = new BigDecimal(minutes);
+		
+		breakHours = breakHours==0?0:breakHours;
+		breakMinutes = breakMinutes==0?0:breakMinutes;
+		BigDecimal breakHrs = new BigDecimal(breakHours);
+		BigDecimal breakMins = new BigDecimal(breakMinutes);
+		if (this.totalCost==null) {
+			this.totalCost = hourlyRate.multiply(shiftHrs).add((hourlyRate.divide(new BigDecimal(60),2).multiply(shiftMins)));
+			totalLaborCost = hourlyRate.multiply(breakHrs).add((hourlyRate.divide(new BigDecimal(60),2).multiply(breakMins)));
+			
+        }
+		
+		return this.totalCost.subtract(totalLaborCost);
+		
+		
+	}
+	public String getEmployeeUploadStatus() {
+		return employeeUploadStatus;
+	}
+	public void setEmployeeUploadStatus(String employeeUploadStatus) {
+		this.employeeUploadStatus = employeeUploadStatus;
+	}
+	public String getUploadedPositionString() {
+		return uploadedPositionString;
+	}
+	public void setUploadedPositionString(String uploadedPositionString) {
+		this.uploadedPositionString = uploadedPositionString;
+	}
+	public boolean isScAdmin() {
+		return scAdmin;
+	}
+	public void setScAdmin(boolean scAdmin) {
+		this.scAdmin = scAdmin;
+	}
+	public boolean isScManager() {
+		return scManager;
+	}
+	public void setScManager(boolean scManager) {
+		this.scManager = scManager;
+	}
+	public String getAvailableLabel() {
+		return availableLabel;
+	}
+	public void setAvailableLabel(String availableLabel) {
+		this.availableLabel = availableLabel;
+	}
+	public boolean isAvailable() {
+		return available;
+	}
+	public void setAvailable(boolean available) {
+		this.available = available;
+	}
+	public Integer getEventPositionId() {
+		return eventPositionId;
+	}
+	public void setEventPositionId(Integer eventPositionId) {
+		this.eventPositionId = eventPositionId;
+	}
+	public List<Location> getAssignedSalesPersonLocations() {
+		return assignedSalesPersonLocations;
+	}
+	public void setAssignedSalesPersonLocations(
+			List<Location> assignedSalesPersonLocations) {
+		this.assignedSalesPersonLocations = assignedSalesPersonLocations;
+	}
+	public List<Location> getRestrictedLocations() {
+		return restrictedLocations;
+	}
+	public void setRestrictedLocations(List<Location> restrictedLocations) {
+		this.restrictedLocations = restrictedLocations;
+	}
+	public Region getRegion() {
+		return region;
+	}
+	public void setRegion(Region region) {
+		this.region = region;
+	}
+	
+	
+	/*public boolean isAdmin(){
+		
+		for(Position position : assignedPositions){
+			if(position.getName().equalsIgnoreCase("Admin"))
+				return true;
+		}
+		
+		return false;
+	}
+	
+	public boolean isManager(){
+		
+		for(Position position : assignedPositions){
+			if(position.getName().equalsIgnoreCase("Manager"))
+				return true;
+		}
+		
+		return false;
+	}*/
+}

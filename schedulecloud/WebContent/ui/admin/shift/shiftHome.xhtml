@@ -1,0 +1,96 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	>
+    
+	
+		<p:tab id="shiftTab" title="Manage Shift" titleStyle="font-size: 11px" >	
+			
+			<div align="right">
+			<p:messages id="growlmsg" showDetail="true" />
+			<h:panelGrid columns="1" >
+				
+				<p:commandButton value="add Shift" actionListener="#{shiftController.clickAddShift}" oncomplete="shiftdlg.show();">
+					<f:param name="action" value="addshift" />
+				</p:commandButton>
+				
+			</h:panelGrid>
+			<br />
+			<div align="center">
+			<p:dataTable id="shifttable" var="shift"
+				value="#{shiftHome.shiftList}" paginator="true" rows="10" style="width:80%">
+
+				<p:column headerText="Shift Name" sortBy="#{shift.name}">
+					<div align="center">
+						<p:commandLink value="#{shift.name}" actionListener="#{shiftController.clickEditShift}"  oncomplete="shiftdlg.show();" >>
+							<f:param name="action" value="editshift" />
+							<f:param name="id" value="#{shift.id}" />
+						</p:commandLink>
+					</div>
+				</p:column>
+				<p:column headerText="Start Time">
+					<div align="center">
+						<h:outputText value="#{shift.startTime}">  
+                			<f:convertDateTime pattern="hh:mm a" />  
+            			</h:outputText>
+					</div>
+				</p:column>
+				
+				<p:column headerText="End Time">
+					<div align="center">
+						<h:outputText value="#{shift.endTime}">  
+                			<f:convertDateTime pattern="hh:mm a" />  
+            			</h:outputText>
+					</div>
+				</p:column>
+				
+			</p:dataTable>
+			</div>
+			</div>
+			
+			<br />
+			
+			<p:dialog id="shiftDialog" header="Add Shift" dynamic="true" widgetVar="shiftdlg">
+				
+				<div align="center">
+		
+					<h:panelGrid columns="4" >
+						<p:outputLabel value="Shift Tag: *" />
+						<p:outputLabel />
+						<p:inputText id="sname" value="#{shiftController.shift.name}"></p:inputText>
+						<p:message for="sname" id="snameMsg" display="text" style="padding-left:30px;"/>
+						<p:outputLabel value="Choose Color: *" />
+						<p:outputLabel />
+						<p:colorPicker id="spopupCP" value="#{shiftController.shift.shiftColor}" widgetVar="picker" />  
+						<p:message for="spopupCP"/>
+							
+						<p:outputLabel value="Start Time"/>
+						<p:outputLabel />
+						<p:calendar id="starttime" value="#{shiftController.shift.startTime}" timeOnly="true" pattern="hh:mm a"/>
+						<p:message for="starttime"/>
+						<p:outputLabel value="End Time"/>
+						<p:outputLabel />
+						<p:calendar id="endtime" value="#{shiftController.shift.endTime}" timeOnly="true" pattern="hh:mm a"/>
+						<p:message for="endtime"/>
+					</h:panelGrid>
+					<h:panelGrid columns="1">										
+							<p:outputLabel value="Notes"/>
+							
+							<p:inputTextarea id="notes" value="#{shiftController.shift.notes}" cols="50" rows="4"/>
+							
+					</h:panelGrid>
+					<p></p>
+					<h:panelGrid columns="3">
+					<p:commandButton id="add" value="Add Shift" actionListener="#{shiftController.addShift}" update="shifttable,:growl" oncomplete="shiftdlg.hide();" rendered="#{empty shiftController.shift.id}"/>
+					<p:outputLabel></p:outputLabel>
+					<p:commandButton value="Update" actionListener="#{shiftController.updateShift}" update="shifttable,:growl" oncomplete="shiftdlg.hide();"  rendered="#{not empty shiftController.shift.id}"/>
+					
+					</h:panelGrid>
+					</div>
+					</p:dialog>
+					
+		</p:tab>
+	
+</ui:composition>

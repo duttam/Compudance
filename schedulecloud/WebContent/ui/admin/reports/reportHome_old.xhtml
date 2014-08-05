@@ -1,0 +1,75 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions"
+	template="../../../template/admincontenttemplate.xhtml">
+    
+
+	<ui:define name="mainContent">
+		<h:form id="reportForm" prependId="false">
+		<style type="text/css">
+			
+			#quotescointainer{
+			    width: 100%;
+			    font-size: 12px;
+			    overflow: hidden; /* contain floated elements */
+			    
+			}
+			#quotesleft {
+			
+			    float: left; 
+			    width: 70%;
+			    
+			}
+			#quotescenter { 
+			    float: left;
+			    width: 30%;
+			}
+			.downloadButton {
+			    width: 40px;
+			    height: 40px;
+			}
+			
+			
+			.ui-state-default .ui-icon-xls {
+				background-image: url(../../../images/excel.png);
+			    width: 40px;
+			    height: 40px;
+			    left: 30%;
+			    top : 30%
+			}
+		</style>
+		<br></br>
+		
+        
+			<div style="height:100%">
+				<p:panel header="Reports">
+					<h:panelGroup layout="block" style="float:right; height:10px;">
+					<p:selectOneButton value="#{reportHome.reportId}" >  
+			            <f:selectItem itemLabel="Labor Forecast" itemValue="1" />  
+			            <f:selectItem itemLabel="Employee Schedule" itemValue="2" />  
+			            
+			            <f:selectItem itemLabel="Event Detail" itemValue="4" />  
+			            <f:selectItem itemLabel="Detail Availability Report" itemValue="5" />
+			        <p:ajax event="change" process="@this" listener="#{reportHome.ChangeReportView}" update="reportView"></p:ajax>
+			        </p:selectOneButton>
+			        <br></br>
+			        </h:panelGroup>
+					
+					<p:spacer height="30"></p:spacer>
+					<p></p>
+					<h:panelGroup id="reportView">
+						<ui:include src="#{reportHome.reportView}" />
+					
+					</h:panelGroup>
+					
+					    
+						      
+						
+				</p:panel>
+			</div>
+		</h:form>
+	</ui:define>
+</ui:composition>

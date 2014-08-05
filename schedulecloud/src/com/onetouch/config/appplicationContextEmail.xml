@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:task="http://www.springframework.org/schema/task"
+	   xsi:schemaLocation="http://www.springframework.org/schema/beans 
+                           http://www.springframework.org/schema/beans/spring-beans.xsd
+                           http://www.springframework.org/schema/context 
+                           http://www.springframework.org/schema/context/spring-context.xsd
+                           http://www.springframework.org/schema/task
+        				   http://www.springframework.org/schema/task/spring-task-3.0.xsd">
+
+    <context:component-scan base-package="com.onetouch" />
+	<task:annotation-driven executor="emailExecutor"/>
+	<task:executor id="emailExecutor" pool-size="20"/>
+    <!-- Edit 'mail.properties' to set a valid user and password for the mail sender. -->
+    <!-- <context:property-placeholder location="classpath:com/onetouch/config/mail.properties" /> -->
+    
+    <bean id="velocityEngine" class="org.springframework.ui.velocity.VelocityEngineFactoryBean"  
+          p:resourceLoaderPath="classpath:com/onetouch/resource/email/" 
+          p:preferFileSystemAccess="false"/>
+    
+    <bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
+    	<property name="host" value="${mail.smtp.host}" />
+    	<!-- <property name="host" value="smtp.gmail.com" />-->
+		<property name="port" value="587" />
+		<property name="username" value="AKIAI6PNXJBYCAJFVBEQ" />
+		<property name="password" value="AuhLSPGlnQLi+fbXq3Dg/dVfk20qfct/aDBM2ogkAwZW" />
+    	<property name="javaMailProperties">
+            <props>
+                <prop key="mail.transport.protocol">smtp</prop>
+                <prop key="mail.smtp.auth">true</prop>
+                <prop key="mail.smtp.starttls.enable">true</prop>
+                <prop key="mail.smtp.starttls.required">true</prop>
+            </props>
+        </property> 
+		
+    </bean>
+    <!-- email messages  -->
+    <bean id="inviteMessage" class="org.springframework.mail.SimpleMailMessage"
+          p:from="${sender.address}" 
+          />
+    
+    <bean id="companyRegisterMessage" class="org.springframework.mail.SimpleMailMessage"
+          p:from="${onetouch.address}"
+          p:subject="OneTouch Registration" />
+          
+    <bean id="availabilityMessage" class="org.springframework.mail.SimpleMailMessage"
+          p:from="${sender.address}"
+          p:subject="User Availability Notification" />
+    
+    <bean id="scheduleMessage" class="org.springframework.mail.SimpleMailMessage"
+          p:from="${sender.address}"
+          />
+    
+    <bean id="resendScheduleMessage" class="org.springframework.mail.SimpleMailMessage"
+          p:from="${sender.address}"
+          />
+  	<bean id="changeScheduleMessage" class="org.springframework.mail.SimpleMailMessage"
+          p:from="${sender.address}"
+          />
+    <bean id="scheduleNoteMessage" class="org.springframework.mail.SimpleMailMessage"
+          p:from="${sender.address}"
+          />
+    <bean id="requestTimeOff" class="org.springframework.mail.SimpleMailMessage"
+          p:to="${onetouch.adminEmail}"
+          />
+          
+    <bean id="resetPasswordMessage" class="org.springframework.mail.SimpleMailMessage"
+          p:from="${sender.address}"
+          />
+</beans>

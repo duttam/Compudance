@@ -1,0 +1,15 @@
+<f:view xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pm="http://primefaces.org/mobile" 
+	contentType="text/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	renderKitId="PRIMEFACES_MOBILE">
+
+				<f:facet name="right"><p:button id="btnPanelContext" value="" iconPos="notext" icon="bars" rendered="#{p:ifAnyGranted('ROLE_ACCESS_ADMIN,ROLE_ACCESS_MANAGER,ROLE_ACCESS_SECURED')}"/></f:facet>
+                <f:facet name="left">
+                	<img src="#{facesContext.externalContext.requestContextPath}/images/logo.jpg" border="0" style="border: none; height: 35px; width: 270px; " />
+				</f:facet>
+
+</f:view>

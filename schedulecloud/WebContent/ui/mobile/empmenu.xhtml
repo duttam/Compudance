@@ -1,0 +1,25 @@
+<f:view xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pm="http://primefaces.org/mobile" 
+	contentType="text/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	renderKitId="PRIMEFACES_MOBILE">
+
+	<p:overlayPanel for="btnPanelContext" widgetVar="panelContext">
+                  
+                <p:dataList styleClass="ui-li-custom">
+                    <f:attribute name="dividerSwatch" value="d" />
+                    
+                    <h:outputLink value="/ui/mobile/employee/empHome.jsf">Home</h:outputLink>
+                    <h:outputLink value="/ui/mobile/employee/empNotification.jsf">Notification</h:outputLink>
+                    <h:outputLink value="/ui/mobile/employee/empSch.jsf">Schedule</h:outputLink>
+                    <h:outputLink value="/ui/mobile/employee/empAvl.jsf">Availability</h:outputLink>
+                    <h:outputLink value="/ui/mobile/employee/empRequest.jsf" rendered="false">TimeOff</h:outputLink>
+                    <p:separator>&#160;</p:separator>
+                    <h:outputLink value="/ui/mobile/chngPasswd.jsf">Change password</h:outputLink>
+                    <h:outputLink value="#{request.contextPath}/j_spring_security_logout">Log Out</h:outputLink>
+                </p:dataList>                                
+            </p:overlayPanel>
+</f:view>

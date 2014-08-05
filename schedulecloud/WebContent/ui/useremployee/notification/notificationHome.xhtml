@@ -1,0 +1,101 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:o="http://omnifaces.org/ui"
+	xmlns:of="http://omnifaces.org/functions"
+	template="../../../template/employeecontenttemplate.xhtml">
+<ui:define name="mainContent">
+    <h:form id="notificationForm" prependId="false">
+    <p:growl id="growl" showDetail="true" sticky="false" showSummary="false" />
+        <br />
+        <p:panel header="Manage Schedule Notifications">
+			<p:dataTable id="notificationTable" value="#{notificationHome.notifiedSchedules}" var="notification">  
+				
+				<p:column style="width:2%">  
+            		<p:rowToggler />  
+        		</p:column>
+		        <p:column headerText="Date">  
+		            <h:outputText value="#{notification.event.startDate}" >
+		            	<f:convertDateTime pattern="MM/dd/yyyy"></f:convertDateTime>
+		            </h:outputText>  
+		        </p:column>  
+		  
+		        <p:column headerText="Event">  
+		            <h:outputText value="#{notification.event.name}" />  
+		        </p:column>  
+		        <p:column headerText="Position">  
+		            <h:outputText value="#{notification.position.name}" />  
+		        </p:column>
+		  		<p:column headerText="Location">  
+		            <h:outputText value="#{notification.event.location.name},#{notification.event.location.locationTitle} " />  
+		        </p:column>
+		        
+		        <p:column headerText="Start Time">  
+		            <h:outputText value="#{of:formatDate(notification.eventPosition.startTime, 'hh:mm a')}"  />  
+		        </p:column>  
+		  
+		        <p:column headerText="End Time">  
+		            <h:outputText value="#{of:formatDate(notification.eventPosition.endTime, 'hh:mm a')}"  />
+		        </p:column>
+				<p:column headerText="Notes">  
+		            <h:outputText value="#{notification.eventPosition.notes}"  />
+		        </p:column>
+				<p:column headerText="">
+					<div align="center">
+						<p:commandButton  value="Accept" actionListener="#{notificationHome.acceptNotification}"  update="notificationTable, :notificationForm:growl">
+							<f:param name="scheduleId" value="#{notification.id}"/>
+							<f:param name="eventPosId" value="#{notification.eventPosition.id}"/>
+						</p:commandButton>
+					</div>
+				</p:column>
+				<p:column headerText="">
+					<div align="center">
+						<p:commandButton  value="Decline" actionListener="#{notificationHome.declineNotification}"  update="notificationTable, :notificationForm:growl">
+							<f:param name="scheduleId" value="#{notification.id}"/>
+							<f:param name="eventPosId" value="#{notification.eventPosition.id}"/>
+						</p:commandButton>
+					</div>
+				</p:column>
+				<p:rowExpansion>  
+		            <h:panelGrid id="display" columns="2" cellpadding="4" style="width:500px;" styleClass="TOP">  
+		            	<p:outputLabel value="Event Time:"/>
+				        <p:outputLabel  value="#{of:formatDate(notification.event.startTime, 'hh:mm a')} - #{of:formatDate(notification.event.endTime, 'hh:mm a')}" />
+				        <p:outputLabel value="Location Detail:" >
+				        </p:outputLabel>
+				        <h:panelGrid columns="1">
+				        	<p:outputLabel value="#{notification.event.location.name} #{notification.event.location.locationTitle}" >
+		        				
+		        			</p:outputLabel>
+		        			<p:outputLabel value="#{notification.event.location.address1} #{notification.event.location.city} #{notification.event.location.state.stateName}" >
+		        				
+		        			</p:outputLabel>
+		        			<p:outputLabel value="#{notification.event.location.city} #{notification.event.location.state.stateName}" >
+		        				
+		        			</p:outputLabel>
+		        			<p:outputLabel value="#{notification.event.location.contactName}, #{notification.event.location.contactEmail}" >
+		        				
+		        			</p:outputLabel>
+				        </h:panelGrid>
+		        		
+				        <p:outputLabel value="Client/Host:" rendered="#{not empty notification.event.hostname}"/>
+				        <p:outputLabel value="#{notification.event.hostname}" rendered="#{not empty notification.event.hostname}"/>
+				        
+				        <p:outputLabel value="Notes:" rendered="#{not empty notification.event.notes}"/>
+				        <p:outputLabel value="#{notification.event.notes}" rendered="#{not empty notification.event.notes}"/>
+				        
+				        <p:outputLabel value="Description:" rendered="#{not empty notification.event.description}"/>
+				        <p:outputLabel value="#{notification.event.description}" rendered="#{not empty notification.event.description}"/>
+		        		
+		        		<p:outputLabel value="Dress:" rendered="#{not empty notification.event.dressCode}"/>
+				        <p:outputLabel value="#{notification.event.dressCode}" rendered="#{not empty notification.event.dressCode}"/>
+				          
+		            </h:panelGrid>  
+		  
+		        </p:rowExpansion> 
+			</p:dataTable> 
+        </p:panel>
+    </h:form>
+</ui:define>
+</ui:composition>

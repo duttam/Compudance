@@ -1,0 +1,31 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Invitation</title>
+</head>
+<script language="text/css">
+	
+</script>
+<body>
+<div align="left">
+	<span style="padding-left:20px;">Hi, </span>
+</div>
+<div align="left" style="padding-left:40px;">
+		
+    	<p >
+        	<span style="font-weight:bold">${scheduleNotes}</span>   
+
+		</p>
+    	<br/>
+    		If you have any questions please reply to ${senderEmail} 
+        <br/>
+        <p/>
+        <span>Thanks</span>
+        <br/>
+        ${senderfirstname} ${senderlastname}
+		
+        
+</div>
+</body>
+</html>

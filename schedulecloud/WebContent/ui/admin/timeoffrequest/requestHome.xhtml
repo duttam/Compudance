@@ -1,0 +1,62 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	template="../../../template/admincontenttemplate.xhtml">
+    
+<ui:define name="mainContent">
+
+      <h:form id="TimeOffListForm">
+    	<p:growl id="growl" showDetail="true" sticky="false" showSummary="false" />
+    	<p:panel header="Time Off Requests">
+             <div align="right">
+                <h:panelGrid columns="1" >
+                    <p:commandButton value="Request TimeOff" action="addTimeoff">
+                        <f:param name="action" value="addTimeoff" />
+                    </p:commandButton>
+                </h:panelGrid>
+             </div>
+        <br />
+        <div align="center">
+        <p:dataTable  id="timeofftable" var="timeoff"
+                value="#{timeoffHome.timeoffList}" paginator="true" rows="10" style="width:80%">
+
+                <p:column  styleClass="hdr1Black" headerText="TimeOff Type" sortBy="#{timeoff.requestType}">
+                    <div align="center">
+                        <p:outputLabel value="#{timeoff.requestType}"/>
+                    </div>
+                </p:column>
+            	<p:column styleClass="hdr1Black" headerText="Start Date" sortBy="#{timeoff.beginDate}">
+                    <div  align="center">
+                        <h:outputText value="#{timeoff.beginDate}" >
+                            <f:convertDateTime pattern="MM/dd/yyyy"></f:convertDateTime>
+                        </h:outputText>                     
+                    </div>
+                </p:column>
+
+                <p:column styleClass="hdr1Black" headerText="End Date">
+                    <div  align="center">
+                        <h:outputText value="#{timeoff.endDate}" >
+                            <f:convertDateTime pattern="MM/dd/yyyy"></f:convertDateTime>
+                        </h:outputText>
+                    </div>
+                </p:column>
+                
+				<p:column styleClass="hdr1Black" headerText="Reason">
+                    <div  align="center">
+                        <h:outputText value="#{timeoff.reason}" >
+                            
+                        </h:outputText>
+                    </div>
+                </p:column>
+
+        </p:dataTable>
+             <br />
+
+        </div>
+        </p:panel>
+    </h:form>
+</ui:define>
+
+</ui:composition>

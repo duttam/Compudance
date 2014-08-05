@@ -1,0 +1,41 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Invitation</title>
+</head>
+<script language="text/css">
+	
+</script>
+<body>
+<div align="left">
+	<span style="padding-left:40px;">Hi, <span style="text-decoration:underline">${firstname} ${lastname} : </span></span>
+</div>
+<div align="left" style="padding-left:40px;">
+	
+    	<p >
+        	
+			Welcome to Schedule-Cloud, your <span style="font-weight:bold">scheduling</span> tool for your new position. Please use the following invite code 
+			to set-up your username and password, profile information and click on the <span style="font-weight:bold">availability tab</span> 
+			to let us know when you can work. It is that easy!! Based on the information you enter, our system will schedule you for upcoming events. You can 
+			update your work availability and check your schedule anytime.
+		</p>
+    	<br/>
+        <span >Schedule-Cloud URL : <a href="${inviteRegistrationUrl}/${contextRoot}/ui/useremployee/registration/EmployeeRegistration.jsf?employeeId=${empid}&tenantId=${tenantId}"">Register</a></span>
+        <br/>
+        <span style="font-weight:bold">Invite Code:${invitecode}</span>
+        <br/>
+        <br/>
+        <br/>
+        Please don't reply to this email.
+        <br/>
+        <br/>
+        <span>Thank You</span>
+        <br/>
+        <br/>
+        
+		
+        
+</div>
+</body>
+</html>

@@ -1,0 +1,216 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	template="../../../template/admincontenttemplate.xhtml">
+    
+
+	<ui:define name="mainContent">
+		<h:form id="editcompany" prependId="false">
+		<style type="text/css">
+			.label {
+				width:40%;
+				padding:2px;
+			}
+
+			.value {
+				width:40%;
+				padding:2px;
+			}
+			.error {
+				width: 20%;
+				padding: 2px;
+			}
+			
+			#quotescointainer{
+			    width: 100%;
+			    font-size: 12px;
+			    overflow: hidden; /* contain floated elements */
+			    
+			}
+			#quotesleft {
+			    float: left; 
+			    width: 50%;
+			    
+			}
+			
+			#quotesright{
+			    float: left;
+			    width: 50%;
+
+			}
+			.ui-radiobutton {
+			  display:inline-block;
+			  line-height:16px;
+			  margin:3px 0;
+			  padding-left:10px;
+			  width:16px;
+			}
+		</style>
+		<br />
+		<p:panel header="Update Company Information">
+		
+			<br />
+			<div align="center">
+    				
+    					<h:panelGrid id="editcompanyGrd" columns="3" cellpadding="5" styleClass="TOP1">
+    						
+    						<p:outputLabel value="Company Name *" />
+							<p:inputText id="name" value="#{companyController.company.name}" required="true" requiredMessage="#{msg['message.empty']}">
+								<p:ajax event="blur" process="@this" update="nameMsg"  />
+							</p:inputText>
+							<p:message for="name" id="nameMsg" display="text" style="padding-left:30px;"/>
+							<p:outputLabel value="Company Code *"/>
+							<p:inputText id="code" value="#{companyController.company.code}" title="this code will uniquely identify a company within the system. For eg. if company name is One Touch Enterprises, LLC then code may be onetouch or otenterprise etc"></p:inputText>
+							<p:message for="code" id="codeMsg" display="text" style="padding-left:30px;"/>
+							
+							
+							<p:outputLabel value="Enrollment Date: *" />
+	                        <p:calendar id="enrolldate" value="#{companyController.company.enrollmentDate}" pattern="MM/dd/yyyy" required="true" requiredMessage="Can't be Empty"
+                            		showButtonPanel="true" navigator="true">
+	                            <p:ajax event="blur" process="@this" update="enrolldateMsg" />
+                              	<p:ajax event="dateSelect" process="@this" update="enrolldateMsg"  />
+	                        </p:calendar>
+	                        <p:message for="enrolldate" id="enrolldateMsg" display="text"/>
+							
+							<p:outputLabel value="Address1 *"/>
+							<p:inputText id="address1" value="#{companyController.company.address1}" required="true" requiredMessage="#{msg['message.empty']}">
+								<p:ajax event="blur" process="@this" update="address1Msg"  />
+							</p:inputText>
+							<p:message for="address1" id="address1Msg" display="text" style="padding-left:30px;"/>
+							
+							<p:outputLabel value="Address2"/>
+							<p:inputText id="address2" value="#{companyController.company.address2}">
+								<p:ajax event="blur" process="@this" update="address2Msg"  />
+							</p:inputText>
+							<p:message for="address2" id="address2Msg" display="text" style="padding-left:30px;"/>
+							
+							<p:outputLabel value="City: *" />
+							<p:autoComplete id="city" value="#{companyController.company.city}"
+								completeMethod="#{autoCompleteBean.complete}" required="true" requiredMessage="#{msg['message.empty']}">
+								<p:ajax event="blur" process="@this" update="cityMsg" />
+							</p:autoComplete>
+							<p:message for="city" id="cityMsg" display="text" />
+			
+							<p:outputLabel value="State: *" />
+							<p:selectOneMenu id="state"
+								value="#{companyController.company.state.stateName}"
+								style="width: 140px" required="true" requiredMessage="#{msg['message.empty']}">
+								<f:selectItem itemLabel="Select One" itemValue="" />
+								<f:selectItems value="#{supportBean.states}" />
+								<p:ajax process="@this" update="stateMsg" />
+							</p:selectOneMenu>
+							<p:message for="state" display="text" id="stateMsg" />
+							<h:outputText value="Zip Code: *" />
+							<p:inputText id="zipcode"
+									value="#{companyController.company.zipcode}" maxlength="5" required="true" requiredMessage="#{msg['message.empty']}">
+									<f:validator validatorId="zipCodeValidator" />
+									<p:ajax event="blur" process="@this" update="zipcodeMsg" />
+							</p:inputText>
+							<p:message for="zipcode" id="zipcodeMsg" display="text" />
+							<p:outputLabel value="Contact Name " />
+							<p:inputText id="contactname" value="#{companyController.company.contactname}" >
+								<p:ajax event="blur" process="@this" update="contactnameMsg"  />
+							</p:inputText>
+							<p:message for="contactname" id="contactnameMsg" display="text" style="padding-left:30px;"/>
+							<p:outputLabel value="Primary Email"/>
+							<p:inputText id="email" value="#{companyController.company.companyEmail}" title="Enter a vaild email address for eample myname@aol.com " style="width:200px" >
+								<p:ajax event="blur" process="@this" update="emailMsg"  />
+			                	<f:converter converterId="emailconverter" />
+								<f:validator validatorId="emailValidator" />
+			                <p:ajax event="blur" process="@this" update="emailMsg"  />
+							</p:inputText>
+							<p:message for="email" id="emailMsg" display="text"/>
+			                               
+							<p:outputLabel value="Business Phone"/>
+							<p:inputMask id="businessphone" value="#{companyController.company.businessPhone}" mask="(999) 999-9999" converter="phoneconverter">
+			                	
+							</p:inputMask>
+			                <p:message for="businessphone" id="businessphoneMsg" display="text"/>
+			                                
+							<p:outputLabel value="Fax"/>
+							<p:inputMask id="fax" value="#{companyController.company.fax}" mask="(999) 999-9999" converter="phoneconverter">
+			                	
+							</p:inputMask>
+			                <p:message for="fax" id="faxMsg" display="text"/>
+    					
+							
+							<p:outputLabel value="Email Sender " />
+							<h:panelGroup>
+							<p:inputText id="sendername" value="#{companyController.company.emailSenderPrefix}"/>
+							<p:outputLabel value="@schedule-cloud.com" style="font-weight:bold"></p:outputLabel>
+							</h:panelGroup>
+							<p:message for="sendername" id="sendernameMsg" display="text" style="padding-left:30px;"/>
+							
+							<p:outputLabel value="Sort Employees By Rank and Hire Date " />
+							<p:selectBooleanCheckbox value="#{companyController.company.sortByRankAndHiredate}"></p:selectBooleanCheckbox>
+							<p:outputLabel />
+							
+							<p:outputLabel value="BreakTime Plan" />
+    						<p:selectOneRadio  id="break_option" value="#{companyController.company.breakOption}" >  
+					            <f:selectItem itemLabel="Paid" itemValue="paid" />  
+					            
+					            <f:selectItem itemLabel="Unpaid" itemValue="unpaid" />  
+					              
+					        </p:selectOneRadio> 
+					        <h:outputLabel></h:outputLabel>
+					        <h:panelGroup>
+					        <p:outputLabel value="OverTime Plan" />
+			        		<p:selectOneRadio  id="overtime_option" value="#{companyController.company.overtimeOption}" layout="custom">  
+					            <f:selectItem itemValue="none"/>  
+					            <f:selectItem itemValue="dayOT" />
+					            <f:selectItem itemValue="weekOT" />  
+					            <p:ajax update="otrate"></p:ajax>
+					        </p:selectOneRadio>  
+					        </h:panelGroup>
+				            <h:panelGrid  columns="2" >  
+							
+						        <p:radioButton id="opt1" for="overtime_option" itemIndex="0"/>  
+						        <h:outputLabel for="opt1" value="None" />  
+						        
+						  		
+						        <p:radioButton id="opt2" for="overtime_option" itemIndex="1"/>  
+						        <h:outputLabel for="opt2" value="more than 8 hours/day" />  
+						       
+						  		
+						        <p:radioButton id="opt3" for="overtime_option" itemIndex="2"/>  
+						        <h:outputLabel for="opt3" value="more than 40 hours/week" />  
+					        
+					    	</h:panelGrid>  
+			        		<h:outputLabel/>
+    						<p:outputLabel value="Overtime Rate Factor" style="font-weight:bold;"/>
+							<p:spinner id="otrate" value="#{companyController.company.overtimeRate}" stepFactor="0.5" min="0.5" disabled="#{companyController.company.overtimeOption == 'none'}"/>
+						
+    					</h:panelGrid>
+    					
+    			</div>
+    			<p:confirmDialog id="deleteCompanyConfirmDialog"
+								message="Are you sure ? This will disable all Users for the company"
+								header="Delete Event" severity="alert"
+								widgetVar="delcompanyconfirmation">
+
+								<p:commandButton id="updateconfirm" value="Yes Sure" action="#{companyController.DisableCompany}"  
+								process="@this,editcompanyGrd" oncomplete="delemployeeconfirmation.hide();" immediate="true" />
+								<p:commandButton id="updatedecline" value="Not Yet"
+									onclick="delcompanyconfirmation.hide()" type="button" />
+
+							</p:confirmDialog>
+    			<p></p>
+    			<div align="center">
+    				<p:commandButton value="Disable" onclick="delcompanyconfirmation.show();" />
+    				<p:commandButton value="Update" action="#{companyController.UpdateCompany}" ajax="false"/>
+					<p style="height:10px"></p>
+    			</div>
+			<br></br>
+				
+			
+			
+			
+			
+		</p:panel>
+		</h:form>
+		
+		
+	</ui:define>
+</ui:composition>

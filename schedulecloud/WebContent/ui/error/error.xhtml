@@ -1,0 +1,36 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions"
+	template="../../template/sitetemplate.xhtml">
+    
+
+	<ui:define name="content">
+		
+		
+			<style type="text/css">
+    body { background-color: #fff; color: #666; text-align: center; font-family: arial, sans-serif; }
+    div.errorDetails {
+      width: 25em;
+      padding: 0 4em;
+      margin: 4em auto 0 auto;
+      border: 1px solid #ccc;
+      border-right-color: #999;
+      border-bottom-color: #999;
+    }
+    h1 { font-size: 100%; color: #f00; line-height: 1.5em; }
+ 
+		</style>
+			
+			<div align="center" class="errorDetails">
+		        Error details: <br/>
+		       <h1> #{flash.keep.errorDetails}</h1>
+		       
+		    </div>
+			
+		
+		
+	</ui:define>
+</ui:composition>

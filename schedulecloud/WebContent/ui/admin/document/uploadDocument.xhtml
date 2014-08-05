@@ -1,0 +1,74 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:fn="http://java.sun.com/jsp/jstl/functions">
+				<p:tab id="uploadpolicies" title="Upload Documents" titleStyle="font-size: 11px" rendered="#{p:ifGranted('ROLE_ACCESS_ADMIN')}">
+					<p:growl id="upgrowl" showDetail="false" life="3000" showSummary="true"/>
+            		<h:panelGrid columns="2" >
+            			<p:fileUpload value="#{uploadDocumentBean.uploadDocument}" mode="simple" process="@form" />  
+				  		<p:outputLabel/>
+            			<h:panelGrid columns="1" >
+            				<h:outputLabel value="Document Notes" styleClass="tableHdr2"></h:outputLabel>
+            				<h:inputTextarea id="docNote" value="#{uploadDocumentBean.documentNote}" cols="25"/>
+            			</h:panelGrid>
+            			<p:outputLabel/>
+            			 <p:commandButton value="Upload" ajax="false" actionListener="#{uploadDocumentBean.uploadDocument}" icon="ui-icon-arrowreturnthick-1-n" /> 	
+				    	
+            		</h:panelGrid>
+            		<p:dataTable id="documentsTbl" var="document" value="#{uploadDocumentBean.tenantDocuments}" editable="true" scrollable="true" scrollHeight="150">  
+            			<p:ajax event="rowEdit" listener="#{uploadDocumentBean.onEdit}"  />  
+        				<p:ajax event="rowEditCancel" listener="#{uploadDocumentBean.onCancel}"  />
+				        <p:column headerText="Document Name" style="width:30%">  
+				            <h:outputText value="#{document.documentName}" />  
+				        </p:column>  
+				   		<p:column headerText="Note" style="width:50%">  
+				   			<p:cellEditor>  
+				                <f:facet name="output">  
+				                    <h:outputText value="#{document.documentNote}" />  
+				                </f:facet>  
+				                <f:facet name="input">  
+				                    <p:inputTextarea value="#{document.documentNote}" style="width:100%" />  
+				                </f:facet>  
+				            </p:cellEditor>
+				           
+				        </p:column>
+				  
+				        <p:column headerText="Download" style="width:7%">  
+				        	<div align="center">
+				            <h:commandLink  onclick="PrimeFaces.monitorDownload(start, stop)">
+								<p:fileDownload value="#{document.file}" />
+								<p:graphicImage value="/images/download/#{document.documentTypeImage}" />
+								
+							</h:commandLink>
+							
+							</div>
+				        </p:column>
+				        <p:column style="width:5%">  
+				            <p:rowEditor />  
+				        </p:column>  
+				        <p:column style="width:8%">  
+				        
+				            <p:commandButton value="Delete" icon="ui-icon ui-icon-close" onclick="deleventconfirmation.show()" >
+				            	
+				            	<f:setPropertyActionListener  value="#{document}" target="#{uploadDocumentBean.deleteDocument}" />
+				            </p:commandButton>
+				        </p:column>
+				    </p:dataTable>  
+				    <p:confirmDialog id="deleteEventConfirmDialog"
+								message="Are you sure ?"
+								header="Delete Document" severity="alert"
+								widgetVar="deleventconfirmation">
+
+								<p:commandButton id="updateconfirm" value="Yes Sure" actionListener="#{uploadDocumentBean.deleteDocument}"    
+				        						oncomplete="deleventconfirmation.hide();"  />
+								<p:commandButton id="updatedecline" value="Not Yet"
+									onclick="deleventconfirmation.hide()" type="button" />
+
+							</p:confirmDialog>
+				    <p:dialog modal="true" widgetVar="statusDialog" header="Status" draggable="false" closable="false" resizable="false">  
+					    <p:graphicImage value="/images/design/ajaxloadingbar.gif" />  
+					</p:dialog>
+            	</p:tab>
+</ui:composition>

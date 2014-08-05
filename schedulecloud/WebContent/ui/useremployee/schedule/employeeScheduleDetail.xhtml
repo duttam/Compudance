@@ -1,0 +1,149 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:o="http://omnifaces.org/ui"
+	xmlns:of="http://omnifaces.org/functions"
+	xmlns:pe="http://primefaces.org/ui/extensions"
+	template="../../../template/employeecontenttemplate.xhtml">
+    
+
+	<ui:define name="mainContent">
+		<h:form id="employeeScheduleDetailForm" prependId="false">
+			<style type="text/css">
+				 
+} 
+
+
+				
+			</style>
+			
+			<p:panel header="Schedule Details ">
+				<f:facet name="actions">
+					<h:panelGroup layout="block" style="float:right">
+						<h:panelGrid columns="3">
+								<h:panelGroup>
+								<h:commandLink rendered="#{employeeScheduleHome.schedule.position.viewReports}"
+							action="#{employeeScheduleHome.employeeSchedulePreProcessorPDF('Landscape')}">
+									<p:graphicImage value="/images/pdf.png" title="export as pdf" />
+								</h:commandLink>
+								<br></br>
+								<h:outputLabel value="Landscape"></h:outputLabel>
+								</h:panelGroup>
+								<h:outputLabel></h:outputLabel>
+								<h:panelGroup>
+								<h:commandLink rendered="#{employeeScheduleHome.schedule.position.viewReports}"
+							action="#{employeeScheduleHome.employeeSchedulePreProcessorPDF('Portrait')}">
+									<p:graphicImage value="/images/pdf.png" title="export as pdf" />
+								</h:commandLink>
+								<br></br>
+								<h:outputLabel value="Portrait"></h:outputLabel>
+								</h:panelGroup>
+							</h:panelGrid>
+						
+					</h:panelGroup>
+					
+
+				</f:facet>
+						<div style="display:none">
+				        	<ui:include src="pdfSchEmpRpt.xhtml" />
+				        </div>
+				        <h:panelGrid id="scheduleDetails" columns="1" cellpadding="10">  
+				        	
+				        	<p:panel style="width: 100%;" header="Event Detail">
+				        	<h:panelGroup>
+				        		<h:panelGrid columns="4" cellpadding="5">
+				        			<h:outputLabel  value="Event Name: " />
+									<h:outputLabel  value="#{employeeScheduleHome.schedule.event.name}" />
+									
+									<h:outputLabel  value="Event Date: " />
+									<h:outputLabel  value="#{of:formatDate(employeeScheduleHome.schedule.event.startDate, 'MM-dd-yyyy')}" />
+									
+									<h:outputText value="Host:" rendered="#{employeeScheduleHome.tenant.id ne 8}"/>
+							        <h:outputText value="#{employeeScheduleHome.schedule.event.hostname}" rendered="#{employeeScheduleHome.tenant.id ne 8}"/>
+							        
+							        <h:outputText value="Notes:" />
+							        <h:outputText value="#{employeeScheduleHome.schedule.event.notes}" />
+							        
+							        <h:outputText value="Description:" />
+							        <h:outputText value="#{employeeScheduleHome.schedule.event.description}" />
+									
+									<h:outputText value="Dress Code:" />
+							        <h:outputText value="#{employeeScheduleHome.schedule.event.dressCode}" />
+				        		</h:panelGrid>
+				        	</h:panelGroup>
+				        	</p:panel>
+				        	<p:panel style="width: 100%;" header="Location Detail">
+				        	<h:panelGroup>
+				        		<h:panelGrid columns="4" cellpadding="5">
+				        			<h:outputLabel  value="Address1: " />
+									<h:outputLabel  value="#{employeeScheduleHome.schedule.event.location.address1}" />
+									
+									<h:outputLabel  value="Address2: " />
+									<h:outputLabel  value="#{employeeScheduleHome.schedule.event.location.address2}" />
+									
+									<h:outputText value="City:" />
+							        <h:outputText value="#{employeeScheduleHome.schedule.event.location.city}" />
+							        
+							        <h:outputText value="State:" />
+							        <h:outputText value="#{employeeScheduleHome.schedule.event.location.state.stateName}" />
+							        
+							        <h:outputText value="Zipcode:" />
+							        <h:outputText value="#{employeeScheduleHome.schedule.event.location.zipcode}" />
+									
+									<h:outputText value="Parking Direction:" />
+							        <h:outputText value="#{employeeScheduleHome.schedule.event.location.parkingDirection}" />
+							        
+									<h:outputText value="Contact Name:" rendered="#{employeeScheduleHome.tenant.id ne 8}"/>
+							        <h:outputText value="#{employeeScheduleHome.schedule.event.location.contactName}" rendered="#{employeeScheduleHome.tenant.id ne 8}"/>
+									<h:outputText value="Contact Email:" rendered="#{employeeScheduleHome.tenant.id ne 8}"/>
+							        <h:outputText value="#{employeeScheduleHome.schedule.event.location.contactEmail}" rendered="#{employeeScheduleHome.tenant.id ne 8}"/>
+									<h:outputText value="Contact Phone:" rendered="#{employeeScheduleHome.tenant.id ne 8}"/>
+							        <h:outputText value="#{employeeScheduleHome.schedule.event.location.contactPhone}" rendered="#{employeeScheduleHome.tenant.id ne 8}"/>
+									
+									
+				        		</h:panelGrid>
+				        	</h:panelGroup>
+				        	</p:panel>
+				        	<p:panel style="width: 100%;" header="Position Detail">
+				            <h:panelGroup>
+				        		<h:panelGrid columns="4" cellpadding="5">
+						            <h:outputLabel  value="Position Name: " />  
+						            <h:outputLabel  value="#{employeeScheduleHome.schedule.position.name}" />
+						            <h:outputLabel  value="Notes: " />  
+						            <h:outputLabel  value="#{employeeScheduleHome.schedule.position.notes}" />
+						            <h:outputLabel  value="Start Time: " />  
+						            <h:outputLabel  value="#{of:formatDate(employeeScheduleHome.schedule.eventPosition.startTime, 'h:mm a')}" />
+						            <h:outputLabel  value="End Time: " />  
+						            <h:outputLabel  value="#{of:formatDate(employeeScheduleHome.schedule.eventPosition.endTime, 'h:mm a')}" />
+						            
+					        	</h:panelGrid>
+				        	</h:panelGroup> 
+				        	</p:panel>
+				        	
+				        	<p:panel style="width: 100%;" header="SignIn SignOut Detail">
+				            <h:panelGroup>
+				        		<h:panelGrid columns="4" cellpadding="5">
+						            
+						            <h:outputLabel  value="SignIn Time: " />  
+						            <h:outputLabel  value="#{of:formatDate(employeeScheduleHome.schedule.signInOut.startTime, 'h:mm a')}" />
+						            <h:outputLabel  value="SignOutTime: " />  
+						            <h:outputLabel  value="#{of:formatDate(employeeScheduleHome.schedule.signInOut.endTime, 'h:mm a')}" />
+						            
+						            <h:outputLabel  value="Break Start Time: " />  
+						            <h:outputLabel  value="#{of:formatDate(employeeScheduleHome.schedule.signInOut.breakStartTime, 'h:mm a')}" />
+						            <h:outputLabel  value="Break End Time: " />  
+						            <h:outputLabel  value="#{of:formatDate(employeeScheduleHome.schedule.signInOut.breakEndTime, 'h:mm a')}" />
+					        	</h:panelGrid>
+				        	</h:panelGroup> 
+				        	</p:panel>
+						  	
+				              
+				        </h:panelGrid>  
+				    
+				
+			</p:panel>
+		</h:form>
+	</ui:define>
+</ui:composition>

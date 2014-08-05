@@ -1,0 +1,173 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:func="http://onetouch.com/functions"
+	xmlns:o="http://omnifaces.org/ui"
+	xmlns:of="http://omnifaces.org/functions"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+	xmlns:pe="http://primefaces.org/ui/extensions"
+	template="../../../template/admincontenttemplate.xhtml">
+    
+
+	<ui:define name="mainContent">
+		<h:form id="scheduleDetail" prependId="false">
+		<style type="text/css">
+		
+			.ui-carousel .ui-carousel-header .ui-carousel-header-title {
+   				display:inline;
+			}
+			#repeatId_content.ui-widget-content{
+				border:0px ;
+			}
+			
+			.ui-orderlist .ui-orderlist-list {
+			    
+			    width: 99%;
+			}
+			#quotescointainer{
+			    width: 100%;
+			    font-size: 12px;
+			    overflow: hidden; /* contain floated elements */
+			    
+			}
+			#quotesleft {
+			    float: left; 
+			    width: 35%;
+			    
+			}
+			#quotescenter { 
+			    float: left;
+			    
+			    width: 10%;
+			}
+			#quotesright{
+			    float: left;
+			    width: 65%;
+			    
+			}
+		</style>
+			<br></br>
+			<div style="height:100%">
+			<p:panel header="Event Detail">
+				<f:facet name="actions">  
+					<h:panelGroup layout="block" style="float:right">
+						<h:panelGrid columns="3">
+								<h:panelGroup>
+								<h:commandLink action="#{scheduleDetailBean.employeeSchedulePreProcessorPDF('landscape')}">
+									<p:graphicImage value="/images/pdf.png" title="export as pdf" />
+								</h:commandLink>
+								<br></br>
+								<h:outputLabel value="Landscape"></h:outputLabel>
+								</h:panelGroup>
+								<h:outputLabel></h:outputLabel>
+								<h:panelGroup>
+								<h:commandLink action="#{scheduleDetailBean.employeeSchedulePreProcessorPDF('potrait')}">
+									<p:graphicImage value="/images/pdf.png" title="export as pdf" />
+								</h:commandLink>
+								<br></br>
+								<h:outputLabel value="Potrait"></h:outputLabel>
+								</h:panelGroup>
+							</h:panelGrid>
+					
+		            </h:panelGroup>
+		        </f:facet>
+		        		
+			<div id="quotescointainer">
+    			<div id="quotesleft">
+    				<ui:include src="eventDetailFacelet.xhtml" />
+    			</div>
+    			
+    			<div id="quotesright">
+    				<p:dataTable   var="employee" value="#{scheduleDetailBean.allEmployees}" paginator="false" rows="10" scrollable="true" >
+								<f:facet name="header">SignIn SignOut Detail</f:facet>
+											<p:column  headerText="Name" sortBy="#{employee.firstname} #{employee.lastname}" >
+							                <div  align="center">
+							                    <p:outputLabel value="#{employee.firstname}"  style="font-weight:bold" title="#{employee.firstname} #{employee.lastname}"/>
+							                    
+							                </div>
+							                </p:column>
+											
+							                <p:column headerText="Start" >
+							                    
+							                    <h:panelGroup id="shiftsigninlblid" style="display:block; text-align:center">
+							                    <p:outputLabel value="#{of:formatDate(employee.signInOut.startTime, 'hh:mm a')}" rendered="#{not empty employee.signInOut.startTime}"/>
+							                    </h:panelGroup>
+							                </p:column>
+							                
+							                <p:column headerText="Break Start">
+							                    <div id="breaksigninid" align="center">
+							                    
+							                    <p:outputLabel value="#{of:formatDate(employee.signInOut.breakStartTime, 'hh:mm a')}" rendered="#{not empty employee.signInOut.breakStartTime}"/>
+							                    </div>
+							                </p:column>
+							                <p:column headerText="Break End">
+							                    <div id="breaksignoutid" align="center">
+							                    
+							                    <p:outputLabel value="#{of:formatDate(employee.signInOut.breakEndTime, 'hh:mm a')}" rendered="#{not empty employee.signInOut.breakEndTime}"/>
+							                    </div>
+							                </p:column>
+							                
+							                <p:column headerText="End">
+							                    <div id="shiftsignoutid" align="center">
+							                    
+							                    <p:outputLabel value="#{of:formatDate(employee.signInOut.endTime, 'hh:mm a')}" rendered="#{not empty employee.signInOut.endTime}"/>
+							                    </div>
+							                </p:column>
+											<p:column headerText="Remarks">
+							                    <p:outputLabel id="remark" value="#{employee.signInOut.remarks}"/>
+							                </p:column>
+											  
+											
+											
+							        </p:dataTable>
+    			</div>
+    		</div>
+			
+				<br />
+				<br></br>
+				<p:dataGrid id="evntposid" var="eventPosition"
+							value="#{scheduleDetailBean.allEventPositions}" columns="4"
+							 styleClass="TOP">
+								<f:facet name="header">  
+						           Scheduled Positions and Staff   
+						        </f:facet>
+								<p:orderList value="#{eventPosition.position.scheduledEmployees}" var="employee"   controlsLocation="none"
+					                    itemValue="#{employee}" converter="employeeConverter"  id="empList" style="width:80%;">  
+							        <f:facet name="caption">
+							        	
+							        	<p:row>  
+							            <p:column>#{eventPosition.position.name}</p:column>  
+							            <p:column>( <span style="color:green">#{fn:length(eventPosition.position.scheduledEmployees)}</span> ) , </p:column>  
+							            <p:column>( <span style="color:red">#{eventPosition.reqdNumber - fn:length(eventPosition.position.scheduledEmployees)}</span> )  </p:column>
+							            
+							            </p:row>
+							            <br></br>
+							        	<p:row>
+							        		<p:column>#{of:formatDate(eventPosition.startTime, 'hh:mm a')} - #{of:formatDate(eventPosition.endTime, 'hh:mm a')}</p:column>
+							        		
+							        	</p:row>
+							        	
+							            
+									</f:facet>  
+							  
+							         <p:column style="width:60%">  
+							            #{employee.firstname} #{employee.lastname}  
+							        </p:column>  
+									<p:column style="width:40%">  
+							            <p:rating value="#{employee.rating}" readonly="true"></p:rating>
+							        </p:column>
+									
+							    </p:orderList>
+							
+				</p:dataGrid>
+					
+					
+			</p:panel>
+			</div>
+					
+		</h:form>
+				
+	</ui:define>
+</ui:composition>

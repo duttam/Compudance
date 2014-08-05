@@ -1,0 +1,91 @@
+<f:view xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"    
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pm="http://primefaces.org/mobile"
+	contentType="text/html">
+
+    <pm:page title="Home">
+
+     
+        <!-- Main View -->
+        <pm:view id="main" swatch="b">
+	     <pm:header title="S-Cloud" id="h1" swatch="b">
+                <f:facet name="right">
+                    <p:button value="Logout" href="#logoutNew" rendered="#{p:ifGranted('ROLE_ACCESS_SECURED')}" />
+                </f:facet>     
+                <pm:navBar>
+                      <p:button value="Personal Info" href="#personalInfo" icon="grid" styleClass="ui-btn-active"/>
+                      <p:button value="Schedule" icon="home" href="#exportVisibility" />
+                      <p:button value="Time-Off" icon="home" href="#exportVisibility" />
+                </pm:navBar>
+              </pm:header>
+		<pm:content id="c1">
+		   <h:form id="sCloudLoginForm" >
+			<h:outputText value="S-Cloud" style="font-family: Arial, Helvetica, sans-serif; font-size: 15px; color: #866E25; font-weight: bold;" />
+		   </h:form>
+		</pm:content>
+			
+	 </pm:view>
+
+		<!-- Logout -->
+
+                <pm:view id="logoutNew" swatch="b">
+			<pm:header title="S-Cloud Logout">
+			</pm:header>
+			<pm:content>
+	 		<h:form id="logoutForm">
+			<pm:field>
+	                    <h:outputLabel value=" Are You Sure ? " style="font-size: 13px; color: green; padding-left: 20px"/>
+					</pm:field>
+                    <pm:buttonGroup>
+                    	<h:form>
+                    	<p:commandButton value="Yes" action="#{loginBean.logout}"  ajax="false"/>
+                    	</h:form>
+                    </pm:buttonGroup>
+                                        
+		</h:form>
+		</pm:content>
+	    </pm:view>
+                
+           <pm:view id="personalInfo" swatch="b" >
+                <pm:header title="S-Cloud">
+                    <f:facet name="left">
+                        <p:button value="Back" icon="back" href="#main"></p:button>
+                     </f:facet>
+                    <f:facet name="right">
+                            <p:button  value="Logout"  href="#logoutNew?reverse=true"/>
+                    </f:facet>
+                </pm:header>
+
+                <pm:content>
+                        <h:form id="persForm">
+
+                        <h:panelGrid columns="2" >
+                            <h:outputText value="Email: *" style="font-family: Arial, Helvetica, sans-serif; font-size: 12px; color: #866E25; font-weight: bold;"/>
+                            <h:outputText id="pers1" value="#{userEmployeeHome.employee.email}" style="font-family: Arial, Helvetica, sans-serif ; font-size: 12px; font-weight: bold; color: #203034;"/>
+                            <h:outputText value="Last Name: *" style="font-family: Arial, Helvetica, sans-serif; font-size: 12px; color: #866E25; font-weight: bold;"/>
+                            <h:outputText id="c4" value="#{userEmployeeHome.employee.lastname}" style="font-family: Arial, Helvetica, sans-serif ; font-size: 12px; font-weight: bold; color: #203034;"/>
+                            <h:outputText value="First Name: *" style="font-family: Arial, Helvetica, sans-serif; font-size: 12px; color: #866E25; font-weight: bold;"/>
+                            <h:outputText id="c6" value="#{userEmployeeHome.employee.firstname}" style="font-family: Arial, Helvetica, sans-serif ; font-size: 12px; font-weight: bold; color: #203034;"/>
+
+                            <h:outputText value="Address1: " style="font-family: Arial, Helvetica, sans-serif; font-size: 12px; color: #866E25; font-weight: bold;"/>
+                            <h:outputText id="c8" value="#{userEmployeeHome.employee.address1}" style="font-family: Arial, Helvetica, sans-serif ; font-size: 12px; font-weight: bold; color: #203034;"/>
+                            <h:outputText value="Address2: " style="font-family: Arial, Helvetica, sans-serif; font-size: 12px; color: #866E25; font-weight: bold;"/>
+                            <h:outputText id="c9" value="#{userEmployeeHome.employee.address2}" style="font-family: Arial, Helvetica, sans-serif ; font-size: 12px; font-weight: bold; color: #203034;"/>
+
+                            <h:outputText value="Date Of Birth: *" style="font-family: Arial, Helvetica, sans-serif; font-size: 12px; color: #866E25; font-weight: bold;"/>
+                            <h:outputText id="c10" value="#{userEmployeeHome.employee.dob}" style="font-family: Arial, Helvetica, sans-serif ; font-size: 12px; font-weight: bold; color: #203034;">
+                                    <f:convertDateTime type="date" pattern="MM/dd/yy"
+                                            timeZone="America/New_York" />
+                            </h:outputText>
+                        </h:panelGrid>
+
+                        </h:form>
+                </pm:content>
+            </pm:view>
+
+
+    </pm:page>
+
+</f:view>

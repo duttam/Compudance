@@ -1,0 +1,60 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	template="sitetemplate.xhtml">
+    
+
+	<ui:define name="content">
+		
+		<h:form id="adminForm" style="height:22px">
+		
+		
+		<p:tabMenu activeIndex="#{mainMenuBean.activeMenuIndex}" > 
+			 <p:menuitem value="Home"  action="#{mainMenuBean.adminMenuItemClicked('adminhome')}" rendered="#{p:ifAnyGranted('ROLE_ACCESS_ADMIN,ROLE_ACCESS_MANAGER,ROLE_ACCESS_SALES')}">
+		    	
+		    </p:menuitem>
+		    
+		    <p:menuitem value="Roster"  action="#{mainMenuBean.adminMenuItemClicked('rooster')}" rendered="#{p:ifAnyGranted('ROLE_ACCESS_ADMIN,ROLE_ACCESS_MANAGER,ROLE_ACCESS_SALES')}" >
+		    	
+		    </p:menuitem>
+		    <p:menuitem value="Employee"  action="#{mainMenuBean.adminMenuItemClicked('employee')}" rendered="#{p:ifAnyGranted('ROLE_ACCESS_ADMIN,ROLE_ACCESS_MANAGER')}" >
+		    	
+		    </p:menuitem>
+		    <p:menuitem value="Event"  action="#{mainMenuBean.adminMenuItemClicked('event')}" rendered="#{p:ifAnyGranted('ROLE_ACCESS_ADMIN,ROLE_ACCESS_MANAGER,ROLE_ACCESS_SALES')}" >
+		    	
+		    </p:menuitem>
+		    <p:menuitem value="Location" action="#{mainMenuBean.adminMenuItemClicked('location')}" rendered="#{p:ifAnyGranted('ROLE_ACCESS_ADMIN,ROLE_ACCESS_MANAGER,ROLE_ACCESS_SALES')}">
+		    	
+		    </p:menuitem> 
+		    
+		    <p:menuitem value="Sign-In-Out"  action="#{mainMenuBean.adminMenuItemClicked('signinout')}" rendered="#{p:ifAnyGranted('ROLE_ACCESS_ADMIN,ROLE_ACCESS_MANAGER')}">
+		    	
+		    </p:menuitem>
+		    
+		    <p:menuitem value="Reports"  action="#{mainMenuBean.adminMenuItemClicked('reports')}" rendered="#{p:ifAnyGranted('ROLE_ACCESS_ADMIN,ROLE_ACCESS_MANAGER')}">
+		    	
+		    </p:menuitem>
+		    <p:menuitem value="Tools"  action="#{mainMenuBean.adminMenuItemClicked('tools')}" rendered="#{p:ifAnyGranted('ROLE_ACCESS_ADMIN,ROLE_ACCESS_MANAGER,ROLE_ACCESS_SALES')}">
+		    	
+		    </p:menuitem>
+		    <p:menuitem value="Upload Employee"  action="#{mainMenuBean.adminMenuItemClicked('uploademployee')}" rendered="#{p:ifGranted('ROLE_ACCESS_ADMIN')}">
+		    	
+		    </p:menuitem>
+		    <p:menuitem value="Email Status"  action="#{mainMenuBean.adminMenuItemClicked('emailstatus')}" rendered="#{p:ifGranted('ROLE_ACCESS_ADMIN')}">
+		    	
+		    </p:menuitem>
+		    <p:menuitem value="New Company"  action="#{mainMenuBean.adminMenuItemClicked('newcompany')}" rendered="#{p:ifGranted('ROLE_ACCESS_SUPERADMIN')}">
+		    	
+		    </p:menuitem>
+		    
+		</p:tabMenu>
+		
+		</h:form>
+		<div>
+			<ui:insert name="mainContent" />
+		</div>
+		
+	</ui:define>
+</ui:composition>

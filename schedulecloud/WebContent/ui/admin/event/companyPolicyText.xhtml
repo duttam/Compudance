@@ -1,0 +1,28 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+				xmlns:h="http://java.sun.com/jsf/html"
+				xmlns:f="http://java.sun.com/jsf/core"
+				xmlns:p="http://primefaces.org/ui"
+				xmlns:func="http://onetouch.com/functions"
+				xmlns:o="http://omnifaces.org/ui"
+				xmlns:of="http://omnifaces.org/functions"
+				xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+				xmlns:pe="http://primefaces.org/ui/extensions">
+	
+	<p:dialog id="policyDialog" header="Enter Text for Meal Breaks and Rest Breaks" 
+			widgetVar="policydlg" resizable="true" showEffect="clip" hideEffect="fold" dynamic="true" >  
+			
+  			<h:form id="policyform" prependId="false">
+  				
+								<p:inputTextarea autoResize="true" value="#{rosterBean.tenant.policyNotes}" rows="20" cols="100"></p:inputTextarea>
+								<p></p>
+								<div align="center">
+								<p:commandButton value="Save"
+									actionListener="#{rosterBean.saveCompanyPolicyNotes}" process="@all" oncomplete="policydlg.hide();"></p:commandButton>
+								</div>
+							
+  			</h:form>
+	</p:dialog>
+
+						
+</ui:composition>

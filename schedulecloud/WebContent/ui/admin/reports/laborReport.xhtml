@@ -1,0 +1,328 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions"
+	xmlns:o="http://omnifaces.org/ui"
+	xmlns:of="http://omnifaces.org/functions">
+
+
+	<div id="quotescointainer">
+		<div id="quotesleft" align="left">
+			<p:selectOneMenu height="200" value="#{reportHome.laborEvent}"
+				converter="eventconverter">
+
+				<f:selectItems value="#{reportHome.eventListByMonth}" />
+
+
+				<p:ajax update="actuallabortbl forecastlabortbl eventdetialgrd"
+					listener="#{reportHome.changeReportTables}" />
+			</p:selectOneMenu>
+		</div>
+		<div id="quotescenter" align="right" >
+			<p:commandButton styleClass="downloadButton" ajax="false" icon="ui-icon-xls" iconPos="right" title="Download Report">  
+								      
+				<pe:exporter type="xlsx" target="#{reportHome.reportViewTarget}" fileName="#{reportHome.filename}" postProcessor="#{reportHome.postProcessXLS}"
+						    preProcessor="#{reportHome.empoyeeSchedulePreProcessorXLS}" facetFontSize="14"/>  
+			</p:commandButton>
+			
+		</div>
+</div>
+
+				<h:panelGrid id="eventdetialgrd" columns="2" styleClass="TOP">
+				
+						<p:outputLabel value="Title:"/>
+						<p:outputLabel value="#{reportHome.laborEvent.name}" />
+						    
+						
+				        
+				        <p:outputLabel value="Event Time:"/>
+				        <p:outputLabel  value="#{of:formatDate(reportHome.laborEvent.startDate, 'MM-dd-yyyy')}, #{of:formatDate(reportHome.laborEvent.startTime, 'hh:mm a')} - #{of:formatDate(reportHome.laborEvent.endTime, 'hh:mm a')}" />
+				        
+				        
+				        <p:outputLabel value="Location:" >
+				        </p:outputLabel>
+				        
+				        <h:panelGrid columns="1">
+				        	<p:outputLabel value="#{reportHome.laborEvent.location.name} #{reportHome.laborEvent.location.locationTitle}" >
+		        				
+		        			</p:outputLabel>
+		        			<p:outputLabel value="#{reportHome.laborEvent.location.address1} #{reportHome.laborEvent.location.city} #{reportHome.laborEvent.location.state.stateName}" >
+		        				
+		        			</p:outputLabel>
+		        			<p:outputLabel value="#{reportHome.laborEvent.location.city}, #{reportHome.laborEvent.location.state.stateName}" >
+		        				
+		        			</p:outputLabel>
+		        			
+				        </h:panelGrid>            
+				  </h:panelGrid>
+						<p></p>
+						<p:dataTable id="actuallabortbl" var="employee" value="#{reportHome.scheduledEmployees}" >
+							<f:facet name="header">  
+						        <h:outputText value="Actual Labor Report"/>  
+						    </f:facet>  
+    						<p:columnGroup type="header">  
+						        
+						        <p:row>  
+						              
+						            <p:column headerText="Employee Name" rowspan="2"/>  
+						            <p:column headerText="Position" rowspan="2"/>  
+						            <p:column headerText="Rate" rowspan="2"/>  
+						            <p:column headerText="Time In" rowspan="2"/>  
+						  
+						            <p:column headerText="Break Out" rowspan="2"/>  
+						            <p:column headerText="Break In" rowspan="2"/>  
+						            <p:column headerText="Time Out" rowspan="2"/>  
+						            <p:column headerText="Hours Worked" rowspan="2"/>  
+						            
+						            <p:column colspan="3" headerText="Wage Categories"/>  
+						            <p:column headerText="" rowspan="2" style="display:none"/>
+						            <p:column headerText="" rowspan="2" style="display:none"/>
+						            <p:column headerText="Total Pay" rowspan="2"/>
+						        </p:row> 
+						  
+						        <p:row>  
+						       		
+						            <p:column headerText="Reg pay"/>
+						            <p:column headerText="OT Pay"/>
+						            <p:column headerText="Dt Pay" />
+						            
+						        </p:row>  
+						    </p:columnGroup>	
+							    	 <p:column  styleClass="hdr1Black" >
+					                    
+					                    	
+					                        <p:outputLabel value="#{employee.firstname} #{employee.lastname}"/>
+					                    
+					                </p:column>
+					                
+						        	<p:column styleClass="hdr1Black" >
+					                    
+					                    	
+					                        <h:outputText value="#{employee.position.name}" >
+					                            
+					                        </h:outputText>                     
+					                    
+					                </p:column>
+									<p:column  styleClass="hdr1Black"  >
+					                   
+					                        <p:outputLabel value="#{employee.empRate.hourlyRate}">
+					                        	<f:convertNumber currencySymbol="$" minFractionDigits="2" maxFractionDigits="2"/>
+					                        </p:outputLabel>
+					                    
+					                </p:column>
+					                <p:column styleClass="hdr1Black" >
+					                    
+					                        <h:outputText value="#{of:formatDate(employee.signInOut.startTime, 'hh:mm a')}" />
+					                    
+					                </p:column>
+					                
+					                
+					                
+					                <p:column styleClass="hdr1Black" >
+					                    
+					                        <h:outputText value="#{of:formatDate(employee.signInOut.breakStartTime, 'hh:mm a')}" />
+					                    
+					                </p:column>
+					                <p:column styleClass="hdr1Black" >
+					                    
+					                        <h:outputText value="#{of:formatDate(employee.signInOut.breakEndTime, 'hh:mm a')}" />
+					                   
+					                </p:column>
+					                <p:column styleClass="hdr1Black" >
+					                    
+					                        <h:outputText value="#{of:formatDate(employee.signInOut.endTime, 'hh:mm a')}" />
+					                   
+					                </p:column>
+									<p:column styleClass="hdr1Black" >
+					                    
+					                        <h:outputText value="#{employee.hours} hours #{employee.minutes} minutes" >
+					                            
+					                        </h:outputText>
+					                    
+					                </p:column>  
+						  			
+						  			
+						  			<p:column  styleClass="hdr1Black"  >
+					                    
+					                        <p:outputLabel value="#{employee.regPay}">
+					                        	<f:convertNumber currencySymbol="$" minFractionDigits="2" maxFractionDigits="2"/>
+					                        </p:outputLabel>
+					                    
+					                </p:column>
+					                <p:column  styleClass="hdr1Black"  >
+					                    
+					                        <p:outputLabel value="#{employee.otPay}">
+					                        	<f:convertNumber currencySymbol="$" minFractionDigits="2" maxFractionDigits="2"/>
+					                        </p:outputLabel>
+					                   
+					                </p:column>
+					                <p:column  styleClass="hdr1Black"  >
+					                    
+					                        <p:outputLabel value="#{employee.dtPay}">
+					                        	<f:convertNumber currencySymbol="$" minFractionDigits="2" maxFractionDigits="2"/>
+					                        </p:outputLabel>
+					                    
+					                </p:column>
+					                <p:column style="display:none" >
+					                   
+					                </p:column>
+					                <p:column style="display:none" >
+					                    
+					                </p:column>
+					                <p:column  styleClass="hdr1Black"  >
+					                    
+					                        <p:outputLabel value="#{employee.totalPay}">
+					                        	<f:convertNumber currencySymbol="$" minFractionDigits="2" maxFractionDigits="2"/>
+					                        </p:outputLabel>
+					                    
+					                </p:column>
+					                
+					                <p:columnGroup type="footer">  
+							        <p:row>  
+							            
+							            <p:column />  
+							            <p:column footerText=""/>  
+							            <p:column footerText=""/>
+							            <p:column colspan="4" footerText="TOTAL HOURS" style="text-align:right"/>  
+							            <p:column footerText="#{reportHome.totalActualHrs} hours #{reportHome.totalActualMinutes} minutes" colspan="1"/>  
+							  			
+							            <p:column colspan="3" footerText="TOTAL PAY " style="text-align:right"/>  
+							            <p:column footerText="" style="display:none"/>  
+							            <p:column footerText="" style="display:none"/>
+							            <p:column footerText="#{reportHome.totalActualPay}"></p:column>
+							              
+							        </p:row>  
+    								</p:columnGroup>
+						</p:dataTable>  
+						<p></p>
+						<p:dataTable id="forecastlabortbl" var="employee" value="#{reportHome.eventPosEmployees}" >
+							<f:facet name="header">  
+						        <h:outputText value="Forecast Labor Report"/>  
+						    </f:facet>  
+    						<p:columnGroup type="header">  
+						        
+						        <p:row>  
+						              
+						            <p:column headerText="Employee Name" rowspan="2"/>  
+						            <p:column headerText="Position" rowspan="2"/>  
+						            <p:column headerText="Rate" rowspan="2"/>  
+						            <p:column headerText="Shift Start" rowspan="2"/>  
+						            <p:column headerText="Shift End" rowspan="2"/>  
+						            <p:column headerText="Est Hours" rowspan="2"/>  
+						            
+						            <p:column colspan="3" headerText="Wage Categories"/>  
+						            <p:column headerText="" rowspan="2" style="display:none"/>
+						            <p:column headerText="" rowspan="2" style="display:none"/>
+						            <p:column headerText="Total Pay" rowspan="2"/>
+						        </p:row> 
+						  
+						        <p:row>  
+						       		
+						            <p:column headerText="Reg pay"/>
+						            <p:column headerText="OT Pay"/>
+						            <p:column headerText="Dt Pay" />
+						            
+						        </p:row>  
+						    </p:columnGroup>	
+							    	 <p:column  styleClass="hdr1Black" >
+					                    	
+					                        <p:outputLabel value="#{employee.firstname} #{employee.lastname}"/>
+					                    
+					                </p:column>
+					                
+						        	<p:column styleClass="hdr1Black"  >
+					                    	
+					                        <h:outputText value="#{employee.position.name}" >
+					                            
+					                        </h:outputText>                     
+					                    
+					                </p:column>
+									<p:column  styleClass="hdr1Black"  >
+					                    
+					                        <p:outputLabel value="#{employee.empRate.hourlyRate}">
+					                        	<f:convertNumber currencySymbol="$" minFractionDigits="2" maxFractionDigits="2"/>
+					                        </p:outputLabel>
+					                   
+					                </p:column>
+					                <p:column styleClass="hdr1Black" >
+					                   
+					                        <h:outputText value="#{of:formatDate(employee.shiftStartTime, 'hh:mm a')}" />
+					                    
+					                </p:column>
+					                
+					                
+					                <p:column styleClass="hdr1Black" >
+					                    
+					                        <h:outputText value="#{of:formatDate(employee.shiftEndTime, 'hh:mm a')}" />
+					                    
+					                </p:column>
+									<p:column styleClass="hdr1Black" >
+					                    
+					                        <h:outputText value="#{employee.hours} hours #{employee.minutes} minutes" >
+					                            
+					                        </h:outputText>
+					                    
+					                </p:column>  
+						  			
+						  			
+						  			<p:column  styleClass="hdr1Black"  >
+					                    
+					                        <p:outputLabel value="#{employee.regPay}">
+					                        	<f:convertNumber currencySymbol="$" minFractionDigits="2" maxFractionDigits="2"/>
+					                        </p:outputLabel>
+					                   
+					                </p:column>
+					                <p:column  styleClass="hdr1Black"  >
+					                       <p:outputLabel value="#{employee.otPay}">
+					                        	<f:convertNumber currencySymbol="$" minFractionDigits="2" maxFractionDigits="2"/>
+					                        </p:outputLabel>
+					                   
+					                </p:column>
+					                <p:column  styleClass="hdr1Black"  >
+					                    
+					                        <p:outputLabel value="#{employee.dtPay}">
+					                        	<f:convertNumber currencySymbol="$" minFractionDigits="2" maxFractionDigits="2"/>
+					                        </p:outputLabel>
+					                    
+					                </p:column>
+					                <p:column  style="display:none">
+					                    
+					                </p:column>
+					                <p:column style="display:none">
+					                    
+					                </p:column>
+					                
+					                <p:column  styleClass="hdr1Black"  >
+					                    
+					                        <p:outputLabel value="#{employee.totalPay}">
+					                        	<f:convertNumber currencySymbol="$" minFractionDigits="2" maxFractionDigits="2"/>
+					                        </p:outputLabel>
+					                    
+					                </p:column>
+					                <p:columnGroup type="footer">  
+							        <p:row>  
+							             
+							            
+							            <p:column footerText=""/>
+							            <p:column footerText=""/>
+							            <p:column footerText=""/>
+							            <p:column colspan="2" footerText="TOTAL HOURS" style="text-align:right"/>  
+							            <p:column footerText="#{reportHome.totalForecastHrs} hours #{reportHome.totalForecastMinutes} minutes"/>  
+							  			
+							            <p:column colspan="3" footerText="TOTAL PAY " style="text-align:right"/>  
+							            <p:column footerText="" style="display:none"/>  
+							            <p:column footerText="" style="display:none"/>
+							            <p:column footerText="#{reportHome.totalForecastPay}" />
+							              
+							        </p:row>  
+    						</p:columnGroup>
+						</p:dataTable>  
+						<p:spacer height="30"/>  
+  
+				
+						     
+						  
+
+</ui:composition>

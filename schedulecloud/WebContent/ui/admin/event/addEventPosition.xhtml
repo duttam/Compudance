@@ -1,0 +1,46 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	>
+    
+	
+		<p:dialog id="eventPositionDialog" header="Add Position, Start Time and End Time" 
+						dynamic="true" position="center" modal="true"  widgetVar="eventpositiondlg" width="500" height="150">
+				
+				<div align="center">
+					
+					<h:panelGrid columns="3" >
+						<p:outputLabel value="Select Position: *" />
+								
+						<p:selectOneMenu id="positionsid" value="#{addEventBean.eventPosition.position}" converter="positionconverter"  >
+		        			
+		            		<f:selectItems value="#{positionHome.positionList}" var="position" itemLabel="#{position.name}" itemValue="#{position}"/>
+		            	</p:selectOneMenu>
+		            	<p:outputLabel/>	
+						<p:outputLabel value="Start Time"/>
+						
+						<p:calendar id="stime" value="#{addEventBean.eventPosition.startTime}" timeOnly="true" pattern="hh:mm a"/>
+						<p:message for="stime"/>
+						<p:outputLabel value="End Time"/>
+						
+						<p:calendar id="etime" value="#{addEventBean.eventPosition.endTime}" timeOnly="true" pattern="hh:mm a"/>
+						<p:message for="etime"/>
+						<p:outputLabel value="Required Number"/>
+						
+						<p:inputText id="reqdnum" value="#{addEventBean.eventPosition.reqdNumber}"/>
+						<p:message for="reqdnum"/>
+						<h:outputLabel/>
+						<h:panelGroup>
+							<p:commandButton value="Save" actionListener="#{addEventBean.addNewEventPosition}" oncomplete="eventpositiondlg.hide();" update="addEventForm:eventPositionTable"/>
+							<p:commandButton value="Cancel"   onclick="eventpositiondlg.hide();"  />
+						</h:panelGroup>
+					</h:panelGrid>
+					
+				</div>
+			</p:dialog>
+			
+			
+		
+</ui:composition>

@@ -1,0 +1,434 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui" xmlns:o="http://omnifaces.org/ui"
+	xmlns:of="http://omnifaces.org/functions"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+	xmlns:pe="http://primefaces.org/ui/extensions"
+	template="../../../template/admincontenttemplate.xhtml">
+
+
+	<ui:define name="mainContent">
+	<f:metadata>
+		<f:viewParam name="startDate" value="#{rosterBean.startDate}" />
+		<f:viewParam name="endDate" value="#{rosterBean.endDate}" />
+    	<f:viewParam name="locationId" value="#{rosterBean.locationId}" />
+    	<f:viewParam name="eventId" value="#{rosterBean.eventId}" />
+    	<f:event type="preRenderView" listener="#{rosterBean.init}" />
+	</f:metadata>
+		<h:form id="roosterForm" prependId="false">
+		<br />
+			<script type="text/javascript">
+			
+	        
+	    
+    /* $(document).ready(function(){
+        $("#eventCal_input").hide();
+        
+    }); */
+    </script>
+			<style type="text/css">
+#quotescointainer {
+	width: 100%;
+	font-size: 12px;
+	overflow: hidden; /* contain floated elements */
+}
+
+#quotesleft {
+	float: left;
+	width: 40%;
+}
+
+#quotescenter {
+	float: left;
+	width: 40%;
+}
+
+#quotesright {
+	float: left;
+	width: 20%;
+	
+}
+.completed {
+    background: red;
+}
+.pendingEvent
+ 
+ {    
+   background-image: url(../../images/Red_flag.gif);
+ }
+</style>
+			
+			<p:growl id="growl" showDetail="true" sticky="false" autoUpdate="true"	showSummary="false" life="5000"/>
+			<p:panel header="Roster">
+				
+				<h:panelGrid columns="11" cellpadding="5" styleClass="TOP">
+					<h:outputLabel value="Start Date"></h:outputLabel>
+					<p:calendar value="#{rosterBean.rosterStartDate}" mode="popup"
+							    showButtonPanel="true" >
+							<p:ajax event="dateSelect"
+								listener="#{rosterBean.selectRosterStartDate}"
+								update="eventCal" />
+					</p:calendar>
+					<h:outputLabel value="End Date"></h:outputLabel>
+					<p:calendar  value="#{rosterBean.rosterEndDate}" mode="popup"
+							id="eventCal" showButtonPanel="true" >
+							<p:ajax event="dateSelect"
+								listener="#{rosterBean.selectRosterEndDate}"
+								/>
+					</p:calendar>
+					
+					<p:selectOneMenu id="locationlist"
+							value="#{rosterBean.selectedLocation}"
+							converter="locationconverter" style="width: 200px" filter="true">
+							<f:selectItem itemLabel="All Location" itemValue="" />
+							<f:selectItems value="#{locationHome.locationList}"
+								var="location"
+								itemLabel="#{location.locationTitle} #{location.name}, #{location.city}, #{location.state.stateName}"
+								itemValue="#{location}" />
+
+							
+						</p:selectOneMenu>
+					<p:commandButton value="Filter Roster" action="#{rosterBean.filterRoster}" ajax="false" ></p:commandButton>
+					
+					
+					<p:button value="Add Event" outcome="addEvent" process="@this">
+							<f:param name="action" value="addevent" />
+					</p:button>
+						
+                   <p:commandButton value="Company Policy" actionListener="#{rosterBean.showCompanyPolicy}" oncomplete="PF('policydlg').show()" update=":policyDialog"  ></p:commandButton>
+                   
+					<p:panel header="Event Schedule">
+						<h:panelGrid columns="2" cellspacing="5">
+							<h:panelGroup>
+								<h:commandLink action="#{rosterBean.processPDF('landscape')}">
+									<p:graphicImage value="/images/pdf.png" title="export as pdf" />
+								</h:commandLink>
+								<br></br>
+								<h:outputLabel value="Landscape"></h:outputLabel>
+							</h:panelGroup>
+							<h:panelGroup>
+								<h:commandLink action="#{rosterBean.processPDF('potrait')}">
+									<p:graphicImage value="/images/pdf.png" title="export as pdf" />
+								</h:commandLink>
+								<br></br>
+								<h:outputLabel value="Portrait"></h:outputLabel>
+							</h:panelGroup>
+						</h:panelGrid>
+					</p:panel>
+					
+					<p:panel  rendered="#{p:ifGranted('ROLE_ACCESS_ADMIN')}" header="Staff Requirement">
+						<h:panelGrid columns="2" cellspacing="5">
+							<h:panelGroup>
+								<h:commandLink
+									action="#{rosterBean.staffReqtListPreProcessorPDF('landscape')}">
+									<p:graphicImage value="/images/pdf.png" title="export as pdf" />
+								</h:commandLink>
+								<br></br>
+								<h:outputLabel value="Landscape"></h:outputLabel>
+							</h:panelGroup>
+							<h:panelGroup>
+								<h:commandLink
+									action="#{rosterBean.staffReqtListPreProcessorPDF('potrait')}">
+									<p:graphicImage value="/images/pdf.png" title="export as pdf" />
+								</h:commandLink>
+								<br></br>
+								<h:outputLabel value="Portrait"></h:outputLabel>
+							</h:panelGroup>
+						</h:panelGrid>
+					</p:panel>
+				</h:panelGrid>
+				<div id="quotescointainer">
+					<div id="quotesleft">
+						<h:panelGrid columns="2" >
+						<p:outputLabel value="Search For Employee by Id/Name" style="font-weight:bold"/>
+						<p:autoComplete  value="#{rosterBean.selectedEmployee}" id="keyword" completeMethod="#{rosterBean.completeEmployer}" size="40" panelStyle="width: 150px;height: 200px;"
+										 var="emp" itemLabel="#{emp.id} #{emp.firstname} #{emp.lastname}" itemValue="#{emp}" converter="employeeConverter" forceSelection="true" emptyMessage="No Employee found">
+							<p:ajax event="query" global="false"/> 
+							<p:ajax event="itemSelect" listener="#{rosterBean.filterEventRosterListener}" update="eventAcr"/>
+						</p:autoComplete>  
+					    
+					    </h:panelGrid>
+					</div>
+					<div id="quotescenter">
+						<p:spacer width="200" height="5"></p:spacer>
+					</div>
+					<div id="quotesright">
+						<div align="right">
+							<p:commandButton value="Expand All" actionListener="#{rosterBean.expandAllTabs}" update="eventAcr" rendered="true"></p:commandButton>
+							<p:commandButton value="Collapse All" actionListener="#{rosterBean.collapseAllTabs}" update="eventAcr" rendered="true"></p:commandButton>
+						</div>
+					</div>
+				</div>
+                <div style="display:none">
+                    <p:dataTable id="printeventdetailTable" var="eventPosition"
+                                        value="#{rosterBean.allEventPositions}">
+          		<f:facet name="header">Event Schedule</f:facet>
+                        <p:columnGroup type="header">
+                	<p:row>
+				<p:column headerText="Id"/>
+				<p:column headerText="Name" />
+				<p:column headerText="Time In" />
+				<p:column headerText="Break Out" />
+				<p:column headerText="Break In" />
+				<p:column headerText="Time Out" />
+				<p:column headerText="Total Hours" />
+				<p:column headerText="Signature" />
+			</p:row>
+                        </p:columnGroup>
+                        <p:subTable var="employee" value="#{eventPosition.position.acceptedEmps}">  
+                        <f:facet name="header">  
+                            <h:outputText value="#{eventPosition.position.name}"/>  
+                        </f:facet>  
+                        <p:column>
+                                <h:outputText value="#{employee.id}" />
+                        </p:column>
+                        <p:column>
+                                <h:outputText value="#{employee.lastname}, #{employee.firstname}" />
+                        </p:column>
+                        <p:column>
+                                <h:outputText></h:outputText>
+                        </p:column>
+                        <p:column>
+                                <h:outputText></h:outputText>
+                        </p:column>
+                        <p:column>
+                                <h:outputText></h:outputText>
+                        </p:column>
+                        <p:column>
+                                <h:outputText></h:outputText>
+                        </p:column>
+                        <p:column>
+                                <h:outputText></h:outputText>
+                        </p:column>
+                        <p:column>
+                                <h:outputText></h:outputText>
+                        </p:column>
+                        </p:subTable>                              
+                    </p:dataTable>
+                </div>
+
+				<br />
+				<p:accordionPanel id="eventAcr" var="event" multiple="true" 
+					value="#{rosterBean.eventList}" dynamic="true" cache="false" activeIndex="#{rosterBean.activeTabIndex}">
+					<p:ajax event="tabChange" listener="#{rosterBean.onTabChange}"
+						update="eventAcr" />
+						
+					<p:tab>
+						<f:facet name="title">
+							<h:panelGroup>
+								<h:graphicImage url="/images/#{event.statusFlag}" rendered="#{event.pendingSchedule}"></h:graphicImage>
+								<h:outputText value=" " ></h:outputText>
+            		            <h:outputText value=" [#{event.id}] #{event.name}, #{of:formatDate(event.startDate, 'MM-dd-yyyy')}, #{of:formatDate(event.startTime, 'hh:mm a')} - #{of:formatDate(event.endTime, 'hh:mm a')}, #{event.location.locationTitle}  #{event.location.name}"/>
+            				
+         					</h:panelGroup>
+         					
+						</f:facet>
+						<div id="quotescointainer">
+							<div id="quotesleft">
+								<h:panelGrid columns="2" cellpadding="5" styleClass="TOP">
+									<p:outputLabel value="Location:" style="font-weight:bold"></p:outputLabel>
+									<h:panelGrid columns="1">
+
+
+										<p:outputLabel value=" #{event.location.locationTitle} #{event.location.name}">
+
+										</p:outputLabel>
+										<p:outputLabel />
+										<p:outputLabel
+											value="#{event.location.address1} #{event.location.city} #{event.location.state.stateName}">
+
+										</p:outputLabel>
+										<p:outputLabel />
+										
+										<p:outputLabel
+											value="#{event.location.contactName}, #{event.location.contactEmail}">
+
+										</p:outputLabel>
+									</h:panelGrid>
+									
+									<p:outputLabel value="Guest Count:"
+										
+										style="font-weight:bold" />
+									<p:outputLabel value="#{event.guestCount}"
+										/>
+										
+									<p:outputLabel value="Event Type:" style="font-weight:bold"/>
+		       						<p:outputLabel value="#{event.eventType.name}"/>
+		       			
+									<p:outputLabel value="Confidential Note:"
+										rendered="#{event.salesPersonNotes ne null}"
+										style="font-weight:bold" />
+									<p:outputLabel value="#{event.salesPersonNotes}"
+										rendered="#{event.salesPersonNotes ne null}" />
+									
+								</h:panelGrid>
+							</div>
+							<div id="quotescenter">
+								<h:panelGrid columns="2" cellpadding="5" styleClass="TOP">
+									<p:outputLabel value="Admin:" style="font-weight:bold" />
+									<h:panelGroup layout="block" >
+									<p:outputLabel value="#{event.owner.firstname} #{event.owner.lastname}" style="vertical-align:top"/>
+									<p:graphicImage value="/images/design/phone.gif" title="Primary Phone : #{event.owner.homephone}"/>
+									</h:panelGroup>
+									<p:outputLabel value="Manager:" style="font-weight:bold" />
+									<p:outputLabel
+										value="#{event.coordinator.firstname} #{event.coordinator.lastname}">
+
+									</p:outputLabel>
+									
+									<p:outputLabel value="Sales Person:" style="font-weight:bold" />
+									<h:panelGroup layout="block" >
+									<p:outputLabel value="#{event.salesPerson.firstname} #{event.salesPerson.lastname}" style="vertical-align:top"/>
+									<p:graphicImage value="/images/design/phone.gif" title="Primary Phone : #{event.salesPerson.homephone}" />
+									</h:panelGroup>
+									
+
+									<p:outputLabel value="Client/Host:"
+										rendered="#{event.hostname ne null}"
+										style="font-weight:bold" />
+									<p:outputLabel value="#{event.hostname}"
+										rendered="#{event.hostname ne null}" />
+
+									
+									<p:outputLabel value="Notes:"
+										rendered="#{event.notes ne null}"
+										style="font-weight:bold" />
+									<p:outputLabel value="#{event.notes}"
+										rendered="#{event.notes ne null}" />
+
+									<p:outputLabel value="Description:"
+										rendered="#{event.description ne null}"
+										style="font-weight:bold" />
+									<p:outputLabel value="#{event.description}"
+										rendered="#{event.description ne null}" />
+
+									<p:outputLabel value="Dress:"
+										rendered="#{event.dressCode ne null}"
+										style="font-weight:bold" />
+									<p:outputLabel value="#{event.dressCode}"
+										rendered="#{event.dressCode ne null}" />
+
+								</h:panelGrid>
+							</div>
+							<div id="quotesright">
+								<div align="right">
+								<h:panelGrid columns="5" rendered="#{p:ifGranted('ROLE_ACCESS_ADMIN')}">
+								 
+								<h:link value="Edit" outcome="addEvent" >
+									<f:param name="action" value="editevent" />
+                        			<f:param name="eventid" value="#{event.id}" />
+                        			<f:param name="editview" value="roster"></f:param>
+								</h:link>
+								
+								<h:outputLabel value="|" rendered="false"></h:outputLabel>
+								  
+								<p:commandLink value="Delete" onclick="deleventconfirmation.show()" rendered="false"/> 
+								<h:outputLabel value="|"></h:outputLabel>  
+								<p:commandLink value="Schedule" action="#{rosterBean.onScheduleEventSelect(event.id)}">
+									
+								</p:commandLink>
+								</h:panelGrid>
+								</div>
+							</div>
+						</div>
+
+						<p:confirmDialog id="deleteEventConfirmDialog"
+								message="Are you sure ? It will delete all eventposition and schedule records for this event"
+								header="Delete Event" severity="alert"
+								widgetVar="deleventconfirmation">
+
+								<p:commandButton id="updateconfirm" value="Yes Sure" action="#{rosterBean.deleteEvent}"  update="eventAcr"  
+				        						oncomplete="deleventconfirmation.hide();"  />
+								<p:commandButton id="updatedecline" value="Not Yet"
+									onclick="deleventconfirmation.hide()" type="button" />
+
+							</p:confirmDialog>
+
+
+
+						<p:dataTable id="eventDetailtbl" var="eventPosition"
+							value="#{event.assignedEventPosition}">
+
+							<f:facet name="header">  
+				            Employee Shift Detail  
+				        </f:facet>
+
+							<p:columnGroup type="header">
+								<p:row>
+									<p:column headerText="Notified" rendered="#{p:ifGranted('ROLE_ACCESS_ADMIN')}"/>
+									<p:column headerText="Accepted" />
+									<p:column headerText="Declined" rendered="#{p:ifGranted('ROLE_ACCESS_ADMIN')}"/>
+									<p:column headerText="Expired" rendered="#{p:ifGranted('ROLE_ACCESS_ADMIN')}"/>
+									<p:column rendered="#{rosterBean.tenant.showMove}"></p:column>
+								</p:row>
+							</p:columnGroup>
+
+							<p:subTable value="#{eventPosition.position.scheduledEmployees}"
+								var="employee">
+								<f:facet name="header">
+									<p:row>
+										<p:column>
+											#{eventPosition.position.name}
+											
+										</p:column>
+										<p:column rendered="false">
+											<h:commandLink value="#{eventPosition.position.name}" action="#{rosterBean.editEventPosition}">
+												<f:setPropertyActionListener target="#{rosterBean.selectedEventPosition}" value="#{eventPosition}"></f:setPropertyActionListener>
+											</h:commandLink> 
+											
+										</p:column>
+										<p:column>( <span style="color: green">#{eventPosition.position.scheduledEmployeesCount}</span> ) , </p:column>
+										<p:column>( <span style="color: red">#{eventPosition.reqdNumber
+												- eventPosition.position.scheduledEmployeesCount}</span> ) , </p:column>
+										<p:column>#{of:formatDate(eventPosition.startTime, 'hh:mm a')} - #{of:formatDate(eventPosition.endTime, 'hh:mm a')}</p:column>
+
+									</p:row>
+
+
+								</f:facet>
+
+								<p:column rendered="#{p:ifGranted('ROLE_ACCESS_ADMIN')}">
+									<h:link	value=" #{employee.lastname}, #{employee.firstname}" rendered="#{employee.schedule.schedulestatus == 1}" outcome="/ui/admin/employee/editEmployee.jsf">
+										<f:param name="action" value="editemployee"></f:param>
+										<f:param name="id" value="#{employee.id}"></f:param>
+									</h:link> 
+								</p:column>
+								<p:column>
+									<h:link	value="#{employee.lastname}, #{employee.firstname}" rendered="#{employee.schedule.schedulestatus == 2}" outcome="/ui/admin/employee/editEmployee.jsf">
+										<f:param name="action" value="editemployee"></f:param>
+										<f:param name="id" value="#{employee.id}"></f:param>
+									</h:link>
+									
+								</p:column>
+								<p:column rendered="#{p:ifGranted('ROLE_ACCESS_ADMIN')}">
+									<h:outputText
+										value="#{employee.lastname}, #{employee.firstname}" rendered="#{employee.schedule.schedulestatus == 3}"/>
+								</p:column>
+								<p:column rendered="#{p:ifGranted('ROLE_ACCESS_ADMIN')}">
+									<h:outputText
+										value="#{employee.lastname}, #{employee.firstname}" rendered="#{employee.schedule.schedulestatus == 4}"/>
+								</p:column>
+								
+								<p:column style="width:4%" rendered="#{rosterBean.tenant.showMove}">  
+						            <p:commandButton id="move" value="Move" icon="ui-icon-transfer-e-w"  action="#{rosterBean.onSelectTransferEmployee}" 					            				
+						            				oncomplete="PF('transferdlg').show()" update=":transferDialog" rendered="#{employee.schedule.schedulestatus eq 2}">  
+				                	    <f:setPropertyActionListener value="#{employee}" target="#{rosterBean.transferEmployee}" ></f:setPropertyActionListener>
+				                	    <f:setPropertyActionListener target="#{rosterBean.selectedEventPosition}" value="#{eventPosition}"></f:setPropertyActionListener>
+				                	    <f:setPropertyActionListener target="#{rosterBean.rosterEvent}" value="#{event}"></f:setPropertyActionListener>
+						            </p:commandButton>  
+						        </p:column>
+							</p:subTable>
+						</p:dataTable>
+					</p:tab>
+				</p:accordionPanel>
+
+			</p:panel>
+			<p:spacer width="30"></p:spacer>
+		</h:form>
+		
+		<ui:include src="transferEmployee.xhtml"></ui:include>
+		<ui:include src="companyPolicyText.xhtml"></ui:include>
+	</ui:define>
+</ui:composition>

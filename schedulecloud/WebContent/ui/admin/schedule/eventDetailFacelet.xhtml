@@ -1,0 +1,83 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+				xmlns:h="http://java.sun.com/jsf/html"
+				xmlns:f="http://java.sun.com/jsf/core"
+				xmlns:p="http://primefaces.org/ui"
+				xmlns:func="http://onetouch.com/functions"
+				xmlns:o="http://omnifaces.org/ui"
+				xmlns:of="http://omnifaces.org/functions"
+				xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+				xmlns:pe="http://primefaces.org/ui/extensions">
+	
+				<h:panelGrid columns="2" styleClass="TOP">
+				
+						<p:outputLabel value="Title:"/>
+						<h:link value="#{scheduleDetailBean.event.id} - #{scheduleDetailBean.event.name}" style="color:blue" outcome="/ui/admin/event/addEvent" >
+						    <f:param name="action" value="editevent" />
+	                        <f:param name="eventid" value="#{scheduleDetailBean.event.id}" />
+	                        <f:param name="editview" value="scheduleDetail"></f:param>
+						</h:link>
+				        
+				        <p:outputLabel value="Event Time:"/>
+				        <p:outputLabel  value="#{of:formatDate(scheduleDetailBean.event.startDate, 'MM-dd-yyyy')}, #{of:formatDate(scheduleDetailBean.event.startTime, 'hh:mm a')} - #{of:formatDate(scheduleDetailBean.event.endTime, 'hh:mm a')}" />
+				        
+				        
+				        <p:outputLabel value="Location:" >
+				        </p:outputLabel>
+				        
+				        <h:panelGrid columns="1">
+				        	<p:outputLabel value="#{scheduleDetailBean.event.location.locationTitle} #{scheduleDetailBean.event.location.name}" >
+		        				
+		        			</p:outputLabel>
+		        			<p:outputLabel value="#{scheduleDetailBean.event.location.address1}" >
+		        				
+		        			</p:outputLabel>
+		        			<p:outputLabel value="#{scheduleDetailBean.event.location.city}, #{scheduleDetailBean.event.location.state.stateName}" >
+		        				
+		        			</p:outputLabel>
+		        			<p:outputLabel value="#{scheduleDetailBean.event.location.contactName}, #{scheduleDetailBean.event.location.contactEmail}" >
+		        				
+		        			</p:outputLabel>
+				        </h:panelGrid>
+		        		
+				        <p:outputLabel value="Admin:"/>
+				        <h:panelGroup>
+				        <p:outputLabel value="#{scheduleDetailBean.event.owner.firstname} #{scheduleDetailBean.event.owner.lastname}" style="vertical-align:top">
+				        
+				        </p:outputLabel>
+				        <p:graphicImage value="/images/design/phone.gif" title="Primary Phone : #{scheduleDetailBean.event.owner.homephone}"/>
+				        </h:panelGroup>	
+				        <p:outputLabel value="Manager:"/>
+		       			<p:outputLabel value="#{scheduleDetailBean.event.coordinator.firstname} #{scheduleDetailBean.event.coordinator.lastname}">
+		       				
+		       			</p:outputLabel>
+		         		<p:outputLabel value="Sales Person:"/>
+		         		<h:panelGroup layout="block">
+		       			<p:outputLabel value="#{scheduleDetailBean.event.salesPerson.firstname} #{scheduleDetailBean.event.salesPerson.lastname}" style="vertical-align:top"/>
+		       			<p:graphicImage value="/images/design/phone.gif" title="Primary Phone : #{scheduleDetailBean.event.salesPerson.homephone}"/>
+		       			
+		       			</h:panelGroup>
+				        <p:outputLabel value="Client/Host:" rendered="#{not empty scheduleDetailBean.event.hostname}"/>
+				        <p:outputLabel value="#{scheduleDetailBean.event.hostname}" rendered="#{not empty scheduleDetailBean.event.hostname}"/>
+				        
+				        <p:outputLabel value="Guest Count:"/>
+		       			<p:outputLabel value="#{scheduleDetailBean.event.guestCount}"/>
+		       			
+		       			<p:outputLabel value="Event Type:"/>
+		       			<p:outputLabel value="#{scheduleDetailBean.event.eventType.name}"/>
+		       			
+				        <p:outputLabel value="Notes:" rendered="#{not empty scheduleDetailBean.event.notes}"/>
+				        <p:outputLabel value="#{scheduleDetailBean.event.notes}" rendered="#{not empty scheduleDetailBean.event.notes}"/>
+				        
+				        <p:outputLabel value="Description:" rendered="#{not empty scheduleDetailBean.event.description}"/>
+				        <p:outputLabel value="#{scheduleDetailBean.event.description}" rendered="#{not empty scheduleDetailBean.event.description}"/>
+		        		
+		        		<p:outputLabel value="Dress:" rendered="#{not empty scheduleDetailBean.event.dressCode}"/>
+				        <p:outputLabel value="#{scheduleDetailBean.event.dressCode}" rendered="#{not empty scheduleDetailBean.event.dressCode}"/>
+				        
+				        <p:outputLabel value="Confidential Notes:"/>
+		       			<p:outputLabel value="#{scheduleDetailBean.event.salesPersonNotes}"/>
+		       			
+					</h:panelGrid>
+	
+</ui:composition>

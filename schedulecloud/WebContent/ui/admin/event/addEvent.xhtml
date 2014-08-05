@@ -1,0 +1,390 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+	xmlns:o="http://omnifaces.org/ui"
+	xmlns:of="http://omnifaces.org/functions"
+	template="eventMain.xhtml">
+	<h:outputScript name="event.js" library="javascript" target="head"/>
+    <ui:define name="head">
+    	
+        
+    </ui:define>
+
+	<ui:define name="eventContent">
+		
+		<h:form id="addEventForm" styleClass="mainContent">
+			
+			<style type="text/css">
+    		.ui-accordion {
+			    width: 100%;
+			}
+			.ui-widget-content {
+    
+    			border: 1px solid #A8A8A8;
+    		
+			}
+			.ui-panelgrid td {
+			    padding: 4px 7px;
+			}
+			
+			.ui-datatable .ui-datatable-header {
+			    border-bottom: 0 none;
+			    height: 30px;
+			    
+			}
+			
+    		</style>
+    		<br />
+    		<p:growl id="growl" showDetail="false" sticky="false" showSummary="true" />
+    <div style="height:100%">
+
+    <p:panel header="">
+					<f:facet name="header">
+						<p:row>
+							
+							<p:column>#{addEventBean.event.id eq null ? 'Add Event' : 'Edit Event with id :'} #{addEventBean.event.id} , </p:column>
+							<p:column> Status : #{not empty addEventBean.event.status ? addEventBean.event.status : 'New'}</p:column>
+							
+						</p:row>
+					</f:facet>
+
+					<div align="center">
+    <h:panelGrid id="eventgrd" columnClasses="tableHdr2,tableCellBold,bodyErrorRed,tableHdr2,tableCellBold,bodyErrorRed,tableHdr2,tableCellBold,bodyErrorRed"
+                  columns="9"  style="width:95%" cellpadding="5" cellspacing="5" styleClass="TOP" >
+
+        <p:outputLabel value="Name: *" />
+        <p:inputText id="name" value="#{addEventBean.event.name}" required="true" requiredMessage="#{msg['message.empty']}" title="#{addEventBean.event.name}">
+        	<p:ajax event="blur" process="@this" update="nameMsg"  />
+        </p:inputText>
+        <p:message for="name" id="nameMsg" display="text"/>
+		
+		<p:outputLabel value="Start Date: *" />
+        <p:calendar id="startdate" value="#{addEventBean.event.startDate}" pattern="MM/dd/yyyy" showButtonPanel="true" navigator="true"
+        			disabled="#{addEventBean.event.id ne null}" required="true" requiredMessage="#{msg['message.empty']}" >
+        	<p:ajax event="blur" process="@this" update="startDateMsg" />
+        	<p:ajax event="dateSelect" process="@this" update="startDateMsg"  />
+        	<f:validator validatorId="salesEventStartDateValidator"></f:validator>
+        </p:calendar>
+        <p:message for="startdate"  id="startDateMsg" display="text"/>
+		
+		<p:outputLabel value="Start Time: *"/>
+        	        
+			        <h:panelGroup>
+			            <p:selectOneMenu id="starttime" value="#{addEventBean.event.startTime}" editable="true" >  
+				            
+				            <f:selectItems value="#{dateBean.eventTimes}" var="sdate" itemLabel="#{of:formatDate(sdate, 'hh:mm a')}" itemValue="#{sdate}" />  
+				            <f:convertDateTime pattern="hh:mm a" type="time"/>
+				            <p:ajax event="change" process="@this"  update="startTimeMsg addEventForm:growl addEventForm:endTimeMsg"  />
+				            <f:validator validatorId="eventStartTimeValidator"></f:validator>
+				        </p:selectOneMenu>
+			            
+		            </h:panelGroup>
+		             <p:message for="starttime" id="startTimeMsg" display="text"/>
+        
+        <p:outputLabel value="MultiDay Event :" />
+        <p:selectBooleanCheckbox value="#{addEventBean.event.multidayevent}" disabled="#{addEventBean.event.id ne null}">
+	    	<p:ajax  update="enddatelbl enddategrp enddateerror"/>
+	    </p:selectBooleanCheckbox>
+        <p:outputLabel></p:outputLabel>
+        
+        <h:panelGroup id="enddatelbl">
+        	<p:outputLabel  value="End Date: *" rendered="#{addEventBean.event.multidayevent}"/>
+        </h:panelGroup>
+       <h:panelGroup id="enddategrp">
+	        <p:calendar id="enddate" value="#{addEventBean.event.endDate}" pattern="MM/dd/yyyy" showButtonPanel="true" navigator="true" rendered="#{addEventBean.event.multidayevent}"
+	        			disabled="#{addEventBean.event.id ne null}" required="true" requiredMessage="#{msg['message.empty']}" >
+	        	<p:ajax event="blur" process="@this" update="endDateMsg"  />
+	        	<p:ajax event="dateSelect"  process="@this" update="endDateMsg"  />
+	        	<f:validator validatorId="eventEndDateValidator"></f:validator>
+	        </p:calendar>
+	   </h:panelGroup>
+	   <h:panelGroup id="enddateerror">
+	        <p:message for="enddate"  id="endDateMsg" display="text" rendered="#{addEventBean.event.multidayevent}"/>
+	   </h:panelGroup>
+        
+        
+        
+        
+        
+        <p:outputLabel value="End Time: *"/>
+        <h:panelGroup> 
+		            	<p:selectOneMenu id="endtime" value="#{addEventBean.event.endTime}" editable="true" >  
+				            <f:convertDateTime pattern="hh:mm a" type="time"/>
+				            <f:selectItems value="#{dateBean.eventTimes}" var="edate" itemLabel="#{of:formatDate(edate, 'hh:mm a')}" itemValue="#{edate}">
+				            	
+				            </f:selectItems> 
+				           <p:ajax event="change" process="@this"   update="endTimeMsg addEventForm:growl addEventForm:startTimeMsg"  />
+				           <f:validator validatorId="eventEndTimeValidator"></f:validator>
+				        </p:selectOneMenu>
+		            	
+		            </h:panelGroup>
+        
+        <p:message for="endtime" id="endTimeMsg" display="text"/>
+		
+		<p:outputLabel value="Location:"/>
+        <p:selectOneMenu id="locationlist"  value="#{addEventBean.event.location}" height="180" filter="true"
+              converter="locationconverter" valueChangeListener="#{addEventBean.eventLocationChange}" >
+            <f:selectItems value="#{locationHome.locationListByType}" var="location"
+                    
+                    itemValue="#{location}"/>
+             <p:ajax event="change" process="@this"   update="addEventForm:saleslist" listener="#{addEventBean.filterSalesList}" />
+        </p:selectOneMenu>
+        <p:message for="locationlist" display="text" id="studentlistMsg" />
+		
+		
+		<p:outputLabel value="Admin:"/>
+        <p:selectOneMenu id="ownerlist" value="#{addEventBean.event.owner}"
+                   converter="omnifaces.SelectItemsIndexConverter">
+                <f:selectItems value="#{addEventBean.ownerList}" var="employee" itemLabel="#{employee.firstname} #{employee.lastname}" itemValue="#{employee}"/>
+        </p:selectOneMenu>
+        <p:message for="ownerlist"/>
+        
+         <p:outputLabel value="Manager:"/>
+        <p:selectOneMenu id="coordinatorlist" value="#{addEventBean.event.coordinator}" converter="omnifaces.SelectItemsIndexConverter"
+             >
+                <f:selectItems value="#{addEventBean.coordinatorList}" var="employee" itemLabel="#{employee.firstname} #{employee.lastname}" itemValue="#{employee}"/>
+        </p:selectOneMenu>
+        <p:message for="coordinatorlist"/>
+       
+        <p:outputLabel value="Dress Code:"/>
+        <p:inputText id="dresscode" value="#{addEventBean.event.dressCode}" valueChangeListener="#{addEventBean.dressCodeChange}" maxlength="99"/>
+        	
+        <p:message for="dresscode"/>
+
+        <p:outputLabel value="Client/Host: "/>
+        <p:inputText id="hostname" value="#{addEventBean.event.hostname}" >
+        	<p:ajax event="blur" process="@this" update="hostMsg"  />
+        </p:inputText>
+        <p:message for="hostname" id="hostMsg" display="text"/>
+		
+		<p:outputLabel value="Guest Count: *"/>
+        <p:inputText id="guestcount" value="#{addEventBean.event.guestCount}" required="true" requiredMessage="#{msg['message.empty']}">
+        	<p:ajax event="blur" process="@this" update="guestCntMeg"  />
+        </p:inputText>
+        <p:message for="guestcount" id="guestCntMeg"/>
+		
+        <p:outputLabel value="Notes:" />
+        <p:inputTextarea id="notes" value="#{addEventBean.event.notes}" rows="3" cols="20" />
+        <p:message for="notes" />
+		
+		
+		
+        <p:outputLabel value="Description:"/>
+        <p:inputTextarea id="description" value="#{addEventBean.event.description}" rows="3" cols="20"/>
+        <p:message for="notes"/>
+       	
+       	<p:outputLabel value="Confidential Notes:" />
+        <p:inputTextarea id="salesnotes" value="#{addEventBean.event.salesPersonNotes}" rows="3" cols="20"   />
+        <p:message for="salesnotes" />
+        
+        <p:outputLabel value="Event Type: *"/>
+        <p:selectOneMenu id="eventtypelist" value="#{addEventBean.event.eventType}" style="width:150px" converter="eventtypeconverter"
+              panelStyle="width:auto" required="true" requiredMessage="Event type can't be empty">
+            <f:selectItem itemLabel="Select One" itemValue="" noSelectionOption="true"/>
+            <f:selectItems value="#{eventTypeHome.allEventTypes}" var="eventtype" itemLabel="#{eventtype.name}" itemValue="#{eventtype}" />
+            <p:ajax process="@this" update="eventtypeMsg" />
+        </p:selectOneMenu>
+        <p:message for="eventtypelist" display="text" id="eventtypeMsg" />
+        
+       	<p:outputLabel value="Sales Person:" />
+       	<p:selectOneMenu id="saleslist" value="#{addEventBean.event.salesPerson}"
+                   converter="employeeConverter" style="width: 200px" var="emp" panelStyle="width:250px">
+                <f:selectItem itemLabel="Select One" itemValue="" />
+                <f:selectItems value="#{addEventBean.salesList}" var="employee" itemLabel="#{employee.firstname}  #{employee.lastname}" itemValue="#{employee}"/>
+                <p:column>  
+					                <h:outputText value="#{emp.firstname} #{emp.lastname}">  
+                						
+            						</h:outputText>  
+					            </p:column>
+		                        <p:column>  
+					                <h:outputText value="#{emp.homephone}" converter="phoneconverter">  
+                						
+            						</h:outputText>  
+					            </p:column>
+        </p:selectOneMenu>
+        
+                
+        
+	</h:panelGrid>
+		<div align="right">
+	        <p:commandButton id="addevent" value="Save Event" rendered="#{addEventBean.event.id eq null}" onclick="statusDialog.show();" onsuccess="statusDialog.hide();" 
+	        actionListener="#{addEventBean.saveEvent}" update="@form" process="@this,addEventForm:eventgrd" >
+	        </p:commandButton>
+	        
+    	</div>
+    	<br></br>
+    	      
+		<p:dialog modal="true" widgetVar="statusDialog" header="Processing Event"   
+		        draggable="false" closable="false" >  
+		    <p:graphicImage value="/images/design/ajaxloadingbar.gif" />  
+		</p:dialog> 
+	<h:panelGroup id="eventpositionblock"  layout="block" style="width:auto;padding-left:30px; padding-right:30px">	
+		
+		
+			<p:dataTable id="eventPositionTable" var="eventPosition" value="#{addEventBean.availableEventPosition}"  scrollable="true" scrollHeight="200" rowIndexVar="rowIndex" 
+			    		 rendered="#{not empty addEventBean.event.id and addEventBean.event.status ne 'published'}" rowKey="#{not empty eventPosition.id ? eventPosition.id : eventPosition.hashCode()}"
+			    		 editable="true" editMode="cell">
+
+								<f:facet name="header" >
+									<p:row>
+										<p:column>Enter Start Time, End Time and Required Number for Positions</p:column>
+										<p:column>
+											<h:panelGroup layout="block" style="float:right">
+												<p:commandButton id="newevntposid" value="New EventPosition" style="color:#2779AA;" actionListener="#{addEventBean.displayAddEventPositionDialog}" oncomplete="eventpositiondlg.show();" process="@this"></p:commandButton>
+												
+											</h:panelGroup>
+										</p:column>
+					
+									</p:row>
+
+								</f:facet>
+								
+								<p:column headerText="Position" style="width:20%">  
+								<div align="center">
+		        	<p:selectOneMenu id="positions" value="#{eventPosition.position}" converter="positionconverter"  style="width:160px">
+		        		<f:selectItem itemLabel="Select Position" itemValue=""/>
+		            	<f:selectItems value="#{positionHome.positionList}" var="position" itemLabel="#{position.name}" itemValue="#{position}" itemDisabled="#{position.name eq 'Admin' or position.name eq 'Manager'}"/>
+		            </p:selectOneMenu>
+		            </div>
+		        </p:column>
+		        <p:column headerText="Start Time (mm/dd/yyyy hh:mm AM/PM)" style="width:25%">
+		        	<div align="center">
+		        		<p:selectOneMenu id="starttime" value="#{eventPosition.startTime}" style="width:180px" editable="true" >  
+				            
+				            <f:selectItems value="#{dateBean.shiftTimes}" var="sdate" itemLabel="#{of:formatDate(sdate, 'MM/dd/yyyy hh:mm a')}" itemValue="#{sdate}" />  
+				            <f:convertDateTime pattern="MM/dd/yyyy hh:mm a" type="time"/>
+				         <p:ajax event="change" process="@this"  listener="#{addEventBean.selectEventPositionStartTime}" update=":growl" />
+		        		 <f:param name="currentRowIndex" value="#{rowIndex}"></f:param>
+						
+				        </p:selectOneMenu> 
+		        			
+		            </div>
+		        </p:column>
+		        <p:column headerText="End Time (mm/dd/yyyy hh:mm AM/PM)" style="width:25%">
+		        	<div align="center">
+		        		<p:selectOneMenu id="endtime" value="#{eventPosition.endTime}" style="width:180px" editable="true">  
+				            
+				            <f:selectItems value="#{dateBean.shiftTimes}" var="edate" itemLabel="#{of:formatDate(edate, 'MM/dd/yyyy hh:mm a')}" itemValue="#{edate}"/>
+				            
+				        	<f:convertDateTime pattern="MM/dd/yyyy hh:mm a" type="time"/>
+				           <p:ajax event="change" process="@this"  listener="#{addEventBean.selectEventPositionEndTime}"  update=":growl"/>
+		        		 	<f:param name="currentRowIndex" value="#{rowIndex}"></f:param>
+						
+				        </p:selectOneMenu>
+		            	
+		            </div>
+		        </p:column>
+		        <p:column headerText="Required Count" style="width:10%">  
+		        	<div align="center" >
+						<p:inputText id="reqdnumber" value="#{eventPosition.reqdNumber}" size="5"/>
+					</div>
+				</p:column>
+				
+				<p:column headerText="Notes" style="width:20%">  
+					<p:inputText id="notesInput" value="#{eventPosition.notes}" style="width:96%"/>
+					  
+		          
+		        </p:column> 
+			</p:dataTable>
+			<br />
+			
+				
+	</h:panelGroup>
+	    </div>
+	    <p></p>
+	    <h:panelGroup layout="block" id="addshiftpositionbtn">
+		    <div align="right">
+		    	<p:commandButton  value="Delete Event" onclick="deleventconfirmation.show()" rendered="#{not empty addEventBean.event.id}" process="@this,addEventForm:eventgrd" disabled="#{p:ifGranted('ROLE_ACCESS_SALES') and addEventBean.event.status eq 'published'}">
+		        </p:commandButton>
+		    	<p:commandButton  value="Update Event" action="#{addEventBean.updateEvent}" rendered="#{not empty addEventBean.event.id and addEventBean.event.status eq 'published'}" process="@this,addEventForm:eventgrd" onclick="jQuery(this).addClass('ui-state-disabled')" oncomplete="jQuery(this).removeAttr('disabled')" disabled="#{p:ifGranted('ROLE_ACCESS_SALES')}">
+		        </p:commandButton>
+		        <p:commandButton  value="Save and Continue" action="#{addEventBean.addEventPosition}" rendered="#{not empty addEventBean.event.id and addEventBean.event.status ne 'published'}" process="@this,addEventForm:eventgrd,addEventForm:eventPositionTable" onclick="jQuery(this).addClass('ui-state-disabled')">
+		        </p:commandButton>
+		    </div>
+		</h:panelGroup>
+		<p:confirmDialog id="deleteEventConfirmDialog"
+								message="Are you sure ? It will delete all eventposition and schedule records for this event"
+								header="Delete Event" severity="alert"
+								widgetVar="deleventconfirmation">
+
+								<p:commandButton id="updateconfirm" value="Yes Sure" action="#{addEventBean.deleteEvent}"  process="@this,addEventForm:eventgrd,addEventForm:eventPositionTable"  
+				        						oncomplete="deleventconfirmation.hide();"  />
+								<p:commandButton id="updatedecline" value="Not Yet"
+									onclick="deleventconfirmation.hide()" type="button" />
+
+							</p:confirmDialog>
+    <p></p>
+    <p:dialog id="eventPositionDialog" header="Add Position, Start Time and End Time" 
+						dynamic="true" position="center" modal="true"  widgetVar="eventpositiondlg" width="600" height="250" >
+				<p:ajax event="close"  listener="#{addEventBean.closeNewEventPositionDialog}"/>
+				<div align="center">
+					
+					<h:panelGrid columns="3" cellpadding="5">
+						<p:outputLabel value="Select Position: *" />
+								
+						<p:selectOneMenu id="positionsid" value="#{addEventBean.eventPosition.position}" converter="positionconverter"  >
+		        			
+		            		<f:selectItems value="#{positionHome.positionList}" var="position" itemLabel="#{position.name}" itemValue="#{position}" itemDisabled="#{position.name eq 'Admin' or position.name eq 'Manager'}"/>
+		            	</p:selectOneMenu>
+		            	<p:outputLabel/>	
+						
+						<p:outputLabel value="Start Time: *"/>
+        	        
+			        <h:panelGroup>
+			            <p:selectOneMenu id="stime" value="#{addEventBean.eventPosition.startTime}" editable="true">  
+				            <f:selectItems value="#{dateBean.shiftTimes}" var="sdate" itemLabel="#{of:formatDate(sdate, 'MM/dd/yyyy hh:mm a')}" itemValue="#{sdate}" />  
+				            <f:convertDateTime pattern="MM/dd/yyyy hh:mm a" type="time"/>
+				            
+				            <p:ajax event="change" process="@this" update="stimeMsg etimeMsg"  />
+				            <f:validator validatorId="newEventPositionStartTimeValidator"></f:validator>
+				        </p:selectOneMenu> 
+			            
+		            </h:panelGroup>
+						<p:message for="stime" id="stimeMsg"/>
+						
+						<p:outputLabel value="End Time: *"/>
+				        <h:panelGroup>  
+						            	<p:selectOneMenu id="etime" value="#{addEventBean.eventPosition.endTime}" editable="true">  
+								            <f:selectItems value="#{dateBean.shiftTimes}" var="edate" itemLabel="#{of:formatDate(edate, 'MM/dd/yyyy hh:mm a')}" itemValue="#{edate}"/>
+				            
+				        					<f:convertDateTime pattern="MM/dd/yyyy hh:mm a" type="time"/>
+				        					
+				        					<p:ajax event="change" process="@this" update="stimeMsg etimeMsg"  />
+								           <f:validator validatorId="newEventPositionEndTimeValidator"></f:validator>
+								        </p:selectOneMenu>
+						            	
+						            </h:panelGroup>
+				        
+				        
+						<p:message for="etime" id="etimeMsg"/>
+						<p:outputLabel value="Required Number"/>
+						
+						<p:inputText id="reqdnum" value="#{addEventBean.eventPosition.reqdNumber}"/>
+						<p:message for="reqdnum"/>
+						
+						<p:outputLabel value="Notes"/>
+						<p:inputText id="eventposnote" value="#{addEventBean.eventPosition.notes}"/>
+						
+						<h:outputLabel/>
+						<h:panelGroup>
+							<p:commandButton value="Add to List" actionListener="#{addEventBean.addNewEventPosition}" oncomplete="eventpositiondlg.hide();" update="addEventForm:eventPositionTable" />
+							<p:commandButton value="Cancel" actionListener="#{addEventBean.cancelNewEventPositionDialog}" oncomplete="eventpositiondlg.hide();"   />
+						</h:panelGroup>
+					</h:panelGrid>
+					
+				</div>
+			</p:dialog>
+			   	
+	    	
+		
+					
+    </p:panel>
+	</div>
+		
+        </h:form>
+        <p:growl id="growl" showDetail="true" sticky="true" />
+</ui:define>
+</ui:composition>

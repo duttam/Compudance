@@ -1,0 +1,122 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+    <style type="text/css">
+    	#quotescointainer{
+			    width: 100%;
+			    font-size: 12px;
+			    overflow: hidden; /* contain floated elements */
+			    
+			}
+			#quotesleft {
+			    float: left; 
+			    width: 10%;
+			    
+			}
+			#quotescenter { 
+			    float: left;
+			    
+			    width: 45%;
+			}
+			#quotesright{
+			    float: left;
+			    width: 45%;
+			    
+			}
+    </style>	
+		
+		
+			<p:tab id="sendEmailTab" title="Send Email" titleStyle="font-size: 11px" rendered="#{p:ifGranted('ROLE_ACCESS_ADMIN')}">	
+			
+			<p:growl id="growl" showDetail="false" life="3000" showSummary="true"/> 
+			<div id="left">
+				<p:panel header=" Select Regions and Positions" >
+				<h:panelGrid columns="1" cellpadding="5" styleClass="TOP">
+				<h:panelGrid columns="3">	
+					<p:selectManyMenu  value="#{bulkEmailBean.selectedRegions}" converter="regionconverter" style="width:200px;height:200px"
+										var="r" showCheckbox="true" >
+					<f:selectItems value="#{regionBean.regionList}" var="region"
+						itemLabel="#{region.name}" itemValue="#{region}" />
+						<p:column>#{r.name}</p:column>
+						<p:column>#{r.description}</p:column>
+					</p:selectManyMenu>
+					<p:spacer height="5" width="30"></p:spacer>
+					<p:selectManyMenu id="emailpositions" value="#{bulkEmailBean.selectedPositions}"   
+		                                converter="positionconverter" style="width:200px;height:auto" var="p" showCheckbox="true" >  
+							<f:selectItems value="#{positionSupport.positions}" var="position" itemLabel="#{position.name}" itemValue="#{position}"/>  
+							<p:column>#{p.name}</p:column>  
+					</p:selectManyMenu>
+				</h:panelGrid>
+				<p:commandButton value="Add Employees to Available List" actionListener="#{bulkEmailBean.filteAvailableEmployeeList}" update=":toolForm:toolview:employeeEmailPickList"></p:commandButton>
+				<p:pickList id="employeeEmailPickList" value="#{bulkEmailBean.employees}"
+					var="employee" itemValue="#{employee}"
+					itemLabel="#{employee.firstname} #{employee.lastname}" converter="employeeConverter"
+					
+					showCheckbox="true" showSourceFilter="true" showTargetFilter="true" 
+					filterMatchMode="contains" >
+	
+					<f:facet name="sourceCaption">Available Employees</f:facet>
+					<f:facet name="targetCaption">Notified Employees</f:facet>
+	
+	
+					<p:column style="width:25%">
+						<p:graphicImage
+							value="/images/#{bulkEmailBean.tenant.code}/#{employee.imageName}"
+							width="30" height="40" rendered="false"/>
+					</p:column>
+	
+					<p:column style="width:75%;">  
+					            #{employee.firstname}  #{employee.lastname}
+					        </p:column>
+	
+				</p:pickList>
+				</h:panelGrid>
+				</p:panel>
+    			
+    			</div>
+    			<div id="center"></div>
+				<div id="right">
+    				<h:panelGrid columns="1" cellpadding="5" styleClass="TOP" width="90%">
+					<h:panelGroup>
+					<p:outputLabel value="Subject" style="font-weight:bold;"></p:outputLabel>
+					
+		                <p:inputText id="emailSubject" value="#{bulkEmailBean.emailSubject}" style="width:95%"/>
+					</h:panelGroup>
+					
+					<h:panelGroup >
+					<h:outputLabel value="Content" style="font-weight:bold;"></h:outputLabel>
+					
+		                <p:inputTextarea id="emailContent" rows="10"  counter="emailcounter" value="#{bulkEmailBean.emailMsg}"
+		                    maxlength="1500"  counterTemplate="{0} characters remaining."
+		                    autoResize="true" style="width:95%"/>
+		
+		                <p:outputLabel  style="width:20%;overflow: scroll; " id="emailcounter" />
+		            </h:panelGroup>
+		            <p:outputLabel value="Add Attachment: " style="font-weight:bold;"/>
+		            <p:fileUpload fileUploadListener="#{bulkEmailBean.uploadEmployeeDetailFile}" dragDropSupport="false" label="Select"  
+				  		mode="advanced"  multiple="true" update=":toolForm:toolview:growl :toolForm:toolview:uploadList"/> 
+            			
+                    
+		            <p:outputLabel></p:outputLabel>
+					
+					<p:dataList id="uploadList" var="attachment" value="#{bulkEmailBean.uploadAttachment}">  
+  
+		            <f:facet name="header">  
+		                Uploaded Documents 
+		            </f:facet>  
+					<h:outputText value="#{attachment}" style="margin-left:10px" />  
+				    <br />  
+				    </p:dataList> 
+				    
+				    <p:commandButton value="Send Email" actionListener="#{bulkEmailBean.sendEmailToEmployees}" update="@this @all :toolForm:toolview:emailSubject :toolForm:toolview:emailpositions
+				    				:toolForm:toolview:emailContent :toolForm:toolview:employeeEmailPickList :toolForm:toolview:growl :toolForm:toolview:uploadList" onclick="jQuery(this).addClass('ui-state-disabled')" ></p:commandButton>
+					
+				</h:panelGrid>
+					
+    			</div>
+			</p:tab>
+		
+		
+</ui:composition>

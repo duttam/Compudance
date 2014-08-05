@@ -1,0 +1,50 @@
+<f:view xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:o="http://omnifaces.org/ui"
+	xmlns:of="http://omnifaces.org/functions"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:pm="http://primefaces.org/mobile" contentType="text/html"
+	renderKitId="PRIMEFACES_MOBILE">
+
+	<pm:page title="Regions">
+		<f:facet name="preinit">
+			
+		</f:facet>
+		<f:facet name="postinit">                        
+            
+        </f:facet>   
+		<!-- Main View -->
+		<pm:view id="regions" swatch="b">
+			<ui:include src="../menu.xhtml" />
+				<pm:header>
+					<ui:include src="../header.xhtml" />
+				</pm:header>
+
+				<pm:content>
+					<h:form id="regionForm" prependId="false">
+					
+						<pm:field>
+		                <h:outputLabel for="regions" value="Select Region to Change: "/>
+		                <br></br>
+		                <h:selectOneMenu id="regionlist" value="#{regionBean.selectedRegion}" converter="regionconverter">
+                        
+	                        <f:selectItems value="#{regionBean.regionList}" var="region"
+	                                itemLabel="#{region.name} #{region.description}"
+	                                itemValue="#{region}"/>
+	
+	                        <p:ajax event="change" listener="#{regionBean.redirectOnRegionChange}"/>
+		              	</h:selectOneMenu>
+		                    
+		                </pm:field>
+					</h:form>
+				</pm:content>
+				
+				
+		</pm:view>
+		
+		
+	</pm:page>
+
+</f:view>

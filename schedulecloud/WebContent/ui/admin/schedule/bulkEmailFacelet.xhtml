@@ -1,0 +1,109 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+				xmlns:h="http://java.sun.com/jsf/html"
+				xmlns:f="http://java.sun.com/jsf/core"
+				xmlns:p="http://primefaces.org/ui"
+				xmlns:func="http://onetouch.com/functions"
+				xmlns:o="http://omnifaces.org/ui"
+				xmlns:of="http://omnifaces.org/functions"
+				xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+				xmlns:pe="http://primefaces.org/ui/extensions">
+	
+
+		<!-- Notification Status and Bulk Email for event  -->
+
+		<p:tabView id="tabView" dynamic="true">
+								<p:ajax event="tabChange" />
+
+								<p:tab title="Notification">
+
+									<p:dataTable id="eventDetailtbl" var="eventPosition"
+										value="#{scheduleDetailBean.allEventPositions}"
+										scrollable="true" scrollHeight="150">
+
+
+
+										<p:columnGroup type="header">
+											<p:row>
+												<p:column headerText="Notified" />
+												<p:column headerText="Accepted" />
+												<p:column headerText="Declined" />
+												<p:column headerText="Expired" />
+
+											</p:row>
+										</p:columnGroup>
+
+										<p:subTable
+											value="#{eventPosition.position.scheduledEmployees}"
+											var="employee">
+											<f:facet name="header">
+												<p:row>
+													<p:column>#{eventPosition.position.name}</p:column>
+													<p:column>( <span style="color: green">#{eventPosition.position.scheduledEmployeesCount}</span> ) , </p:column>
+													<p:column>( <span style="color: red">#{eventPosition.reqdNumber
+															- eventPosition.position.scheduledEmployeesCount}</span> ) , </p:column>
+													<p:column>#{of:formatDate(eventPosition.startTime, 'hh:mm a')} - #{of:formatDate(eventPosition.endTime, 'hh:mm a')}</p:column>
+
+												</p:row>
+
+
+											</f:facet>
+
+											<p:column style="text-align:center">
+												<h:outputText
+													value="#{employee.firstname} #{employee.lastname}"
+													rendered="#{employee.schedule.schedulestatus == 1}" />
+											</p:column>
+											<p:column style="text-align:center">
+												<h:outputText
+													value="#{employee.firstname} #{employee.lastname}"
+													rendered="#{employee.schedule.schedulestatus == 2}" />
+											</p:column>
+											<p:column style="text-align:center">
+												<h:outputText
+													value="#{employee.firstname} #{employee.lastname}"
+													rendered="#{employee.schedule.schedulestatus == 3}" />
+											</p:column>
+											<p:column style="text-align:center">
+												<h:outputText
+													value="#{employee.firstname} #{employee.lastname}"
+													rendered="#{employee.schedule.schedulestatus == 4}" />
+											</p:column>
+
+										</p:subTable>
+									</p:dataTable>
+
+								</p:tab>
+
+								<p:tab title="Bulk Email">
+
+									<h:panelGrid styleClass="TOP" columns="2" width="100%"
+										id="sendBulkEmailId">
+										<p:outputLabel value="Subject" style="font-weight:bold;"></p:outputLabel>
+										<h:panelGroup>
+											<p:inputText id="sendBulkSubject"
+												value="#{scheduleDetailBean.scheduleDetailSubject}"
+												style="width:75%" />
+
+
+										</h:panelGroup>
+										<p:outputLabel value="Content" style="font-weight:bold;"></p:outputLabel>
+										<h:panelGroup>
+											<p:editor id="sendBulkContent" style="width:75%" value="#{scheduleDetailBean.scheduleDetailNotes}" ></p:editor>
+										
+											
+										</h:panelGroup>
+										<p:outputLabel></p:outputLabel>
+										<p:commandButton value="Email To All Employees "
+											actionListener="#{scheduleDetailBean.sendEmailToEmployee}"
+											process="sendBulkEmailId"
+											update="@this tabView:sendBulkContent tabView:sendBulkSubject :scheduleDetail:growl"
+											onclick="jQuery(this).addClass('ui-state-disabled')"></p:commandButton>
+
+									</h:panelGrid>
+
+								</p:tab>
+							</p:tabView>
+		
+					
+</ui:composition>

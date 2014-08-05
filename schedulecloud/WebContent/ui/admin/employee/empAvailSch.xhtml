@@ -1,0 +1,226 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:o="http://omnifaces.org/ui"
+	xmlns:of="http://omnifaces.org/functions"
+	template="../../../template/admincontenttemplate.xhtml">
+    <ui:define name="head">
+    	<script type="text/javascript">
+			$(document).ready(function(){
+		        $("btnPrint").click(function(){
+		            $("availDatesCal").printArea( options );
+		            return false;
+		        });
+
+        
+    		});
+			</script>
+		
+	
+        
+    </ui:define>
+
+	<ui:define name="mainContent">
+	<style type="text/css">
+	.TOP label {
+			    vertical-align: top;
+		}
+		#left {
+		    display: table-cell;
+		    min-width: 350px;
+		}
+		#center {
+		    display: table-cell;
+		    min-width: 10px;
+		}
+		#right {
+		    display: table-cell;
+		    width: 100%;
+		    vertical-align: top;
+		}
+		#quotescointainer{
+			    width: 100%;
+			    font-size: 12px;
+			    overflow: hidden; /* contain floated elements */
+			    
+			}
+			#quotesleft {
+			    float: left; 
+			    width: 47%;
+			    
+			}
+			#quotescenter { 
+			    float: left;
+			    
+			    width: 5%;
+			}
+			#quotesright{
+			    float: left;
+			    width: 48%;
+			    
+			}
+			.fc-event {
+			    background-color: #3A87AD;
+			    border: 1px solid #3A87AD;
+			    color: #FFFFFF;
+			    cursor: pointer;
+			    font-size: 0.85em;
+			}
+			.header{
+			    display: inline-block;
+			    vertical-align: top;
+			    font-size: 15px; 
+			    font-weight:bold
+			}
+	</style>
+	
+		<h:form prependId="false">
+		<p:growl id="availgrowl" showDetail="false"  life="10000" showSummary="true"/>
+		<br></br>
+		<p:panel>
+		
+			<f:facet name="header">
+				<p:row>
+					<p:column>Employee Availability vs Schedule Calender </p:column>
+					<p:column>
+						<div align="center">
+							<span style="text-transform: capitalize">#{employeeScheduleHome.employee.firstname} #{employeeScheduleHome.employee.lastname}</span>
+						</div>
+					</p:column>
+				</p:row>
+				
+			</f:facet>
+			<div id="quotescointainer">
+    				<div id="quotesleft">
+    					<div align="center">
+    						<h:outputLabel value="Availability Calender" styleClass="header"/>
+    					</div>
+    					<p:separator></p:separator>
+						<p:schedule id="availDatesCal" value="#{availHome.eventModel}" widgetVar="myschedule"  view="month"  initialDate="#{availHome.currentAvailDate}" 
+							timeFormat="h:mm t{ - h:mm t}"  draggable="false">  
+	  
+			    		</p:schedule> 
+			    	</div>
+			    	<div id="quotescenter">
+			    		<h:outputLabel value="separator" style="visibility:hidden"></h:outputLabel>
+			    	</div>
+			    	
+			    	<div id="quotesright">
+			    		<div align="center">
+			    			<h:outputLabel value="Schedule Calender" styleClass="header"/>
+			    		</div>
+			    		<p:separator></p:separator>
+			    		<p:schedule  value="#{employeeScheduleHome.employeeScheduleModel}" widgetVar="employeeschedule"   draggable="false" resizable="false"  timeFormat="h:mm t{ - h:mm t}">
+							  <p:ajax event="eventSelect" listener="#{employeeScheduleHome.onScheduleEventSelect}" oncomplete="employeeScheduleDialog.show();" update="scheduleDetails"/>
+						</p:schedule>
+			    	</div>
+			   </div>
+			
+			<p:dialog id="employeeScheduleDetail" widgetVar="employeeScheduleDialog"  showEffect="clip" hideEffect="clip" dynamic="true" position="50,50" >  
+						<f:facet name="header">
+							<p:row>
+								<p:column>Schedule Details</p:column>
+											
+							</p:row>
+						</f:facet>
+						
+				        <h:panelGrid id="scheduleDetails" columns="1" cellpadding="10">  
+				        	
+				        	<p:panel style="width: 100%;" header="Event Detail">
+				        	<h:panelGroup>
+				        		<h:panelGrid columns="4" cellpadding="5">
+				        			<h:outputLabel  value="Event Name: " />
+									<h:outputLabel  value="#{employeeScheduleHome.schedule.event.name}" />
+									
+									<h:outputLabel  value="Event Date: " />
+									<h:outputLabel  value="#{of:formatDate(employeeScheduleHome.schedule.event.startDate, 'yyyy-MM-dd')}" />
+									
+									<h:outputText value="Host:" />
+							        <h:outputText value="#{employeeScheduleHome.schedule.event.hostname}" />
+							        
+							        <h:outputText value="Notes:" />
+							        <h:outputText value="#{employeeScheduleHome.schedule.event.notes}" />
+							        
+							        <h:outputText value="Description:" />
+							        <h:outputText value="#{employeeScheduleHome.schedule.event.description}" />
+									
+									
+				        		</h:panelGrid>
+				        	</h:panelGroup>
+				        	</p:panel>
+				        	<p:panel style="width: 100%;" header="Location Detail">
+				        	<h:panelGroup>
+				        		<h:panelGrid columns="4" cellpadding="5">
+				        			<h:outputLabel  value="Address1: " />
+									<h:outputLabel  value="#{employeeScheduleHome.schedule.event.location.address1}" />
+									
+									<h:outputLabel  value="Address2: " />
+									<h:outputLabel  value="#{employeeScheduleHome.schedule.event.location.address2}" />
+									
+									<h:outputText value="City:" />
+							        <h:outputText value="#{employeeScheduleHome.schedule.event.location.city}" />
+							        
+							        <h:outputText value="State:" />
+							        <h:outputText value="#{employeeScheduleHome.schedule.event.location.state.stateName}" />
+							        
+							        <h:outputText value="Zipcode:" />
+							        <h:outputText value="#{employeeScheduleHome.schedule.event.location.zipcode}" />
+									<h:outputText value="Parking Direction:" />
+							        <h:outputText value="#{employeeScheduleHome.schedule.event.location.parkingDirection}" />
+									<h:outputText value="Contact Name:" />
+							        <h:outputText value="#{employeeScheduleHome.schedule.event.location.contactName}" />
+									<h:outputText value="Contact Email:" />
+							        <h:outputText value="#{employeeScheduleHome.schedule.event.location.contactEmail}" />
+									<h:outputText value="Contact Phone:" />
+							        <h:outputText value="#{employeeScheduleHome.schedule.event.location.contactPhone}" />
+									
+									
+	        		
+				        		</h:panelGrid>
+				        	</h:panelGroup>
+				        	</p:panel>
+				        	<p:panel style="width: 100%;" header="Position Detail">
+				            <h:panelGroup>
+				        		<h:panelGrid columns="4" cellpadding="5">
+						            <h:outputLabel  value="Position Name: " />  
+						            <h:outputLabel  value="#{employeeScheduleHome.schedule.position.name}" />
+						            <h:outputLabel></h:outputLabel>
+						            <h:outputLabel></h:outputLabel>
+						            <h:outputLabel  value="Start Time: " />  
+						            <h:outputLabel  value="#{of:formatDate(employeeScheduleHome.schedule.eventPosition.startTime, 'hh:mm a')}" />
+						            <h:outputLabel  value="End Time: " />  
+						            <h:outputLabel  value="#{of:formatDate(employeeScheduleHome.schedule.eventPosition.endTime, 'hh:mm a')}" />
+						            
+					        	</h:panelGrid>
+				        	</h:panelGroup> 
+				        	</p:panel>
+				        	
+				        	<p:panel style="width: 100%;" header="SignIn SignOut Detail">
+				            <h:panelGroup>
+				        		<h:panelGrid columns="4" cellpadding="5">
+						            
+						            <h:outputLabel  value="SignIn Time: " />  
+						            <h:outputLabel  value="#{of:formatDate(employeeScheduleHome.schedule.signInOut.startTime, 'hh:mm a')}" />
+						            <h:outputLabel  value="SignOutTime: " />  
+						            <h:outputLabel  value="#{of:formatDate(employeeScheduleHome.schedule.signInOut.endTime, 'hh:mm a')}" />
+						            
+						            <h:outputLabel  value="Break Start Time: " />  
+						            <h:outputLabel  value="#{of:formatDate(employeeScheduleHome.schedule.signInOut.breakStartTime, 'hh:mm a')}" />
+						            <h:outputLabel  value="Break End Time: " />  
+						            <h:outputLabel  value="#{of:formatDate(employeeScheduleHome.schedule.signInOut.breakEndTime, 'hh:mm a')}" />
+					        	</h:panelGrid>
+				        	</h:panelGroup> 
+				        	</p:panel>
+						  	
+				              
+				        </h:panelGrid>  
+				    </p:dialog>
+		</p:panel>
+		
+				
+		</h:form>
+		
+	</ui:define>
+</ui:composition>

@@ -1,0 +1,25 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+				xmlns:h="http://java.sun.com/jsf/html"
+				xmlns:f="http://java.sun.com/jsf/core"
+				xmlns:p="http://primefaces.org/ui"
+				xmlns:func="http://onetouch.com/functions"
+				xmlns:o="http://omnifaces.org/ui"
+				xmlns:of="http://omnifaces.org/functions"
+				xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+				xmlns:pe="http://primefaces.org/ui/extensions">
+
+
+	<p:selectOneMenu 
+									value="#{scheduleEmployeeSort.selectedSortOption}"
+									label="Select Sorting order" filter="true" filterText="Filter"
+									filterMatchMode="startsWith" panelStyle="width:220px" >
+									<f:selectItem itemLabel="Sort by Employee Name" itemValue="name" ></f:selectItem>
+									<f:selectItem itemLabel="Sort by Rating" itemValue="rating"></f:selectItem>
+									<f:selectItem itemLabel="Sort by HireDate" itemValue="hiredate"></f:selectItem>
+									<f:selectItem itemLabel="Sort by Rating and HireDate" itemValue="default" itemDisabled="#{not loginBean.tenant.sortByRankAndHiredate}"></f:selectItem>
+									<p:ajax process="@this" update="scroll" listener="#{scheduleEmployeeSort.sortEmployees}"/>
+								</p:selectOneMenu>
+
+
+</ui:composition>

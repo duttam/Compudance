@@ -1,0 +1,54 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:o="http://omnifaces.org/ui"
+	xmlns:of="http://omnifaces.org/functions"
+	template="../../../template/employeecontenttemplate.xhtml">
+    <ui:define name="head">
+    	
+        
+    </ui:define>
+
+	<ui:define name="mainContent">
+	
+		<h:form id="downloadDocumentForm">
+		<script type="text/javascript">  
+				function start() {  
+				    statusDialog.show();  
+				}  
+				  
+				function stop() {  
+				    statusDialog.hide();  
+				}  
+        </script>
+		<p:panel header="Download Documents" >
+			
+			<p:dataTable id="documentsTbl" var="document" value="#{uploadDocumentBean.tenantDocuments}" >  
+				        <p:column headerText="Document Name">  
+				            <h:outputText value="#{document.documentName}" />  
+				        </p:column>  
+				  
+				        <p:column headerText="Document Type">  
+				            <h:outputText value="#{document.documentType}" />  
+				        </p:column>  
+				  
+				        <p:column >  
+				            <h:commandLink  onclick="PrimeFaces.monitorDownload(start, stop)">
+								<p:fileDownload value="#{document.file}" />
+								<p:graphicImage value="/images/download/#{document.documentTypeImage}" />
+								
+							</h:commandLink>
+				        </p:column>  
+				    </p:dataTable>  
+				    
+				    <p:dialog modal="true" widgetVar="statusDialog" header="Status" draggable="false" closable="false" resizable="false">  
+					    <p:graphicImage value="/images/design/ajaxloadingbar.gif" />  
+					</p:dialog>	
+			
+    		
+    		</p:panel>  
+		</h:form>
+	</ui:define>
+</ui:composition>

@@ -1,0 +1,219 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:func="http://onetouch.com/functions"
+	xmlns:o="http://omnifaces.org/ui"
+	xmlns:of="http://omnifaces.org/functions"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+	xmlns:pe="http://primefaces.org/ui/extensions"
+	template="../../../template/admincontenttemplate.xhtml">
+
+
+	<ui:define name="mainContent">
+	
+		<h:form id="scheduleDetail" prependId="false">
+			<style type="text/css">
+.sickStyle {
+	color: green;
+	width: 65%;
+}
+
+.noStyle {
+	width: 65%;
+}
+
+.ui-carousel .ui-carousel-header .ui-carousel-header-title {
+	display: inline;
+}
+
+#repeatId_content.ui-widget-content {
+	border: 0px;
+}
+
+.ui-datagrid .ui-datagrid-header,.ui-datagrid .ui-datagrid-footer {
+	padding: 10px 10px;
+	text-align: center;
+	height: 25px;
+}
+
+.ui-orderlist .ui-orderlist-list {
+	width: 99.5%;
+}
+
+#quotescointainer {
+	width: 100%;
+	font-size: 12px;
+	overflow: hidden; /* contain floated elements */
+}
+
+#quotesleft {
+	float: left;
+	width: 35%;
+}
+
+#quotescenter {
+	float: left;
+	width: 5%;
+}
+
+#quotesright {
+	float: left;
+	width: 65%;
+}
+
+#left {
+	display: table-cell;
+	min-width: 350px;
+}
+
+#center {
+	display: table-cell;
+	min-width: 10px;
+}
+
+#right {
+	display: table-cell;
+	width: 100%;
+	vertical-align: top;
+}
+.ui-datalist-data {
+   height:150px;
+   overflow:auto;
+}
+</style>
+<br></br>
+		<p:panel header="Add New Position">
+		<p:messages autoUpdate="true"></p:messages>
+			<div align="center">
+				<h:panelGrid columns="9" cellpadding="5" cellspacing="5">
+				<p:outputLabel value="Select Position: *" />
+									<p:selectOneMenu id="eventPositions"
+										value="#{scheduleEventPosition.scheduledEventPosition.position}"
+										converter="positionconverter">
+										<f:selectItem itemLabel="Select One" itemValue=""
+											noSelectionOption="true" />
+										<f:selectItems value="#{positionHome.positionList}"
+											var="position" itemLabel="#{position.name}"
+											itemValue="#{position}"
+											itemDisabled="#{position.name eq 'Admin' or position.name eq 'Manager'}" />
+										<p:ajax listener="#{scheduleEventPosition.filterEmployeeList}"
+											process="@this" update="scroll" />
+									</p:selectOneMenu>
+									<p:outputLabel></p:outputLabel>
+
+									<p:outputLabel value="Employee Count: *" />
+									<p:inputText id="reqdcnt"
+										value="#{scheduleEventPosition.scheduledEventPosition.reqdNumber}" required="true" requiredMessage="Employee Count must be greater than 0">
+
+										<f:validator validatorId="employeeCountValidator"></f:validator>
+										<p:ajax event="blur" process="@this" update="reqdcntMsg" />
+									</p:inputText>
+									<p:message for="reqdcnt" id="reqdcntMsg" display="text" />
+
+									<p:outputLabel value="Start Time" />
+									
+										<p:selectOneMenu id="starttime"
+											value="#{scheduleEventPosition.scheduledEventPosition.startTime}"
+											editable="true">
+											<f:selectItems value="#{dateBean.shiftTimes}" var="sdate"
+												itemLabel="#{of:formatDate(sdate, 'MM/dd/yyyy hh:mm a')}"
+												itemValue="#{sdate}" />
+											<f:convertDateTime pattern="MM/dd/yyyy hh:mm a" type="time" />
+											<p:ajax event="change" process="@this"
+												update="startTimeMsg,scroll"
+												listener="#{scheduleEventPosition.filterEmployeeList}" />
+										</p:selectOneMenu>
+									
+									<p:message for="starttime" id="startTimeMsg" display="text" />
+
+									<p:outputLabel value="End Time" />
+									
+										<p:selectOneMenu id="endtime"
+											value="#{scheduleEventPosition.scheduledEventPosition.endTime}"
+											editable="true">
+
+											<f:selectItems value="#{dateBean.shiftTimes}" var="edate"
+												itemLabel="#{of:formatDate(edate, 'MM/dd/yyyy hh:mm a')}"
+												itemValue="#{edate}" />
+											<f:convertDateTime pattern="MM/dd/yyyy hh:mm a" type="time" />
+											<p:ajax event="change" process="@this"
+												listener="#{scheduleEventPosition.filterEmployeeList}"
+												update="endTimeMsg,scroll" />
+
+										</p:selectOneMenu>
+									
+									<p:message for="endtime" id="endTimeMsg" display="text" />
+									
+									<p:outputLabel value="Position Notes" />
+									<p:inputTextarea id="eventposnote" autoResize="true"
+										value="#{scheduleEventPosition.scheduledEventPosition.notes}" />
+									<h:outputLabel></h:outputLabel>
+									<h:outputLabel></h:outputLabel>
+									<ui:include src="sortEmployee.xhtml"></ui:include>
+				
+					</h:panelGrid>
+				
+				<p></p>
+								<ui:include src="scheduleEmployee.xhtml"></ui:include>
+								<p></p>
+								<p:button value="Back" outcome="scheduleDetail">
+									<f:param name="eventId" value="#{scheduleEventPosition.event.id}" />
+								</p:button>
+								<p:spacer width="10" ></p:spacer>
+									<p:commandButton value="Save" actionListener="#{scheduleEventPosition.showNewEventPositionSummary}" 
+									oncomplete="updateconfirmation.show()" update=":scheduleDetail:updateConfirmDialog"/>
+
+			</div>
+		</p:panel>
+		<p:confirmDialog id="updateConfirmDialog"  
+						 severity="alert"
+						widgetVar="updateconfirmation">
+						<f:facet name="header">
+							<h:outputText value="Update Position" />
+						</f:facet>
+						<f:facet name="message">
+							<h:outputText value="#{scheduleEventPosition.editConfirmMessage}" />
+							<p></p>
+							<p:dataList value="#{scheduleEventPosition.saveSchedules}" var="schedule" type="ordered">
+						        <f:facet name="header">
+						            Scheduled Employees
+						        </f:facet>
+						        #{schedule.employee.firstname}, #{schedule.employee.lastname}
+						    </p:dataList>
+						    <br></br>
+						    <p:dataList value="#{scheduleEventPosition.updateSchedules}" var="schedule" type="ordered">
+						        <f:facet name="header">
+						            Updated Employees 
+						        </f:facet>
+						        #{schedule.employee.firstname}, #{schedule.employee.lastname}
+						    </p:dataList>
+						    <br></br>
+						    <p:dataList value="#{scheduleEventPosition.deleteSchedules}" var="schedule" type="ordered">
+						        <f:facet name="header">
+						            <h:outputLabel value="Deleted Employees" style="font-weight:bold;color:red"></h:outputLabel> 
+						        </f:facet>
+						        <p:outputLabel value="#{schedule.employee.firstname}, #{schedule.employee.lastname}" style="color:red"></p:outputLabel>
+						        
+						    </p:dataList>
+						</f:facet>
+						<div align="center">
+						<p:commandButton id="updateconfirm" value="Submit"
+							action="#{scheduleEventPosition.addNewEventPosition}" 
+							 />
+						<p:commandButton id="updatedecline" value="Back" 
+							onclick="updateconfirmation.hide();editScheduleWidget.hide();" type="button" />
+						<p:button value="Cancel" outcome="addEventPosition"
+							onclick="updateconfirmation.hide()"  includeViewParams="true" rendered="false">
+							<f:param name="operation" value="add" />
+							
+						</p:button>
+						</div>
+					</p:confirmDialog>
+			<ui:include src="availabilityDialog.xhtml"></ui:include>
+			<ui:include src="notifyDialog.xhtml"></ui:include>
+		</h:form>
+
+	</ui:define>
+</ui:composition>

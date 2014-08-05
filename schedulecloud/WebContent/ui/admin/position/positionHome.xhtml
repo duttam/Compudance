@@ -1,0 +1,109 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	>
+    	
+		
+		
+		
+		
+		<p:tab id="positionTab" title="Manage Position" titleStyle="font-size: 11px" >	
+		<p:growl id="posgrowl" showDetail="false" life="3000" showSummary="true"/> 	
+			<br />
+			<div align="right" style="width: 90%;">
+				<p:commandButton value="Add Position" actionListener="#{positionController.clickAddPosition}" oncomplete="positiondlg.show();" >
+					<f:param name="action" value="addposition" />
+				</p:commandButton>
+				<p:commandButton value="Update Position Order"  update="positionDisplayDialog" oncomplete="positiondisplaydlg.show();" >
+					<f:param name="action" value="addposition" />
+				</p:commandButton>
+			</div>
+			<br />
+			<div align="center">
+			<p:dataTable id="positiontable" var="position"
+				value="#{positionHome.positionList}" paginator="true" rows="10" style="width:80%">
+
+				<p:column headerText="Position Name" sortBy="#{position.name}" >
+					<div align="center">
+						<p:commandLink value="#{position.name}" actionListener="#{positionController.clickEditPosition}"  oncomplete="positiondlg.show();" disabled="#{position.name eq 'Admin' or position.name eq 'Manager'}">
+							<f:param name="action" value="editposition" />
+							<f:param name="id" value="#{position.id}" />
+						</p:commandLink>
+					</div>
+				</p:column>
+				<p:column headerText="Description" >
+					<div  align="center" >
+					
+						  <p:outputLabel value="#{position.description}"></p:outputLabel>
+					
+					</div>
+				</p:column>
+								
+				
+			</p:dataTable>
+			</div>
+			<p:dialog id="positionDialog" header="Add Position" dynamic="true" widgetVar="positiondlg">
+				<div align="center">
+				
+				<h:panelGrid columns="4" >
+					<p:outputLabel value="Position Name: *" />
+					<p:spacer height="5" width="30"></p:spacer>
+					<p:inputText id="name" value="#{positionController.position.name}"></p:inputText>
+					<p:message for="name" id="nameMsg" display="text" style="padding-left:30px;"/>
+										
+					<h:outputText value="Staff Reports: " rendered="#{p:ifAnyGranted('ROLE_ACCESS_ADMIN,ROLE_ACCESS_MANAGER')}"/>  
+        			<p:spacer height="5" width="30"></p:spacer>
+        			<p:selectBooleanCheckbox value="#{positionController.position.viewReports}" rendered="#{p:ifAnyGranted('ROLE_ACCESS_ADMIN,ROLE_ACCESS_MANAGER')}"/> 
+				</h:panelGrid>
+				
+				<br />
+				<h:panelGrid columns="1">
+				<h:outputText value="Description: " />
+					<p:inputTextarea rows="4" cols="55" id="popupCP" value="#{positionController.position.description}"  />  
+					
+					
+				</h:panelGrid>
+				
+              	
+				<h:panelGrid columns="1">
+					<h:outputText value="Notes: " />
+
+					<p:inputTextarea rows="4" cols="55" counter="counter" value="#{positionController.position.notes}"
+						maxlength="1500" counterTemplate="{0} characters remaining."
+						autoResize="false" />
+ 
+					<h:outputText id="counter" />
+				</h:panelGrid>
+				<br />
+				<h:panelGrid columns="3">
+					<p:commandButton value="Save" actionListener="#{positionController.addPosition}" update="positiontable :toolForm:toolview:posgrowl" oncomplete="positiondlg.hide();" rendered="#{empty positionController.position.id}"/>
+					<p:outputLabel></p:outputLabel>
+					<p:commandButton value="Update" actionListener="#{positionController.updatePosition}" update="positiontable :toolForm:toolview:posgrowl" oncomplete="positiondlg.hide();"  rendered="#{not empty positionController.position.id}"/>
+				</h:panelGrid>
+				
+			</div>
+			</p:dialog>
+			
+			<p:dialog id="positionDisplayDialog" header="Update Position Display Order" dynamic="true" widgetVar="positiondisplaydlg">
+				<div align="center">
+				
+				<p:orderList value="#{positionHome.positionList}" var="position" iconOnly="true" effect="clip"  
+                    itemValue="#{position}" converter="positionconverter" controlsLocation="left" id="positiondisplayList">  
+			        <f:facet name="caption">Available Positions</f:facet>  
+			  
+			        
+			         <p:column style="width:75%;">  
+			            #{position.name} - #{position.description}  
+			        </p:column>  
+			    </p:orderList>
+				<h:panelGrid columns="3">
+					<p:commandButton value="Update" actionListener="#{positionController.updatePositionDisplayOrder}" update="positiontable" oncomplete="positiondisplaydlg.hide();"  />
+				</h:panelGrid>
+				
+			</div>
+			</p:dialog>
+		</p:tab>
+		
+</ui:composition>

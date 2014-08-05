@@ -1,0 +1,56 @@
+<f:view xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:o="http://omnifaces.org/ui"
+	xmlns:of="http://omnifaces.org/functions"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:pm="http://primefaces.org/mobile" contentType="text/html"
+	renderKitId="PRIMEFACES_MOBILE">
+
+	<pm:page title="Admin Home">
+		<f:facet name="postinit">                        
+            <link rel="stylesheet" href="#{request.contextPath}/javax.faces.resource/calendar/calendar.css.jsf?ln=primefaces-mobile" />
+            <h:outputScript library="primefaces-mobile" name="calendar/calendar.js" />              
+
+            <script type="text/javascript">
+                (function($) {
+                	
+                })(jQuery);
+            </script>
+        </f:facet>   
+		<!-- Main View -->
+		<pm:view id="chngpasswd" swatch="b">
+			<ui:include src="empmenu.xhtml" />
+				<pm:header>
+					
+					<ui:include src="header.xhtml" />
+						
+				</pm:header>
+
+				<pm:content>
+					<h:form id="chngpasswdform" prependId="false">
+					<p:contextMenu event="swiperight" beforeShow="PF('panelContext').show()" />
+						
+						<p:inputText id="oldpasswd" value="#{loginBean.oldPassword}" label="Old Password:" required="true" requiredMessage="Enter Old Password">
+							<p:ajax event="blur" process="@this" update="passwdMsg"/>
+						</p:inputText>
+
+                        <p:inputText id="newpasswd" value="#{loginBean.password}" label="New Password:" required="true" requiredMessage="Enter New Password">
+                        	<p:ajax event="blur" process="@this" update="passwdMsg"/>
+                        </p:inputText>
+                		<p:inputText id="confirmpasswd"  label="Confirm Password:" />
+                		
+                		<p:commandButton value="Submit" actionListener="#{loginBean.updatePassword}" update="passwdMsg"/>
+                		<p:growl id="passwdMsg" life="800"/>
+                	</h:form>
+                	
+				</pm:content>
+				
+		</pm:view>
+		
+		
+	</pm:page>
+
+</f:view>

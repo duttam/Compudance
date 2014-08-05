@@ -1,0 +1,52 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	template="sitetemplate.xhtml">
+    
+
+	<ui:define name="content">
+		<h:form id="adminForm" style="height:22px">
+		
+		
+		<p:tabMenu activeIndex="#{mainMenuBean.activeMenuIndex}" > 
+			 <p:menuitem value="Home" actionListener="" url="/ui/admin/adminHome.jsf" rendered="#{p:ifAnyGranted('ROLE_ACCESS_ADMIN, ROLE_ACCESS_MANAGER')}">
+		    	<f:param name="menuid" value="adminhome"></f:param>
+		    </p:menuitem>
+		    <p:menuitem value="Employee"  url="/ui/admin/employee/employeeHome.jsf" rendered="#{p:ifAnyGranted('ROLE_ACCESS_ADMIN, ROLE_ACCESS_MANAGER')}">
+		    	<f:param name="menuid" value="employee"></f:param>
+		    </p:menuitem>
+		    <p:menuitem value="Event"  url="/ui/admin/event/eventHome.jsf" rendered="#{p:ifAnyGranted('ROLE_ACCESS_ADMIN, ROLE_ACCESS_MANAGER')}">
+		    	<f:param name="menuid" value="event"></f:param>
+		    </p:menuitem>
+		    <p:menuitem value="Location" url="/ui/admin/location/locationHome.jsf" rendered="#{p:ifAnyGranted('ROLE_ACCESS_ADMIN, ROLE_ACCESS_MANAGER')}">
+		    	<f:param name="menuid" value="location"></f:param>
+		    </p:menuitem> 
+		    
+		    <p:menuitem value="Sign-In-Out"  url="/ui/admin/EmployeeSignInOut.jsf" rendered="#{p:ifAnyGranted('ROLE_ACCESS_ADMIN, ROLE_ACCESS_MANAGER')}">
+		    	<f:param name="menuid" value="signinout"></f:param>
+		    </p:menuitem>
+		    
+		    <p:menuitem value="Reports"  url="/ui/admin/reports/reportHome.jsf" rendered="#{p:ifAnyGranted('ROLE_ACCESS_ADMIN, ROLE_ACCESS_MANAGER')}">
+		    	<f:param name="menuid" value="reports"></f:param>
+		    </p:menuitem>
+		    <p:menuitem value="Tools"  url="/ui/admin/tools/toolHome.jsf" rendered="#{p:ifAnyGranted('ROLE_ACCESS_ADMIN, ROLE_ACCESS_MANAGER')}">
+		    	<f:param name="menuid" value="tools"></f:param>
+		    </p:menuitem>
+		    <p:menuitem value="Upload Employee"  url="/ui/admin/employee/uploadEmployeeHome.jsf" rendered="#{p:ifGranted('ROLE_ACCESS_ADMIN')}">
+		    	<f:param name="menuid" value="uploademployee"></f:param>
+		    </p:menuitem>
+		    <p:menuitem value="New Company"  url="/ui/admin/registration/companyHome.jsf" rendered="#{p:ifGranted('ROLE_ACCESS_SUPERADMIN')}">
+		    	<f:param name="menuid" value="newcompany"></f:param>
+		    </p:menuitem>
+		    
+		</p:tabMenu>
+		
+		</h:form>
+		<div>
+			<ui:insert name="mainContent" />
+		</div>
+		
+	</ui:define>
+</ui:composition>

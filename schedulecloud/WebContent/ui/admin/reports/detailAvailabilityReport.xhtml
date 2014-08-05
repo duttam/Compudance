@@ -1,0 +1,204 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions"
+	xmlns:o="http://omnifaces.org/ui"
+	xmlns:of="http://omnifaces.org/functions">
+	<p:ajaxStatus onstart="PF('statusDialog').show();" oncomplete="PF('statusDialog').hide();">
+		
+		
+	</p:ajaxStatus>
+	<p:dialog modal="true" widgetVar="statusDialog" header="Loading Data"   
+        draggable="false" closable="false" > 
+        <div align="center"> 
+    	<p:graphicImage value="/images/design/ajax-loader.gif" />
+    	</div>  
+	</p:dialog>
+	<div id="quotescointainer">
+            <div id="quotesleft" align="left">
+			<h:panelGrid columns="10" cellpadding="5">
+				<p:outputLabel value="Start Date:" style="font-weight:bold" />
+				<p:calendar id="startdate"
+					value="#{detailedAvailReportBean.reportStartDate}"
+					pattern="MM/dd/yyyy" showButtonPanel="true" navigator="true"
+					required="true" requiredMessage="#{msg['message.empty']}" >
+					<p:ajax event="dateSelect"
+						listener="#{detailedAvailReportBean.selectStartDate}"
+						process="@this" global="false" />
+				</p:calendar>
+				<p:outputLabel value="End Date:" style="font-weight:bold" />
+				<p:calendar id="enddate"
+					value="#{detailedAvailReportBean.reportEndDate}"
+					pattern="MM/dd/yyyy" showButtonPanel="true" navigator="true"
+					required="true" requiredMessage="#{msg['message.empty']}">
+					<p:ajax event="dateSelect"
+						listener="#{detailedAvailReportBean.selectEndDate}"
+						process="@this" global="false" />
+				</p:calendar>
+
+
+
+				
+				
+				<p:selectCheckboxMenu 
+							value="#{detailedAvailReportBean.selectedPositions}"
+							converter="positionconverter" id="positionList"
+							label="#{detailedAvailReportBean.positionList}" filter="true" filterText="Filter"
+							filterMatchMode="startsWith" panelStyle="width:auto;" style="width:250px;">
+							<f:selectItems value="#{positionHome.positionList}"
+								var="position" itemLabel="#{position.name}"
+								itemValue="#{position}" />
+							
+						</p:selectCheckboxMenu>
+						
+				<h:panelGroup>
+				 Check if All Regions
+				 <p:selectBooleanCheckbox value="#{detailedAvailReportBean.allRegion}" />
+				 </h:panelGroup>  
+				 <p:commandButton value="Filter Report" action="#{detailedAvailReportBean.filterDetailAvailabilityReport}" 
+				 					update="printdetailavailTable positionList"></p:commandButton>
+				 <p:commandButton value="Find All Employee Status" action="#{detailedAvailReportBean.findAllEmployeeStatus}" 
+				 					update="printdetailavailTable positionList"></p:commandButton>
+			</h:panelGrid>
+
+		</div>
+                <div id="quotescenter" align="right">
+                    <h:commandLink action="#{detailedAvailReportBean.detailAvlPreProcessorPDF}">
+									<p:graphicImage value="/images/pdf.png" title="export as pdf" />
+								</h:commandLink>
+                    <h:commandLink rendered="false">  
+						<p:graphicImage value="/images/pdf.png" title="export as pdf"/>
+							<pe:exporter  cellFontSize="10"  subTable="true" facetBackground="#9E9E9E" orientation="Landscape" type="pdf" 
+							target="printdetailavailTable" fileName="Detail_Availability_Report" preProcessor="#{detailedAvailReportBean.detailAvlPreProcessorPDF}"/>
+                    </h:commandLink>        
+                    
+                </div>
+            </div>
+    
+    <h:panelGrid columns="4">
+			<p:inputText id="keywordId" value="#{detailedAvailReportBean.idSearchValue}" size="40">
+				<p:ajax event="keyup" listener="#{detailedAvailReportBean.filterIdListener}" update="printdetailavailTable"/>
+			</p:inputText>
+			<p:watermark for="keywordId" value="Search For Employee by Id" />
+			
+			<p:inputText id="keywordName" value="#{detailedAvailReportBean.nameSearchValue}" size="40">
+				<p:ajax event="keyup" listener="#{detailedAvailReportBean.filterListener}" update="printdetailavailTable"/>
+			</p:inputText>
+			<p:watermark for="keywordName" value="Search For Employee by Name" />  
+	</h:panelGrid>
+	
+	
+    
+    <br></br>
+    
+    <p:dataTable id="printdetailavailTable" var="avlReport"
+		value="#{detailedAvailReportBean.detailedAvailList}" widgetVar="detailAvlReport" stickyHeader="true">
+
+		<f:facet name="header">
+		
+		</f:facet>
+		
+		<p:columnGroup type="header">
+
+			<p:row>
+				<p:column headerText="Emp Id" style="width:4%"/>
+				<p:column headerText="Employee Name" style="width:18%"/> 
+				<p:column headerText="Position Name" style="width:7%"/>
+				<p:column headerText="Shift Start Time" style="width:8%"/>
+				<p:column headerText="Shift End Time" style="width:8%"/>
+				<p:column headerText="Availability Start Time" style="width:8%"/>
+				<p:column headerText="Availability End Time" style="width:8%"/>
+				<p:column headerText="Event Id" style="width:4%"/>
+				<p:column headerText="Event Name" style="width:25%"/>
+				<p:column headerText="Location Code" style="width:4%"/>
+				
+				<p:column headerText="Status" style="width:6%"/>
+			</p:row>
+		</p:columnGroup>
+		<p:subTable var="detailAvl" value="#{avlReport.detailedAvailReports}">  
+        <f:facet name="header">  
+              <h:outputText value="#{of:formatDate(avlReport.reportDate, 'MM-dd-yyyy')}, #{avlReport.position.name}"/>
+        </f:facet> 
+        <p:column>
+			 <h:outputText value="#{detailAvl.employeeId}" style="center"/>
+		</p:column> 
+        <p:column>
+			 <h:outputText value="#{detailAvl.employeeLastname}, #{detailAvl.employeeFirstname}"/>
+		</p:column>
+		<p:column>
+			 <h:outputText value="#{detailAvl.position}" style="center"/>
+		</p:column>
+		<p:column>
+			<h:outputText value="#{of:formatDate(detailAvl.startTime, 'hh:mm a')}" style="center"/>  
+		</p:column>
+		<p:column>
+			<h:outputText value="#{of:formatDate(detailAvl.endTime, 'hh:mm a')}" style="center"/>  
+		</p:column>
+		<p:column>
+			<h:outputText value="#{of:formatDate(detailAvl.availStartTime, 'hh:mm a')}" style="center"/>  
+		</p:column>
+		<p:column>
+			<h:outputText value="#{of:formatDate(detailAvl.availEndTime, 'hh:mm a')}" style="center"/>  
+		</p:column>
+		<p:column>
+			<h:link value="#{detailAvl.eventId eq 0 ? '' : detailAvl.eventId}" style="center" outcome="/ui/admin/schedule/scheduleDetail.jsf?eventId=#{detailAvl.eventId}"/>
+		</p:column>
+		<p:column>
+			<h:outputText value="#{detailAvl.eventName}"></h:outputText>
+		</p:column>
+		<p:column>
+			<h:outputText value="#{detailAvl.locationCode}" style="center"></h:outputText>
+		</p:column>
+		
+		
+		<p:column>
+			<h:outputText value="#{detailAvl.status}" style="center"/>  
+		</p:column>
+		</p:subTable>
+		
+		
+	</p:dataTable>
+	
+	<p:dataTable id="printallempstatusTable" var="detailAvl" value="#{detailedAvailReportBean.empStatusResult}" rendered="false">
+		<p:column headerText="Emp Id" style="width:4%">
+			 <h:outputText value="#{detailAvl.employeeId}" style="center"/>
+		</p:column> 
+        <p:column headerText="Employee Name" style="width:25%">
+			 <h:outputText value="#{detailAvl.employeeLastname}, #{detailAvl.employeeFirstname}"/>
+		</p:column>
+		<p:column headerText="Position Name" style="width:4%">
+			 <h:outputText value="#{detailAvl.position}" style="center"/>
+		</p:column>
+		<p:column headerText="Shift Start Time" style="width:8%">
+			<h:outputText value="#{of:formatDate(detailAvl.startTime, 'hh:mm a')}" style="center"/>  
+		</p:column>
+		<p:column headerText="Shift End Time" style="width:8%">
+			<h:outputText value="#{of:formatDate(detailAvl.endTime, 'hh:mm a')}" style="center"/>  
+		</p:column>
+		<p:column headerText="Availability Start Time" style="width:8%">
+			<h:outputText value="#{of:formatDate(detailAvl.availStartTime, 'hh:mm a')}" style="center"/>  
+		</p:column>
+		<p:column headerText="Availability End Time" style="width:8%">
+			<h:outputText value="#{of:formatDate(detailAvl.availEndTime, 'hh:mm a')}" style="center"/>  
+		</p:column>
+		<p:column headerText="Event Id" style="width:4%">
+			<p:outputLabel value="#{detailAvl.eventId eq 0 ? '' : detailAvl.eventId}" style="center"/>
+		</p:column>
+		<p:column headerText="Event Name" style="width:25%">
+			<h:outputText value="#{detailAvl.eventName}"></h:outputText>
+		</p:column>
+		<p:column headerText="Location Code" style="width:4%">
+			<h:outputText value="#{detailAvl.locationCode}" style="center"></h:outputText>
+		</p:column>
+		
+		
+		<p:column headerText="Status" style="width:6%">
+			<h:outputText value="#{detailAvl.status}" style="center"/>  
+		</p:column>
+			
+    </p:dataTable>
+    				  
+
+</ui:composition>

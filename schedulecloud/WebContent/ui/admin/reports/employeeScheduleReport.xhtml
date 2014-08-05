@@ -1,0 +1,198 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions"
+	xmlns:o="http://omnifaces.org/ui"
+	xmlns:of="http://omnifaces.org/functions"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions">
+    
+
+		
+		<div id="quotescointainer">
+			<div id="quotesleft" align="left">
+				<h:panelGrid columns="2">
+				<p:selectOneMenu height="200" value="#{employeeScheduleReport.selectedEmployee}"  converter="employeeConverter" >  
+				            <f:selectItems value="#{employeeScheduleReport.employeeList}" var="employee" itemLabel="#{employee.firstname} #{employee.lastname}" itemValue="#{employee}"/>
+							<p:ajax update="empschreporttbl vactimeoffreporttbl sicktimeoffreporttbl" listener="#{employeeScheduleReport.changeEmployee}" />
+						</p:selectOneMenu>
+						<p:selectOneMenu value="#{employeeScheduleReport.selectedMonth}">  
+				            <f:selectItems value="#{employeeScheduleReport.months}"/>
+							<p:ajax update="empschreporttbl vactimeoffreporttbl sicktimeoffreporttbl" listener="#{employeeScheduleReport.changeMonth}" />
+						</p:selectOneMenu>
+					</h:panelGrid>
+			</div>
+			<div id="quotescenter" align="right">
+				<p:commandButton styleClass="downloadButton" ajax="false"
+					icon="ui-icon-xls" iconPos="right" title="Download Report">
+	
+					<pe:exporter type="xlsx" target="#{reportHome.reportViewTarget},vactimeoffreporttbl,sicktimeoffreporttbl" fileName="#{reportHome.filename}" subTable="true"
+									facetFontSize="14" preProcessor="#{employeeScheduleReport.preProcessorXLS}" postProcessor="#{employeeScheduleReport.postProcessXLS}"/>
+				</p:commandButton>
+	
+			</div>
+		</div>
+<br></br>
+	
+						
+						<p:dataTable id="empschreporttbl" var="onetouchreport" value="#{employeeScheduleReport.employeeScheduleList}" >
+							<f:facet name="header">  
+						        <h:outputText value="Employee Schedule Report"/>  
+						    </f:facet>  
+    						<p:columnGroup type="header">  
+						        
+						        <p:row>  
+						              
+						            <p:column headerText="Event Name" rowspan="2"/>  
+						            <p:column headerText="Date" rowspan="2"/>  
+						            <p:column headerText="Rate" rowspan="2"/>  
+						            <p:column headerText="Time In" rowspan="2"/>  
+						  
+						            <p:column headerText="Break Out" rowspan="2"/>  
+						            <p:column headerText="Break In" rowspan="2"/>  
+						            <p:column headerText="Time Out" rowspan="2"/>  
+						            <p:column headerText="Hours Worked" rowspan="2"/>  
+						            
+						            <p:column colspan="4" headerText="Wage Categories"/>  
+						            <p:column headerText="" rowspan="2" style="display:none"/>
+						            <p:column headerText="" rowspan="2" style="display:none"/>
+						            <p:column headerText="Total Pay" rowspan="2"/>
+						        </p:row> 
+						  
+						        <p:row>  
+						            <p:column headerText=""/>
+						            <p:column headerText="Reg pay"/>
+						            <p:column headerText="OT Pay"/>
+						            <p:column headerText="Dt Pay" />
+						            
+						        </p:row>  
+						    </p:columnGroup>	
+						    <p:subTable var="schedule" value="#{onetouchreport.scheduleList}">  
+				            <f:facet name="header">  
+				              <h:outputText value="#{onetouchreport.month}" />   
+				            </f:facet>
+				            
+				            
+							    	 <p:column  styleClass="hdr1Black" >
+					                    	
+					                        <p:outputLabel value="#{schedule.event.name}"/>
+					                   
+					                </p:column> 
+						        	<p:column styleClass="hdr1Black"  sortBy="#{timeoff.beginDate}">
+					                    	
+					                        <h:outputText value="#{schedule.event.startDate}" >
+					                            <f:convertDateTime pattern="MM/dd/yyyy"></f:convertDateTime>
+					                        </h:outputText>                     
+					                    
+					                </p:column>
+									<p:column  styleClass="hdr1Black"  >
+					                    
+					                        <p:outputLabel value="#{schedule.employee.empRate.hourlyRate}">
+					                        	<f:convertNumber currencySymbol="$" minFractionDigits="2" maxFractionDigits="2"/>
+					                        </p:outputLabel>
+					                    
+					                </p:column>
+					                <p:column styleClass="hdr1Black" >
+					                    
+					                        <h:outputText value="#{of:formatDate(schedule.signInOut.startTime, 'hh:mm a')}" />
+					                    
+					                </p:column>
+					                
+					                
+					                
+					                <p:column styleClass="hdr1Black" >
+					                    
+					                        <h:outputText value="#{of:formatDate(schedule.signInOut.breakStartTime, 'hh:mm a')}" />
+					                    
+					                </p:column>
+					                <p:column styleClass="hdr1Black" >
+					                    
+					                        <h:outputText value="#{of:formatDate(schedule.signInOut.breakEndTime, 'hh:mm a')}" />
+					                    
+					                </p:column>
+					                <p:column styleClass="hdr1Black" >
+					                    
+					                        <h:outputText value="#{of:formatDate(schedule.signInOut.endTime, 'hh:mm a')}" />
+					                    
+					                </p:column>
+									<p:column styleClass="hdr1Black" >
+					                   
+					                        <h:outputText value="#{schedule.workingHours} hours #{schedule.workingMinutes} minutes" >
+					                            
+					                        </h:outputText>
+					                   
+					                </p:column>  
+						  			
+						  			<p:column styleClass="hdr1Black" >
+					                   
+					                        
+					                </p:column>
+						  			<p:column  styleClass="hdr1Black"  >
+					                    
+					                        <p:outputLabel value="#{schedule.regPay}">
+					                        	<f:convertNumber currencySymbol="$" minFractionDigits="2" maxFractionDigits="2"/>
+					                        </p:outputLabel>
+					                    
+					                </p:column>
+					                <p:column  styleClass="hdr1Black"  >
+					                    
+					                        <p:outputLabel value="#{schedule.otPay}">
+					                        	<f:convertNumber currencySymbol="$" minFractionDigits="2" maxFractionDigits="2"/>
+					                        </p:outputLabel>
+					                    
+					                </p:column>
+					                <p:column  styleClass="hdr1Black"  >
+					                    
+					                        <p:outputLabel value="#{schedule.dtPay}">
+					                        	<f:convertNumber currencySymbol="$" minFractionDigits="2" maxFractionDigits="2"/>
+					                        </p:outputLabel>
+					                    
+					                </p:column>
+					                <p:column styleClass="hdr1Black" style="display:none">
+					                    
+					                </p:column>
+					                <p:column styleClass="hdr1Black" style="display:none">
+					                    
+					                </p:column>
+					                <p:column  styleClass="hdr1Black"  >
+					                    
+					                        <p:outputLabel value="#{schedule.totalPay}">
+					                        	<f:convertNumber currencySymbol="$" minFractionDigits="2" maxFractionDigits="2"/>
+					                        </p:outputLabel>
+					                    
+					                </p:column>
+					                <p:columnGroup type="footer">  
+							        <p:row>  
+							            
+							            <p:column colspan="1" style="text-align:right" footerText="Total Days Worked: " />
+							            	
+							            <p:column colspan="1" footerText="#{fn:length(onetouchreport.scheduleList)}"/>  
+							            <p:column footerText=""/>  
+							            <p:column footerText=""/>
+							             
+							            <p:column colspan="3" footerText="TOTAL HOURS" style="text-align:right"/> 
+							            <p:column footerText="#{onetouchreport.totalActualHrs} hours #{onetouchreport.totalActualMinutes} minutes"/>  
+							            <p:column footerText="TOTAL MONTHLY PAY "/>
+							            <p:column footerText="#{onetouchreport.totalEmpSchRegPay}"/>
+							            <p:column footerText="#{onetouchreport.totalEmpSchOTPay}"/>
+							            <p:column footerText=" "/>
+							            <p:column footerText="" style="display:none"/>  
+							  			<p:column footerText="" style="display:none"/>
+							              
+							            <p:column footerText="#{onetouchreport.totalActualPay}"/>  
+							            
+							            
+							              
+							        </p:row>  
+    								</p:columnGroup>
+					             </p:subTable>   
+					                
+					                
+						</p:dataTable>  
+						<ui:include src="timeoffReport.xhtml" />
+						<p:spacer height="30"/>  
+  
+				
+						    
+</ui:composition>
