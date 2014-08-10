@@ -15,12 +15,12 @@ public class HelloWorldBean2 implements Serializable{
 	 */
 	private static final long serialVersionUID = 1L;
 	private String string;
-	private String secondString;
+	private String thirdString;
 
 	@PostConstruct
 	public void init(){
 		string = "this is a sinple demo test";
-		secondString = "this is a second String";
+		thirdString = "this is a second String";
 	}
 
 	public String getString() {
@@ -31,13 +31,15 @@ public class HelloWorldBean2 implements Serializable{
 		this.string = string;
 	}
 
-	public String getSecondString() {
-		return secondString;
+	public String getThirdString() {
+		return thirdString;
 	}
 
-	public void setSecondString(String secondString) {
-		this.secondString = secondString;
+	public void setThirdString(String thirdString) {
+		this.thirdString = thirdString;
 	}
+
+	
 
 	
 }
